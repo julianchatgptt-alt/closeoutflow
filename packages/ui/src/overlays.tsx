@@ -10,7 +10,7 @@ import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { ChevronDown, X } from "lucide-react";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 import { Button } from "./button";
 import { cn } from "./lib/cn";
@@ -18,6 +18,8 @@ import { cn } from "./lib/cn";
 const overlay = "fixed inset-0 z-overlay bg-[hsl(var(--overlay))]";
 const dialog =
   "fixed left-1/2 top-1/2 z-modal w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-lg border bg-surface-raised p-6 shadow-lg max-sm:bottom-0 max-sm:top-auto max-sm:w-full max-sm:max-w-none max-sm:-translate-y-0 max-sm:rounded-b-none";
+const commandDialog =
+  "fixed left-1/2 top-[12vh] z-command w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded-lg border bg-surface-raised shadow-lg max-sm:inset-0 max-sm:h-dvh max-sm:w-full max-sm:max-w-none max-sm:translate-x-0 max-sm:rounded-none";
 
 export function Tooltip({ children, content }: { children: ReactNode; content: ReactNode }) {
   return (
@@ -89,32 +91,60 @@ export function Dialog({
   trigger,
   title,
   description,
-  children
+  children,
+  open,
+  onOpenChange,
+  variant = "default",
+  showClose = true,
+  bodyClassName,
+  onCloseAutoFocus
 }: {
-  trigger: ReactNode;
+  trigger?: ReactNode;
   title: string;
   description?: string;
   children: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  variant?: "default" | "command";
+  showClose?: boolean;
+  bodyClassName?: string;
+  onCloseAutoFocus?: ComponentProps<typeof DialogPrimitive.Content>["onCloseAutoFocus"];
 }) {
   return (
-    <DialogPrimitive.Root>
-      <DialogPrimitive.Trigger asChild>{trigger}</DialogPrimitive.Trigger>
+    <DialogPrimitive.Root
+      {...(open === undefined ? {} : { open })}
+      {...(onOpenChange ? { onOpenChange } : {})}
+    >
+      {trigger ? <DialogPrimitive.Trigger asChild>{trigger}</DialogPrimitive.Trigger> : null}
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className={overlay} />
-        <DialogPrimitive.Content className={dialog}>
-          <DialogPrimitive.Title className="text-h2 font-semibold">{title}</DialogPrimitive.Title>
+        <DialogPrimitive.Content
+          className={variant === "command" ? commandDialog : dialog}
+          {...(onCloseAutoFocus ? { onCloseAutoFocus } : {})}
+        >
+          <DialogPrimitive.Title
+            className={variant === "command" ? "sr-only" : "text-h2 font-semibold"}
+          >
+            {title}
+          </DialogPrimitive.Title>
           {description ? (
-            <DialogPrimitive.Description className="mt-1 text-sm text-muted-foreground">
+            <DialogPrimitive.Description
+              className={variant === "command" ? "sr-only" : "mt-1 text-sm text-muted-foreground"}
+            >
               {description}
             </DialogPrimitive.Description>
           ) : null}
-          <div className="mt-5">{children}</div>
-          <DialogPrimitive.Close
-            aria-label="Close dialog"
-            className="absolute right-4 top-4 rounded-md p-2 hover:bg-muted"
-          >
-            <X aria-hidden="true" className="h-4 w-4" />
-          </DialogPrimitive.Close>
+          <div className={cn(variant === "command" ? "h-full" : "mt-5", bodyClassName)}>
+            {children}
+          </div>
+          {showClose ? (
+            <DialogPrimitive.Close
+              aria-label="Close dialog"
+              className="absolute right-4 top-4 rounded-md p-2 hover:bg-muted"
+            >
+              <X aria-hidden="true" className="h-4 w-4" />
+            </DialogPrimitive.Close>
+          ) : null}
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
@@ -125,16 +155,27 @@ export function AlertDialog({
   trigger,
   title,
   description,
-  actionLabel = "Continue"
+  actionLabel = "Continue",
+  open,
+  onOpenChange,
+  onAction
 }: {
-  trigger: ReactNode;
+  trigger?: ReactNode;
   title: string;
   description: string;
   actionLabel?: string;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onAction?: () => void;
 }) {
   return (
-    <AlertDialogPrimitive.Root>
-      <AlertDialogPrimitive.Trigger asChild>{trigger}</AlertDialogPrimitive.Trigger>
+    <AlertDialogPrimitive.Root
+      {...(open === undefined ? {} : { open })}
+      {...(onOpenChange ? { onOpenChange } : {})}
+    >
+      {trigger ? (
+        <AlertDialogPrimitive.Trigger asChild>{trigger}</AlertDialogPrimitive.Trigger>
+      ) : null}
       <AlertDialogPrimitive.Portal>
         <AlertDialogPrimitive.Overlay className={overlay} />
         <AlertDialogPrimitive.Content className={dialog}>
@@ -149,7 +190,9 @@ export function AlertDialog({
               <Button variant="outline">Cancel</Button>
             </AlertDialogPrimitive.Cancel>
             <AlertDialogPrimitive.Action asChild>
-              <Button variant="destructive">{actionLabel}</Button>
+              <Button variant="destructive" onClick={onAction}>
+                {actionLabel}
+              </Button>
             </AlertDialogPrimitive.Action>
           </div>
         </AlertDialogPrimitive.Content>

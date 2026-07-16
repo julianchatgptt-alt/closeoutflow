@@ -5,6 +5,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import {
   DENSITY_STORAGE_KEY,
   type DensityPreference,
+  normalizeDensity,
+  normalizeTheme,
   resolveTheme,
   THEME_STORAGE_KEY,
   type ThemePreference
@@ -37,8 +39,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const timer = window.setTimeout(() => {
       const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
       const storedDensity = localStorage.getItem(DENSITY_STORAGE_KEY);
-      setThemeState(storedTheme === "light" || storedTheme === "dark" ? storedTheme : "system");
-      setDensityState(storedDensity === "compact" ? "compact" : "comfortable");
+      const normalizedTheme = normalizeTheme(storedTheme);
+      const normalizedDensity = normalizeDensity(storedDensity);
+      if (storedTheme !== normalizedTheme) localStorage.setItem(THEME_STORAGE_KEY, normalizedTheme);
+      if (storedDensity !== normalizedDensity)
+        localStorage.setItem(DENSITY_STORAGE_KEY, normalizedDensity);
+      setThemeState(normalizedTheme);
+      setDensityState(normalizedDensity);
       setPreferencesLoaded(true);
     }, 0);
     return () => window.clearTimeout(timer);

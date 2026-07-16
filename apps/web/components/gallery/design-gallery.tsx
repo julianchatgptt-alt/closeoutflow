@@ -50,7 +50,12 @@ import {
 import { SampleValidationForm } from "../form/sample-form";
 import { ThemeToggle } from "../theme/theme-toggle";
 import { RiskIndicator } from "../status/risk-indicator";
-import { StatusBadge, statusValues } from "../status/status-badge";
+import {
+  StatusBadge,
+  type StatusBadgeProps,
+  type StatusCategory,
+  statusValues
+} from "../status/status-badge";
 import { DataTable } from "../table/data-table";
 import { projects } from "../../src/mock/phase-3";
 
@@ -69,7 +74,7 @@ export function DesignGallery() {
       <main className="mx-auto grid max-w-6xl gap-8 p-4 sm:p-8">
         <div>
           <Badge tone="warning">Local/test only</Badge>
-          <h1 className="mt-3 text-3xl font-semibold">CloseoutFlow component gallery</h1>
+          <h1 className="mt-3 text-3xl font-semibold">Closeout component gallery</h1>
           <p className="mt-2 text-muted-foreground">
             Living Phase 3 reference. Static samples only; this route returns 404 in production.
           </p>
@@ -146,16 +151,12 @@ export function DesignGallery() {
         </Section>
         <Section title="Status and risk system">
           <div className="grid gap-4">
-            {Object.entries(statusValues).map(([category, statuses]) => (
+            {(Object.keys(statusValues) as StatusCategory[]).map((category) => (
               <div key={category}>
                 <h3 className="mb-2 text-sm font-semibold capitalize">{category}</h3>
                 <div className="flex flex-wrap gap-2">
-                  {statuses.map((status) => (
-                    <StatusBadge
-                      key={status}
-                      category={category as keyof typeof statusValues}
-                      status={status}
-                    />
+                  {statusValues[category].map((status) => (
+                    <StatusBadge key={status} {...({ category, status } as StatusBadgeProps)} />
                   ))}
                 </div>
               </div>

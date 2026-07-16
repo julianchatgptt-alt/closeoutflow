@@ -5,7 +5,7 @@ import { DesignGallery } from "../../../components/gallery/design-gallery";
 import { isDesignGalleryEnabled } from "./access";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Component Gallery · CloseoutFlow" };
+export const metadata = { title: "Component Gallery" };
 
 export default function Page() {
   if (!isDesignGalleryEnabled(serverEnv.APP_ENV)) notFound();

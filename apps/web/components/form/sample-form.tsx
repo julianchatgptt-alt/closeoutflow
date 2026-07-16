@@ -7,6 +7,7 @@ import { z } from "zod";
 
 import {
   Alert,
+  AlertDialog,
   Button,
   Field,
   FileUploadPlaceholder,
@@ -24,8 +25,14 @@ const schema = z.object({
 });
 type Values = z.infer<typeof schema>;
 
-export function SampleValidationForm() {
+export function SampleValidationForm({
+  onNavigate
+}: {
+  onNavigate?: (href: string) => void;
+} = {}) {
   const summary = useRef<HTMLDivElement>(null);
+  const pendingAnchor = useRef<HTMLAnchorElement | null>(null);
+  const bypassNavigationGuard = useRef(false);
   const {
     register,
     handleSubmit,
@@ -36,6 +43,7 @@ export function SampleValidationForm() {
     defaultValues: { name: "", email: "", notes: "" }
   });
   const [saved, setSaved] = useState(false);
+  const [discardOpen, setDiscardOpen] = useState(false);
   useEffect(() => {
     const guard = (event: BeforeUnloadEvent) => {
       if (isDirty) event.preventDefault();
@@ -44,67 +52,115 @@ export function SampleValidationForm() {
     return () => window.removeEventListener("beforeunload", guard);
   }, [isDirty]);
   useEffect(() => {
+    const guardNavigation = (event: MouseEvent) => {
+      if (!isDirty || bypassNavigationGuard.current || event.defaultPrevented) return;
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        return;
+      const target = event.target;
+      const anchor =
+        target instanceof Element ? target.closest<HTMLAnchorElement>("a[href]") : null;
+      if (!anchor || anchor.target === "_blank" || anchor.hasAttribute("download")) return;
+      const destination = new URL(anchor.href, window.location.href);
+      if (
+        destination.origin !== window.location.origin ||
+        destination.href === window.location.href
+      )
+        return;
+      event.preventDefault();
+      event.stopPropagation();
+      pendingAnchor.current = anchor;
+      setDiscardOpen(true);
+    };
+    document.addEventListener("click", guardNavigation, true);
+    return () => document.removeEventListener("click", guardNavigation, true);
+  }, [isDirty]);
+  useEffect(() => {
     if (Object.keys(errors).length) summary.current?.focus();
   }, [errors]);
   return (
-    <form
-      className="grid max-w-[var(--content-max-form)] gap-5"
-      noValidate
-      onSubmit={handleSubmit((values) => {
-        setSaved(true);
-        reset(values);
-      })}
-    >
-      {Object.keys(errors).length ? (
-        <div
-          ref={summary}
-          tabIndex={-1}
-          role="alert"
-          className="rounded-md border border-danger-border bg-danger-subtle p-3"
+    <>
+      <form
+        className="grid max-w-[var(--content-max-form)] gap-5"
+        noValidate
+        onSubmit={handleSubmit((values) => {
+          setSaved(true);
+          reset(values);
+        })}
+      >
+        {Object.keys(errors).length ? (
+          <div
+            ref={summary}
+            tabIndex={-1}
+            role="alert"
+            className="rounded-md border border-danger-border bg-danger-subtle p-3"
+          >
+            <p className="font-medium">Review the highlighted fields.</p>
+            <p className="text-sm text-muted-foreground">Each error is linked to its control.</p>
+          </div>
+        ) : null}
+        {saved ? (
+          <Alert tone="success" title="Sample saved">
+            This confirmation is visual only. No data was persisted.
+          </Alert>
+        ) : null}
+        <Field
+          label="Contact name"
+          htmlFor="sample-name"
+          required
+          {...(errors.name?.message ? { error: errors.name.message } : {})}
         >
-          <p className="font-medium">Review the highlighted fields.</p>
-          <p className="text-sm text-muted-foreground">Each error is linked to its control.</p>
+          <Input id="sample-name" aria-invalid={Boolean(errors.name)} {...register("name")} />
+        </Field>
+        <Field
+          label="Email"
+          htmlFor="sample-email"
+          required
+          help="Use a clearly fake address for this preview."
+          {...(errors.email?.message ? { error: errors.email.message } : {})}
+        >
+          <Input
+            id="sample-email"
+            type="email"
+            aria-invalid={Boolean(errors.email)}
+            {...register("email")}
+          />
+        </Field>
+        <div className="flex gap-2">
+          <Button type="submit">Validate sample</Button>
+          <Button type="button" variant="outline" onClick={() => reset()}>
+            Reset
+          </Button>
         </div>
-      ) : null}
-      {saved ? (
-        <Alert tone="success" title="Sample saved">
-          This confirmation is visual only. No data was persisted.
-        </Alert>
-      ) : null}
-      <Field
-        label="Contact name"
-        htmlFor="sample-name"
-        required
-        {...(errors.name?.message ? { error: errors.name.message } : {})}
-      >
-        <Input id="sample-name" aria-invalid={Boolean(errors.name)} {...register("name")} />
-      </Field>
-      <Field
-        label="Email"
-        htmlFor="sample-email"
-        required
-        help="Use a clearly fake address for this preview."
-        {...(errors.email?.message ? { error: errors.email.message } : {})}
-      >
-        <Input
-          id="sample-email"
-          type="email"
-          aria-invalid={Boolean(errors.email)}
-          {...register("email")}
-        />
-      </Field>
-      <div className="flex gap-2">
-        <Button type="submit">Validate sample</Button>
-        <Button type="button" variant="outline" onClick={() => reset()}>
-          Reset
-        </Button>
-      </div>
-      {isDirty ? (
-        <p role="status" className="text-sm text-warning">
-          Unsaved sample changes
-        </p>
-      ) : null}
-    </form>
+        {isDirty ? (
+          <p role="status" className="text-sm text-warning">
+            Unsaved sample changes
+          </p>
+        ) : null}
+      </form>
+      <AlertDialog
+        open={discardOpen}
+        onOpenChange={setDiscardOpen}
+        title="Discard changes?"
+        description="Your unsaved sample changes will be lost if you leave this page."
+        actionLabel="Discard and leave"
+        onAction={() => {
+          const anchor = pendingAnchor.current;
+          if (!anchor) return;
+          const href = anchor.getAttribute("href") ?? anchor.href;
+          reset();
+          setDiscardOpen(false);
+          if (onNavigate) {
+            onNavigate(href);
+            return;
+          }
+          bypassNavigationGuard.current = true;
+          window.setTimeout(() => {
+            anchor.click();
+            bypassNavigationGuard.current = false;
+          }, 0);
+        }}
+      />
+    </>
   );
 }
 

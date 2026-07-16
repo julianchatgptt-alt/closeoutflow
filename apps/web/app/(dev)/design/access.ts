@@ -1,1 +1,5 @@
-export { isPlaygroundEnabled as isDesignGalleryEnabled } from "../../(marketing)/playground/access";
+export type DesignGalleryEnvironment = "local" | "test" | "preview" | "staging" | "production";
+
+export function isDesignGalleryEnabled(environment: DesignGalleryEnvironment): boolean {
+  return environment === "local" || environment === "test";
+}

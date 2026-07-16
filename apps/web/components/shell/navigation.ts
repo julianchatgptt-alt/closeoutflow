@@ -1,10 +1,17 @@
-import { Building2, FolderKanban, LayoutDashboard, Settings, UsersRound } from "lucide-react";
+import {
+  BarChart3,
+  Building2,
+  FolderKanban,
+  LayoutDashboard,
+  Settings,
+  UsersRound
+} from "lucide-react";
 
 export const globalNavigation = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/projects", label: "Projects", icon: FolderKanban },
   { href: "/companies", label: "Companies", icon: Building2 },
-  { href: "/reports", label: "Reports", icon: LayoutDashboard, disabled: true, phase: 11 },
+  { href: "/reports", label: "Reports", icon: BarChart3, disabled: true, phase: 11 },
   { href: "/team", label: "Team", icon: UsersRound },
   { href: "/settings/general", label: "Settings", icon: Settings }
 ] as const;

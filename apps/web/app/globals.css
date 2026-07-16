@@ -47,6 +47,28 @@ select {
   font-variant-numeric: tabular-nums;
 }
 
+@media (min-width: 1024px) {
+  html[data-sidebar="expanded"] .app-shell {
+    padding-left: var(--sidebar-w);
+  }
+
+  html[data-sidebar="expanded"] .app-sidebar {
+    width: var(--sidebar-w);
+  }
+
+  html[data-sidebar="collapsed"] .app-shell {
+    padding-left: var(--sidebar-w-collapsed);
+  }
+
+  html[data-sidebar="collapsed"] .app-sidebar {
+    width: var(--sidebar-w-collapsed);
+  }
+
+  html[data-sidebar="collapsed"] .sidebar-expanded-only {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

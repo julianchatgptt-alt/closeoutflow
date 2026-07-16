@@ -23,6 +23,10 @@ import {
 import { Badge } from "@closeoutflow/ui";
 
 export type StatusCategory = keyof typeof statusValues;
+export type StatusFor<C extends StatusCategory> = (typeof statusValues)[C][number];
+export type StatusBadgeProps = {
+  [C in StatusCategory]: { category: C; status: StatusFor<C> };
+}[StatusCategory];
 export type StatusTone = "neutral" | "info" | "success" | "warning" | "danger" | "owner";
 
 export const statusValues = {
@@ -214,9 +218,18 @@ export const STATUS_PRESENTATION: Record<StatusCategory, Record<string, Presenta
   }
 };
 
-export function StatusBadge({ category, status }: { category: StatusCategory; status: string }) {
+export function StatusBadge({ category, status }: StatusBadgeProps) {
   const presentation = STATUS_PRESENTATION[category][status];
-  if (!presentation) throw new Error(`Unknown ${category} status: ${status}`);
+  if (!presentation) {
+    if (process.env.NODE_ENV !== "production")
+      console.warn(`Unknown ${category} status: ${String(status)}`);
+    return (
+      <Badge tone="neutral">
+        <CircleDashed aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+        <span>Unknown</span>
+      </Badge>
+    );
+  }
   const Icon = presentation.icon;
   return (
     <Badge tone={presentation.tone}>
