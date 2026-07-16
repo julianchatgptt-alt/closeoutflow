@@ -1,4 +1,3 @@
-import { auditActions, writeAuditEvent } from "@closeoutflow/audit";
 import { createServiceClient } from "@closeoutflow/db/server";
 import { serverEnv } from "@closeoutflow/env/server";
 import { createLogger, createRequestId } from "@closeoutflow/observability";
@@ -6,9 +5,23 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
+type DatabaseHealthResult = PromiseLike<{
+  data: boolean | null;
+  error: { code?: string } | null;
+}>;
+
+export type DatabaseHealthClient = {
+  rpc(name: "database_health_check"): DatabaseHealthResult;
+};
+
+export async function checkDatabaseReachability(client: DatabaseHealthClient): Promise<boolean> {
+  const { data, error } = await client.rpc("database_health_check");
+  return error === null && data === true;
+}
+
 export async function GET(request: Request) {
   const requestId = createRequestId(request.headers.get("x-request-id"));
-  const logger = createLogger({ requestId, source: "api" });
+  const logger = createLogger({ requestId, source: "api", level: serverEnv.LOG_LEVEL });
   let databaseReachable = false;
 
   const url = serverEnv.NEXT_PUBLIC_SUPABASE_URL;
@@ -17,17 +30,10 @@ export async function GET(request: Request) {
   if (url && serviceRoleKey) {
     try {
       const client = createServiceClient({ url, serviceRoleKey });
-      await writeAuditEvent(client, {
-        actorType: "system",
-        targetType: "system",
-        action: auditActions.systemHealthChecked,
-        requestId,
-        source: "api",
-        metadata: { build_version: serverEnv.BUILD_VERSION }
-      });
-      databaseReachable = true;
-    } catch (error) {
-      logger.warn({ error }, "Database health check failed");
+      databaseReachable = await checkDatabaseReachability(client);
+      if (!databaseReachable) logger.warn("Database health check failed");
+    } catch {
+      logger.warn("Database health check failed");
     }
   }
 

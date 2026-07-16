@@ -5,6 +5,17 @@ const directory = path.join(process.cwd(), "supabase", "migrations");
 const names = (await readdir(directory)).filter((name) => name.endsWith(".sql")).sort();
 const errors = [];
 
+function containsTableCreation(sql, table) {
+  const escapedTable = table.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const optionalSchema = '(?:(?:"[^"]+"|[a-z_][a-z0-9_$]*)\\s*\\.\\s*)?';
+  const tableIdentifier = `(?:"${escapedTable}"|${escapedTable})`;
+  const pattern = new RegExp(
+    `\\bcreate\\s+(?:unlogged\\s+)?table\\s+(?:if\\s+not\\s+exists\\s+)?${optionalSchema}${tableIdentifier}(?=\\s|\\()`,
+    "i"
+  );
+  return pattern.test(sql);
+}
+
 if (names.length === 0) errors.push("No migrations found.");
 
 const versions = new Set();
@@ -32,11 +43,17 @@ const forbiddenBusinessTables = [
   "billing"
 ];
 for (const table of forbiddenBusinessTables) {
-  if (
-    combined.includes("create table " + table) ||
-    combined.includes("create table public." + table)
-  ) {
+  if (containsTableCreation(combined, table)) {
     errors.push("Business table found during Phase 2: " + table + ".");
+  }
+}
+
+for (const [sql, table] of [
+  ['create table if not exists "public"."projects" (id uuid);', "projects"],
+  ['create unlogged table "requirements" (id uuid);', "requirements"]
+]) {
+  if (!containsTableCreation(sql, table)) {
+    errors.push("Migration business-table guard failed its self-test for " + table + ".");
   }
 }
 
@@ -44,7 +61,10 @@ for (const required of [
   "create schema if not exists audit",
   "alter table audit.audit_events enable row level security",
   "alter table audit.audit_events force row level security",
-  "create trigger audit_events_immutable"
+  "create trigger audit_events_immutable",
+  "create trigger audit_events_immutable_truncate",
+  "create or replace function public.write_audit_event",
+  "create or replace function public.database_health_check"
 ]) {
   if (!combined.includes(required)) errors.push("Missing migration invariant: " + required + ".");
 }

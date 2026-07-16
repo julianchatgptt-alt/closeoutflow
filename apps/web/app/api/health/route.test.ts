@@ -1,8 +1,9 @@
 // @vitest-environment node
 
-import { describe, expect, it } from "vitest";
+import { readFile } from "node:fs/promises";
+import { describe, expect, it, vi } from "vitest";
 
-import { GET } from "./route";
+import { checkDatabaseReachability, GET, type DatabaseHealthClient } from "./route";
 
 describe("health endpoint", () => {
   it("returns a safe local health response without requiring cloud credentials", async () => {
@@ -14,5 +15,21 @@ describe("health endpoint", () => {
     expect(payload.status).toBe("ok");
     expect(serialized).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
     expect(serialized).not.toContain("placeholder-server-only");
+  });
+
+  it("uses only the read-only health RPC and never writes an audit event", async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: true, error: null });
+    const client = { rpc } as DatabaseHealthClient;
+
+    await expect(checkDatabaseReachability(client)).resolves.toBe(true);
+    await expect(checkDatabaseReachability(client)).resolves.toBe(true);
+
+    expect(rpc).toHaveBeenCalledTimes(2);
+    expect(rpc).toHaveBeenNthCalledWith(1, "database_health_check");
+    expect(rpc).toHaveBeenNthCalledWith(2, "database_health_check");
+
+    const source = await readFile("apps/web/app/api/health/route.ts", "utf8");
+    expect(source).not.toContain("@closeoutflow/audit");
+    expect(source).not.toContain("writeAuditEvent");
   });
 });

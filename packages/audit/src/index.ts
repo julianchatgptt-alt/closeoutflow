@@ -1,7 +1,7 @@
-import type { AuditEventInsert, Json } from "@closeoutflow/db";
+import type { AuditEventInsert, Database, Json } from "@closeoutflow/db";
 
 export const auditActions = {
-  systemHealthChecked: "system.health_checked"
+  systemFoundationVerified: "system.foundation_verified"
 } as const;
 
 export type AuditAction = (typeof auditActions)[keyof typeof auditActions];
@@ -25,13 +25,10 @@ export type AuditEvent = {
 };
 
 type AuditInsertResult = PromiseLike<{ error: { message: string } | null }>;
+type WriteAuditEventArgs = Database["public"]["Functions"]["write_audit_event"]["Args"];
 
 export type AuditClient = {
-  schema(name: "audit"): {
-    from(table: "audit_events"): {
-      insert(value: AuditEventInsert): AuditInsertResult;
-    };
-  };
+  rpc(name: "write_audit_event", parameters: WriteAuditEventArgs): AuditInsertResult;
 };
 
 export async function writeAuditEvent(client: AuditClient, event: AuditEvent): Promise<void> {
@@ -53,6 +50,24 @@ export async function writeAuditEvent(client: AuditClient, event: AuditEvent): P
     metadata: event.metadata ?? {}
   };
 
-  const { error } = await client.schema("audit").from("audit_events").insert(row);
+  const parameters: WriteAuditEventArgs = {
+    p_actor_type: row.actor_type,
+    p_target_type: row.target_type,
+    p_action: row.action,
+    p_request_id: row.request_id,
+    p_source: row.source,
+    p_metadata: row.metadata ?? {},
+    ...(event.organizationId ? { p_organization_id: event.organizationId } : {}),
+    ...(event.actorId ? { p_actor_id: event.actorId } : {}),
+    ...(event.projectId ? { p_project_id: event.projectId } : {}),
+    ...(event.targetId ? { p_target_id: event.targetId } : {}),
+    ...(event.before === undefined ? {} : { p_before: event.before }),
+    ...(event.after === undefined ? {} : { p_after: event.after }),
+    ...(event.sessionId ? { p_session_id: event.sessionId } : {}),
+    ...(event.ip ? { p_ip: event.ip } : {}),
+    ...(event.userAgent ? { p_user_agent: event.userAgent } : {})
+  };
+
+  const { error } = await client.rpc("write_audit_event", parameters);
   if (error) throw new Error("Audit event write failed: " + error.message);
 }

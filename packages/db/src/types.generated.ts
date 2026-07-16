@@ -91,7 +91,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      database_health_check: { Args: never; Returns: boolean }
+      write_audit_event: {
+        Args: {
+          p_action: string
+          p_actor_id?: string
+          p_actor_type: string
+          p_after?: Json
+          p_before?: Json
+          p_ip?: unknown
+          p_metadata?: Json
+          p_organization_id?: string
+          p_project_id?: string
+          p_request_id: string
+          p_session_id?: string
+          p_source: string
+          p_target_id?: string
+          p_target_type: string
+          p_user_agent?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
