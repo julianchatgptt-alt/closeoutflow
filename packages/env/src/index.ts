@@ -20,6 +20,7 @@ const optionalString = z.preprocess(
   z.string().optional()
 );
 const optionalUrl = z.preprocess((value) => (value === "" ? undefined : value), z.url().optional());
+const logLevelSchema = z.enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"]);
 
 export const serverEnvSchema = z
   .object({
@@ -33,9 +34,7 @@ export const serverEnvSchema = z
     EMAIL_PROVIDER: z.enum(["noop", "mailpit", "resend"]).default("noop"),
     RESEND_API_KEY: optionalString,
     EMAIL_FROM: optionalString,
-    LOG_LEVEL: z
-      .enum(["fatal", "error", "warn", "info", "debug", "trace", "silent"])
-      .default("info"),
+    LOG_LEVEL: logLevelSchema.optional(),
     SENTRY_DSN: optionalUrl,
     SENTRY_ENABLED: z
       .enum(["true", "false"])
@@ -64,7 +63,11 @@ export const serverEnvSchema = z
         });
       }
     }
-  });
+  })
+  .transform((value) => ({
+    ...value,
+    LOG_LEVEL: value.LOG_LEVEL ?? (["local", "test"].includes(value.APP_ENV) ? "debug" : "info")
+  }));
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
 

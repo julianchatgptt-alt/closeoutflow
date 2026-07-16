@@ -10,12 +10,24 @@ describe("environment validation", () => {
   });
 
   it("parses a valid local environment with safe defaults", () => {
-    const result = parseServerEnv({ APP_ENV: "local", LOG_LEVEL: "debug" });
+    const result = parseServerEnv({ APP_ENV: "local" });
 
     expect(result.APP_ENV).toBe("local");
     expect(result.EMAIL_PROVIDER).toBe("noop");
     expect(result.LOG_LEVEL).toBe("debug");
     expect(result.SENTRY_ENABLED).toBe(false);
+  });
+
+  it("uses a safe production log default and rejects invalid levels", () => {
+    const production = parseServerEnv({
+      APP_ENV: "production",
+      NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "public-anon-key",
+      SUPABASE_SERVICE_ROLE_KEY: "server-only-key"
+    });
+
+    expect(production.LOG_LEVEL).toBe("info");
+    expect(() => parseServerEnv({ APP_ENV: "local", LOG_LEVEL: "verbose" })).toThrow();
   });
 
   it("keeps every secret server-only", () => {

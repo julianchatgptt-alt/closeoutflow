@@ -10,8 +10,12 @@ import {
 import { serverEnv } from "@closeoutflow/env/server";
 import { notFound } from "next/navigation";
 
+import { isPlaygroundEnabled } from "./access";
+
+export const dynamic = "force-dynamic";
+
 export default function ComponentPlayground() {
-  if (!["local", "test"].includes(serverEnv.APP_ENV)) notFound();
+  if (!isPlaygroundEnabled(serverEnv.APP_ENV)) notFound();
 
   return (
     <main className="mx-auto max-w-3xl space-y-6 p-8">
