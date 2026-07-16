@@ -7,9 +7,20 @@
 
 ---
 
+## Permanent public identity
+
+- The public-facing product name is **Closeout**.
+- The canonical domain is **closeoutflow.com**.
+- User-visible copy, metadata, PWA surfaces, accessible names, and icon titles use **Closeout**, never “CloseoutFlow” or “Closeout Flow.”
+- Internal technical identifiers may retain `closeoutflow`, including the repository name, `@closeoutflow/*` package scope, environment prefixes, code namespaces, storage keys, and documentation paths.
+
+This distinction is permanent: internal namespace stability must not leak the former name into a user-facing surface.
+
+---
+
 ## 1. Product visual philosophy
 
-CloseoutFlow is the **command center for the last, most document-heavy phase of a construction project**. The interface earns trust the way a good set of project records does: it is **organized, legible, and calm under a large amount of information**. Every screen should make a project manager feel that *nothing is falling through the cracks*.
+Closeout is the **command center for the last, most document-heavy phase of a construction project**. The interface earns trust the way a good set of project records does: it is **organized, legible, and calm under a large amount of information**. Every screen should make a project manager feel that *nothing is falling through the cracks*.
 
 The guiding metaphor is **"the well-run closeout binder, made live"** — the credibility of a meticulously tabbed submittal binder, but searchable, current, and shared. We borrow the *discipline* of construction documentation (structure, labels, status, provenance) without cosplaying the *jobsite* (no hazard stripes, hard hats, or blueprint wallpaper).
 

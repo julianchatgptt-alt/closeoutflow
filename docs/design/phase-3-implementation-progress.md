@@ -203,3 +203,16 @@ Tasks 0–15 are implemented. Required code, component, browser, accessibility, 
 - Founder may visually review palette, typography, status semantics, desktop shell, mobile shell, placeholder pages, and `/design` before a later production UI release. These are soft checkpoints under the approved plan.
 - Manual screen-reader and physical-device testing should accompany feature implementation in later phases.
 - Stepper, Timeline, Activity List, context menu, real upload behavior, and all business workflows remain deferred exactly as classified in `components.md`.
+
+## Phase 3D audit remediation
+
+- **Date:** 2026-07-16.
+- **Source:** The independent [Phase 3C audit](./phase-3c-audit.md) remains preserved unchanged.
+- **Artifact:** [Phase 3D remediation record](./phase-3d-remediation.md).
+- **Findings:** P3C-001 through P3C-016 are resolved. P3C-017 was reviewed and retained as a justified CSP style-policy observation; nonce-based script CSP remains strict.
+- **Brand:** Public product naming is Closeout; the canonical domain remains closeoutflow.com; internal `closeoutflow` technical namespaces remain stable. Root metadata, inherited titles, Open Graph, Twitter, manifest, shell, gallery, error states, icons, and accessible names follow this rule.
+- **Accessibility and UX:** The command palette now uses the shared Radix dialog with focus trap/restore, scroll lock, labeled combobox/listbox semantics, and complete option-key handling. Theme controls live in the user menu; branded error surfaces, SPA dirty-form confirmation, visible risk drivers, meaningful navigation tooltips, distinct report iconography, pre-paint sidebar sizing, and stored-value normalization are in place.
+- **Architecture:** The large shell and page client modules were split into discrete shell components and server-first page compositions with narrow client islands. `/design` is the only development gallery; the legacy `/playground` route was removed.
+- **Testing:** Brand, metadata, manifest, error, command-palette, status fallback, dirty-navigation, risk-driver, preference-normalization, first-paint, route-census, cross-browser, mobile, and accessibility regressions are covered.
+- **Scope:** No authentication, business feature, business API, database table, migration, provider integration, external portal, or Phase 4 work was added. Phase 2 security boundaries remain intact.
+- **Validation:** Frozen install, formatting, lint/boundaries, 14/14 TypeScript packages, 27 unit/component files with 71 tests, 14/14 production build, server-only negative build, migration validation, 78 E2E executions, 25 dedicated accessibility executions, all five browser/device projects, 26-route census, and live production route/CSP probes passed. See the remediation artifact for exact evidence.

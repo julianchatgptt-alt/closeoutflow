@@ -33,5 +33,7 @@ Approved Phase 3 design specifications live in [`design/`](./design/):
 - [Open design decisions](./design/open-design-decisions.md)
 - [Implementation progress](./design/phase-3-implementation-progress.md)
 - [Exit review](./design/phase-3-exit-review.md)
+- [Independent audit](./design/phase-3c-audit.md)
+- [Audit remediation](./design/phase-3d-remediation.md)
 
 Phase 3 is limited to the design system, shell, presentational components, static labeled mock content, placeholder routes, and their tests. It does not authorize authentication, business persistence, business APIs, billing, integrations, AI processing, or external portals.

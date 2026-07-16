@@ -31,7 +31,7 @@
 
 ## OD-4 — Status color/icon system sign-off
 - **Decision:** Approve the status→tone→icon mapping in [patterns.md §9](./patterns.md) (green/amber/red/blue/slate/violet; ≤3 tones per screen).
-- **Why it matters:** Status is CloseoutFlow's core visual language; it must be consistent and product-wide from the start.
+- **Why it matters:** Status is Closeout's core visual language; it must be consistent and product-wide from the start.
 - **Recommended:** the mapping as specified (color + icon + label, muted for closed states, violet reserved for owner/external review).
 - **Alternatives:** fewer hues (drop violet, fold owner-review into blue) for maximum restraint.
 - **Consequence:** changing status semantics later touches every list/detail/dashboard.
@@ -45,11 +45,11 @@
 - **Consequence:** affects perceived professionalism/density on first run.
 - **When:** Task 1/9. **Blocks 3B?** **No** — both are built; default is a one-line choice.
 
-## OD-6 — Component gallery: dedicated `/design` vs. reuse `/playground`
-- **Decision:** New `/design` route vs. extending the existing gated `/playground`.
+## OD-6 — Component gallery: dedicated `/design`
+- **Decision:** Use one development-only component-gallery route.
 - **Why it matters:** Minor, but affects where the living design reference lives and the gating code reused.
-- **Recommended:** **Extend the existing gated `/playground` → rename/alias `/design`**, reusing the proven `playground/access.ts` runtime gate (local/test only, dynamic, 404 in prod). **No Storybook** (avoids tooling weight; the app itself is the reference).
-- **Alternatives:** adopt Storybook (more tooling/CI weight, separate build); brand-new route (duplicate gating).
+- **Recommended:** **Use `/design` only**, with its runtime gate (local/test only, dynamic, 404 in production). **No Storybook** (avoids tooling weight; the app itself is the reference).
+- **Alternatives:** adopt Storybook (more tooling/CI weight, separate build).
 - **Consequence:** Storybook would add maintenance; the in-app gallery keeps one source of truth.
 - **When:** Task 12. **Blocks 3B?** **No.**
 
@@ -62,9 +62,9 @@
 - **When:** Task 11. **Blocks 3B?** **No.**
 
 ## OD-8 — Owner-portal & subcontractor-portal branding scope (forward-looking)
-- **Decision:** How much visual customization customers may eventually apply (logo, accent) and what CloseoutFlow controls.
+- **Decision:** How much visual customization customers may eventually apply (logo, accent) and what Closeout controls.
 - **Why it matters:** The owner portal is a long-term GC-branded surface; setting boundaries now prevents customers from breaking accessibility/semantics later.
-- **Recommended:** **CloseoutFlow controls** the neutral system, status colors, typography, layout, and a11y; **customers may later customize** logo + a single accent within contrast-safe bounds (owner portal shows GC logo/name). Status colors and semantic tokens are **not** customer-overridable.
+- **Recommended:** **Closeout controls** the neutral system, status colors, typography, layout, and a11y; **customers may later customize** logo + a single accent within contrast-safe bounds (owner portal shows GC logo/name). Status colors and semantic tokens are **not** customer-overridable.
 - **Alternatives:** full white-label (much larger scope; not for the initial product).
 - **Consequence:** guides Phase 14 owner-portal design; no Phase 3 build impact.
 - **When:** before Phase 14 (not now). **Blocks 3B?** **No** — documented for later; the token architecture already reserves an org-accent layer.
