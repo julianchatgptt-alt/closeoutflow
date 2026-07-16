@@ -1,0 +1,24 @@
+{
+  "name": "@closeoutflow/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./server": "./src/server.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@closeoutflow/env": "workspace:*",
+    "@supabase/supabase-js": "2.110.6",
+    "server-only": "0.0.1"
+  },
+  "devDependencies": {
+    "@closeoutflow/config": "workspace:*",
+    "@types/node": "26.1.1",
+    "typescript": "5.9.3"
+  }
+}
