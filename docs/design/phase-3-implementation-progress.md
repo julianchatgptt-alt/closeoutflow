@@ -1,7 +1,9 @@
 # Phase 3 implementation progress
 
-> **Updated:** July 16, 2026  
-> **Branch:** `codex/phase-3b-design-system`  
+> **Updated:** July 16, 2026
+>
+> **Branch:** `codex/phase-3b-design-system`
+>
 > **Scope:** Phase 3B design system, application shell, frontend foundation, and honest placeholder routes only.
 
 ## Current result

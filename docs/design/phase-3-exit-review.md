@@ -1,8 +1,11 @@
 # Phase 3 exit review
 
-> **Review date:** July 16, 2026  
-> **Implementation branch:** `codex/phase-3b-design-system`  
-> **Implementation reviewer:** Codex  
+> **Review date:** July 16, 2026
+>
+> **Implementation branch:** `codex/phase-3b-design-system`
+>
+> **Implementation reviewer:** Codex
+>
 > **Founder visual sign-off:** Awaiting soft visual review; available but not blocking Phase 3C audit.
 
 ## Exit decision
