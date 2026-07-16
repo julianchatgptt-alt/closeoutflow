@@ -1,0 +1,12 @@
+AGENTS.md
+CLAUDE.md
+docs/
+node_modules/
+.next/
+.turbo/
+dist/
+coverage/
+playwright-report/
+test-results/
+pnpm-lock.yaml
+packages/db/src/types.generated.ts
