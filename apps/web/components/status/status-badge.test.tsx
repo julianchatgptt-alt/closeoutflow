@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import { vi } from "vitest";
 
 import { STATUS_PRESENTATION, StatusBadge, statusValues } from "./status-badge";
 import { RiskIndicator } from "./risk-indicator";
@@ -17,8 +18,30 @@ describe("StatusBadge", () => {
     expect(container.querySelector("svg")).toBeTruthy();
   });
 
+  it("fails safely for an unexpected runtime status", () => {
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const RuntimeStatusBadge = StatusBadge as (props: {
+      category: "project";
+      status: string;
+    }) => React.ReactNode;
+    render(<RuntimeStatusBadge category="project" status="Unexpected runtime value" />);
+
+    expect(screen.getByText("Unknown")).toBeVisible();
+    expect(warning).toHaveBeenCalledWith("Unknown project status: Unexpected runtime value");
+    warning.mockRestore();
+  });
+
   it.each(["Low", "Medium", "High", "Insufficient data"] as const)("renders %s risk", (level) => {
     render(<RiskIndicator level={level} />);
     expect(screen.getByText(level)).toBeVisible();
+  });
+
+  it("exposes risk drivers as visible associated text", () => {
+    render(<RiskIndicator level="High" drivers="Two overdue sample requirements" />);
+    const badge = screen.getByText("High").closest("span");
+    const driver = screen.getByText("Two overdue sample requirements");
+
+    expect(driver).toBeVisible();
+    expect(badge).toHaveAttribute("aria-describedby", driver.id);
   });
 });

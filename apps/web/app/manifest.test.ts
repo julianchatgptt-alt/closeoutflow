@@ -23,4 +23,13 @@ describe("PWA manifest", () => {
       ).resolves.toBeUndefined();
     }
   });
+
+  it("uses the permanent public product brand", () => {
+    const value = manifest();
+
+    expect(value.name).toBe("Closeout");
+    expect(value.short_name).toBe("Closeout");
+    expect(value.description).toMatch(/construction closeout software/i);
+    expect(JSON.stringify(value)).not.toContain("CloseoutFlow");
+  });
 });
