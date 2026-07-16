@@ -1,19 +1,15 @@
-import type { Metadata, Viewport } from "next";
+import type { Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
 import { headers } from "next/headers";
 import type { ReactNode } from "react";
 
 import { ThemeProvider } from "../components/theme/theme-provider";
 import { THEME_INIT_SCRIPT } from "../components/theme/theme-script";
+export { metadata, PRODUCT_DESCRIPTION } from "./metadata";
 import "./globals.css";
 
 // Nonce-based CSP requires every HTML response to be rendered with its request nonce.
 export const dynamic = "force-dynamic";
-
-export const metadata: Metadata = {
-  title: "CloseoutFlow",
-  description: "The well-run closeout binder, made live"
-};
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
