@@ -6,9 +6,7 @@ test("foundation smoke uses the request CSP nonce on framework scripts", async (
   const csp = response?.headers()["content-security-policy"];
   const nonce = csp?.match(/'nonce-([^']+)'/)?.[1];
 
-  await expect(
-    page.getByRole("heading", { level: 1, name: "CloseoutFlow is operational." })
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Dashboard" })).toBeVisible();
 
   expect(csp).toContain("strict-dynamic");
   expect(csp).not.toContain("script-src 'self' 'unsafe-inline'");
