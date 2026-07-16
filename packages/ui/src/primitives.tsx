@@ -1,0 +1,505 @@
+"use client";
+
+import * as AvatarPrimitive from "@radix-ui/react-avatar";
+import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import * as RadioPrimitive from "@radix-ui/react-radio-group";
+import * as SeparatorPrimitive from "@radix-ui/react-separator";
+import * as SwitchPrimitive from "@radix-ui/react-switch";
+import { cva, type VariantProps } from "class-variance-authority";
+import { AlertCircle, Check, ChevronDown, FileUp, Lock, Search, XCircle } from "lucide-react";
+import {
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  type HTMLAttributes,
+  type InputHTMLAttributes,
+  type LabelHTMLAttributes,
+  type ReactNode,
+  type SelectHTMLAttributes,
+  type TextareaHTMLAttributes
+} from "react";
+
+import { Button, type ButtonProps } from "./button";
+import { Input } from "./input";
+import { cn } from "./lib/cn";
+
+export const Textarea = forwardRef<
+  HTMLTextAreaElement,
+  TextareaHTMLAttributes<HTMLTextAreaElement>
+>(({ className, ...props }, ref) => (
+  <textarea
+    ref={ref}
+    className={cn(
+      "min-h-24 w-full resize-y rounded-md border border-input bg-surface px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:bg-muted",
+      className
+    )}
+    {...props}
+  />
+));
+Textarea.displayName = "Textarea";
+
+export function Label({
+  required,
+  className,
+  children,
+  ...props
+}: LabelHTMLAttributes<HTMLLabelElement> & { required?: boolean }) {
+  return (
+    <label className={cn("text-sm font-medium", className)} {...props}>
+      {children}
+      {required ? (
+        <>
+          <span aria-hidden="true" className="text-danger">
+            {" "}
+            *
+          </span>
+          <span className="sr-only"> required</span>
+        </>
+      ) : null}
+    </label>
+  );
+}
+
+export function Field({
+  label,
+  htmlFor,
+  help,
+  error,
+  required,
+  children,
+  className
+}: {
+  label: string;
+  htmlFor: string;
+  help?: string;
+  error?: string;
+  required?: boolean;
+  children: ReactNode;
+  className?: string;
+}) {
+  const describedBy = [help ? `${htmlFor}-help` : "", error ? `${htmlFor}-error` : ""]
+    .filter(Boolean)
+    .join(" ");
+  const control = isValidElement<Record<string, unknown>>(children)
+    ? cloneElement(children, {
+        ...(describedBy ? { "aria-describedby": describedBy } : {}),
+        ...(error ? { "aria-invalid": true } : {}),
+        ...(required ? { "aria-required": true } : {})
+      })
+    : children;
+  return (
+    <div className={cn("grid gap-1.5", className)}>
+      <Label htmlFor={htmlFor} {...(required ? { required: true } : {})}>
+        {label}
+      </Label>
+      {control}
+      {help ? (
+        <p id={`${htmlFor}-help`} className="text-sm text-muted-foreground">
+          {help}
+        </p>
+      ) : null}
+      {error ? (
+        <p
+          id={`${htmlFor}-error`}
+          role="alert"
+          className="flex items-center gap-1 text-sm text-danger"
+        >
+          <AlertCircle aria-hidden="true" className="h-4 w-4" />
+          {error}
+        </p>
+      ) : null}
+      {describedBy ? (
+        <span className="sr-only">Field guidance is provided below the control.</span>
+      ) : null}
+    </div>
+  );
+}
+
+export const Select = forwardRef<HTMLSelectElement, SelectHTMLAttributes<HTMLSelectElement>>(
+  ({ className, children, ...props }, ref) => (
+    <div className="relative">
+      <select
+        ref={ref}
+        className={cn(
+          "h-10 w-full appearance-none rounded-md border border-input bg-surface px-3 pr-9 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:bg-muted",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </select>
+      <ChevronDown
+        aria-hidden="true"
+        className="pointer-events-none absolute right-3 top-3 h-4 w-4 text-muted-foreground"
+      />
+    </div>
+  )
+);
+Select.displayName = "Select";
+
+export function Combobox({
+  label = "Search options",
+  options = []
+}: {
+  label?: string;
+  options?: string[];
+}) {
+  return (
+    <div className="relative">
+      <Search aria-hidden="true" className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+      <Input aria-label={label} list={`${label}-options`} className="pl-9" />
+      <datalist id={`${label}-options`}>
+        {options.map((option) => (
+          <option key={option}>{option}</option>
+        ))}
+      </datalist>
+    </div>
+  );
+}
+
+export function MultiSelect({ values }: { values: string[] }) {
+  return (
+    <div
+      className="flex min-h-10 flex-wrap gap-1 rounded-md border border-input bg-surface p-1.5"
+      role="group"
+      aria-label="Selected values"
+    >
+      {values.map((value) => (
+        <Badge key={value} tone="neutral">
+          {value}
+          <span aria-hidden="true"> ×</span>
+        </Badge>
+      ))}
+    </div>
+  );
+}
+
+export function Checkbox({
+  id,
+  label,
+  ...props
+}: { id: string; label: string } & CheckboxPrimitive.CheckboxProps) {
+  return (
+    <label htmlFor={id} className="inline-flex min-h-11 items-center gap-2 text-sm">
+      <CheckboxPrimitive.Root
+        id={id}
+        className="grid h-5 w-5 place-items-center rounded-sm border border-input bg-surface data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+        {...props}
+      >
+        <CheckboxPrimitive.Indicator>
+          <Check aria-hidden="true" className="h-4 w-4" />
+        </CheckboxPrimitive.Indicator>
+      </CheckboxPrimitive.Root>
+      {label}
+    </label>
+  );
+}
+
+export function RadioGroup({
+  label,
+  options
+}: {
+  label: string;
+  options: Array<{ value: string; label: string }>;
+}) {
+  return (
+    <fieldset>
+      <legend className="mb-1 text-sm font-medium">{label}</legend>
+      <RadioPrimitive.Root className="grid gap-1">
+        {options.map((option) => (
+          <label key={option.value} className="inline-flex min-h-11 items-center gap-2 text-sm">
+            <RadioPrimitive.Item
+              value={option.value}
+              className="grid h-5 w-5 place-items-center rounded-full border border-input"
+            >
+              <RadioPrimitive.Indicator className="h-2.5 w-2.5 rounded-full bg-primary" />
+            </RadioPrimitive.Item>
+            {option.label}
+          </label>
+        ))}
+      </RadioPrimitive.Root>
+    </fieldset>
+  );
+}
+
+export function Switch({
+  id,
+  label,
+  ...props
+}: { id: string; label: string } & SwitchPrimitive.SwitchProps) {
+  return (
+    <label htmlFor={id} className="inline-flex min-h-11 items-center gap-2 text-sm">
+      <SwitchPrimitive.Root
+        id={id}
+        className="h-6 w-11 rounded-full bg-muted data-[state=checked]:bg-primary"
+        {...props}
+      >
+        <SwitchPrimitive.Thumb className="block h-5 w-5 translate-x-0.5 rounded-full bg-surface shadow-sm transition-transform data-[state=checked]:translate-x-[22px]" />
+      </SwitchPrimitive.Root>
+      {label}
+    </label>
+  );
+}
+
+const badge = cva(
+  "inline-flex items-center gap-1 rounded-sm border px-2 py-0.5 text-xs font-medium",
+  {
+    variants: {
+      tone: {
+        neutral:
+          "border-neutral-status-border bg-neutral-status-subtle text-neutral-status-foreground",
+        info: "border-info-border bg-info-subtle text-info-foreground",
+        success: "border-success-border bg-success-subtle text-success-foreground",
+        warning: "border-warning-border bg-warning-subtle text-warning-foreground",
+        danger: "border-danger-border bg-danger-subtle text-danger-foreground",
+        owner: "border-owner-border bg-owner-subtle text-owner-foreground"
+      }
+    },
+    defaultVariants: { tone: "neutral" }
+  }
+);
+export function Badge({
+  tone,
+  className,
+  ...props
+}: HTMLAttributes<HTMLSpanElement> & VariantProps<typeof badge>) {
+  return <span className={cn(badge({ tone }), className)} {...props} />;
+}
+
+export function Avatar({
+  name,
+  src,
+  size = "md"
+}: {
+  name: string;
+  src?: string;
+  size?: "sm" | "md" | "lg";
+}) {
+  const initials = name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2);
+  return (
+    <AvatarPrimitive.Root
+      aria-label={name}
+      className={cn(
+        "inline-grid place-items-center overflow-hidden rounded-full bg-muted font-medium",
+        size === "sm" && "h-6 w-6 text-xs",
+        size === "md" && "h-8 w-8 text-sm",
+        size === "lg" && "h-10 w-10"
+      )}
+    >
+      <AvatarPrimitive.Image src={src} alt="" className="h-full w-full object-cover" />
+      <AvatarPrimitive.Fallback>{initials}</AvatarPrimitive.Fallback>
+    </AvatarPrimitive.Root>
+  );
+}
+
+export function IconButton({
+  label,
+  children,
+  ...props
+}: Omit<ButtonProps, "aria-label"> & { label: string }) {
+  return (
+    <Button
+      aria-label={label}
+      size="sm"
+      variant="ghost"
+      className="h-11 w-11 px-0 sm:h-9 sm:w-9"
+      {...props}
+    >
+      {children}
+    </Button>
+  );
+}
+
+export function Alert({
+  tone = "info",
+  title,
+  children
+}: {
+  tone?: "info" | "success" | "warning" | "danger";
+  title: string;
+  children?: ReactNode;
+}) {
+  return (
+    <div
+      role={tone === "danger" ? "alert" : "status"}
+      className={cn(
+        "rounded-md border p-4",
+        tone === "info" && "border-info-border bg-info-subtle",
+        tone === "success" && "border-success-border bg-success-subtle",
+        tone === "warning" && "border-warning-border bg-warning-subtle",
+        tone === "danger" && "border-danger-border bg-danger-subtle"
+      )}
+    >
+      <p className="font-medium">{title}</p>
+      {children ? <div className="mt-1 text-sm text-muted-foreground">{children}</div> : null}
+    </div>
+  );
+}
+export const Banner = Alert;
+
+export function Spinner({ label = "Loading" }: { label?: string }) {
+  return (
+    <span role="status" className="inline-flex items-center gap-2">
+      <span
+        aria-hidden="true"
+        className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-r-transparent motion-reduce:animate-none"
+      />
+      <span className="sr-only">{label}</span>
+    </span>
+  );
+}
+export function Progress({ value, label }: { value: number; label: string }) {
+  return (
+    <div className="grid gap-1">
+      <div className="flex justify-between text-sm">
+        <span>{label}</span>
+        <span className="tabular-nums">{value}%</span>
+      </div>
+      <progress
+        value={value}
+        max={100}
+        aria-label={label}
+        className="h-2 w-full overflow-hidden rounded-full accent-[hsl(var(--primary))]"
+      />
+    </div>
+  );
+}
+export function Separator(props: SeparatorPrimitive.SeparatorProps) {
+  return <SeparatorPrimitive.Root className="h-px w-full bg-border" {...props} />;
+}
+
+export function EmptyState({
+  title,
+  description,
+  action
+}: {
+  title: string;
+  description: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="grid min-h-48 place-items-center rounded-lg border border-dashed border-border-strong p-8 text-center">
+      <div>
+        <FileUp aria-hidden="true" className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
+        <h2 className="text-h2 font-semibold">{title}</h2>
+        <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">{description}</p>
+        {action ? <div className="mt-4">{action}</div> : null}
+      </div>
+    </div>
+  );
+}
+export function ErrorState({
+  title = "Something went wrong",
+  description,
+  onRetry
+}: {
+  title?: string;
+  description: string;
+  onRetry?: () => void;
+}) {
+  return (
+    <div
+      role="alert"
+      className="rounded-lg border border-danger-border bg-danger-subtle p-6 text-center"
+    >
+      <XCircle aria-hidden="true" className="mx-auto h-8 w-8 text-danger" />
+      <h2 className="mt-2 font-semibold">{title}</h2>
+      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+      {onRetry ? (
+        <Button className="mt-4" variant="outline" onClick={onRetry}>
+          Retry
+        </Button>
+      ) : null}
+    </div>
+  );
+}
+export function PermissionDenied({
+  description = "Ask an organization administrator if you need access."
+}: {
+  description?: string;
+}) {
+  return (
+    <div className="rounded-lg border p-8 text-center">
+      <Lock aria-hidden="true" className="mx-auto h-8 w-8 text-muted-foreground" />
+      <h2 className="mt-2 font-semibold">You don&apos;t have permission to view this</h2>
+      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+    </div>
+  );
+}
+
+export function KeyValue({ items }: { items: Array<{ label: string; value: ReactNode }> }) {
+  return (
+    <dl className="grid gap-4 sm:grid-cols-2">
+      {items.map((item) => (
+        <div key={item.label}>
+          <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {item.label}
+          </dt>
+          <dd className="mt-1 text-sm">{item.value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+export const MetadataList = KeyValue;
+export function ResponsiveStack({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("flex flex-col gap-4 md:flex-row", className)} {...props} />;
+}
+export function MetricCard({
+  label,
+  value,
+  detail
+}: {
+  label: string;
+  value: string | number;
+  detail?: string;
+}) {
+  return (
+    <div className="rounded-lg border bg-surface p-5">
+      <p className="text-sm text-muted-foreground">{label}</p>
+      <p className="mt-2 text-2xl font-semibold tabular-nums">{value}</p>
+      {detail ? <p className="mt-1 text-xs text-muted-foreground">{detail}</p> : null}
+    </div>
+  );
+}
+export function FileUploadPlaceholder({ phase = 8 }: { phase?: number }) {
+  return (
+    <div
+      aria-disabled="true"
+      className="rounded-lg border border-dashed border-border-strong bg-surface-sunken p-6 text-center text-sm text-muted-foreground"
+    >
+      <FileUp aria-hidden="true" className="mx-auto mb-2 h-6 w-6" />
+      Uploads arrive in Phase {phase}
+    </div>
+  );
+}
+export function DateInput(props: InputHTMLAttributes<HTMLInputElement>) {
+  return <Input type="date" {...props} />;
+}
+export function Calendar() {
+  const days = Array.from({ length: 35 }, (_, index) => index - 2);
+  return (
+    <div
+      aria-label="Calendar preview"
+      className="grid grid-cols-7 gap-1 rounded-lg border p-3 text-center text-xs"
+    >
+      {"SMTWTFS".split("").map((day, index) => (
+        <span key={`${day}-${index}`} className="font-medium text-muted-foreground">
+          {day}
+        </span>
+      ))}
+      {days.map((day) => (
+        <span
+          key={day}
+          className={cn("grid h-8 place-items-center", day < 1 && "text-subtle-foreground")}
+        >
+          {day < 1 ? "" : day}
+        </span>
+      ))}
+    </div>
+  );
+}

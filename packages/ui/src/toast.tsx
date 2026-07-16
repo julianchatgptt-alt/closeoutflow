@@ -19,9 +19,10 @@ export type ToastProps = {
   description?: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  tone?: "success" | "warning" | "danger" | "info";
 };
 
-export function Toast({ title, description, open, onOpenChange }: ToastProps) {
+export function Toast({ title, description, open, onOpenChange, tone = "info" }: ToastProps) {
   const openProps = open === undefined ? {} : { open };
   const changeProps = onOpenChange === undefined ? {} : { onOpenChange };
 
@@ -29,11 +30,18 @@ export function Toast({ title, description, open, onOpenChange }: ToastProps) {
     <ToastPrimitive.Root
       {...openProps}
       {...changeProps}
-      className={cn("rounded-md border bg-white p-4 shadow-lg dark:bg-slate-950")}
+      role={tone === "danger" ? "alert" : "status"}
+      className={cn(
+        "rounded-lg border bg-surface-raised p-4 shadow-md",
+        tone === "success" && "border-success-border",
+        tone === "warning" && "border-warning-border",
+        tone === "danger" && "border-danger-border",
+        tone === "info" && "border-info-border"
+      )}
     >
       <ToastPrimitive.Title className="font-medium">{title}</ToastPrimitive.Title>
       {description ? (
-        <ToastPrimitive.Description className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+        <ToastPrimitive.Description className="mt-1 text-sm text-muted-foreground">
           {description}
         </ToastPrimitive.Description>
       ) : null}
