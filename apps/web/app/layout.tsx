@@ -3,6 +3,9 @@ import type { ReactNode } from "react";
 
 import "./globals.css";
 
+// Nonce-based CSP requires every HTML response to be rendered with its request nonce.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "CloseoutFlow",
   description: "Construction closeout management foundation"
