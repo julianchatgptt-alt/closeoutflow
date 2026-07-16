@@ -4,6 +4,10 @@
 
 This run implements Tasks 0–13 only. Tasks 14–18 are deferred completely by founder direction. No Phase 3 work or business feature was started.
 
+### Plan numbering and traceability
+
+The approved implementation plan defines Tasks 0–19. This progress record's original implementation run covered Tasks 0–13, then listed Tasks 14–18 as deferred. Task 19 is the Phase 2 exit-review gate; for the local foundation it is represented by the independent [Phase 2C audit](./phase-2c-audit.md) and the completed [Phase 2D remediation](./phase-2d-remediation.md). This mapping preserves the original implementation history while making the plan numbering explicit. Tasks 14–18 remain deferred and were not relabeled or performed during audit remediation.
+
 ## Task 0 — Read and confirm
 
 - Status: Complete
@@ -90,6 +94,7 @@ This run implements Tasks 0–13 only. Tasks 14–18 are deferred completely by 
 - Result: Vitest and Playwright are green. With Docker Desktop available, the local Supabase pgTAP runner also passes both database test files (6 assertions total).
 - Decisions: CI execution is not part of this task run because Task 15 is explicitly deferred.
 - Deviations: pgTAP runtime verification remains outstanding; the tests themselves are present.
+- Phase 2D clarification: This historical deviation is closed. Live pgTAP passed during Phase 2B and again during Phase 2D.
 - Remaining founder action: None.
 
 ## Task 8 — Supabase local baseline
@@ -122,6 +127,7 @@ This run implements Tasks 0–13 only. Tasks 14–18 are deferred completely by 
 - Tests run: Structured JSON/redaction, request IDs, Sentry disabled behavior, typed audit writer, static default-deny RLS/immutability, and pgTAP update/delete rejection.
 - Result: Unit and static security tests pass. Live pgTAP inserts an audit event and proves that both UPDATE and DELETE fail with the immutable-audit trigger error.
 - Decisions: Only the generic system.health_checked catalog event exists. Audit writes target the audit schema and remain separate from pino and future analytics.
+- Phase 2D remediation: The health-check audit action was removed because operational probes do not belong in the immutable legal audit store. The remaining generic foundation event writes through a service-role-only public RPC while the audit schema stays outside PostgREST.
 - Deviations: None.
 - Remaining founder action: None.
 
@@ -133,6 +139,7 @@ This run implements Tasks 0–13 only. Tasks 14–18 are deferred completely by 
 - Tests run: Safe 200 health response, no secret leakage, CSP, HSTS, nosniff, referrer, frame, and permissions headers.
 - Result: Unit and browser checks pass. Missing local cloud credentials produce database.reachable false without breaking health.
 - Decisions: When a service client is configured, the plan-required generic system health audit event is written.
+- Phase 2D remediation: Superseded. Health now uses a read-only service-role RPC and creates no audit event; repeated live requests leave the audit row count unchanged.
 - Deviations: None.
 - Remaining founder action: None.
 
@@ -165,6 +172,7 @@ This run implements Tasks 0–13 only. Tasks 14–18 are deferred completely by 
 - Task 16 — Deferred to founder cloud setup: full Inngest dev server/function route and Mailpit/Resend/React Email setup.
 - Task 17 — Deferred to founder cloud setup: PostHog and full Sentry application wiring.
 - Task 18 — Deferred to founder cloud setup: documentation indexes, runbooks, and complete onboarding.
+- Task 19 — Local foundation exit gate completed through Phase 2C independent audit and Phase 2D remediation; cloud/CI portions dependent on Tasks 14–18 remain deferred with those tasks.
 
 ## Verification summary
 
@@ -184,3 +192,21 @@ This run implements Tasks 0–13 only. Tasks 14–18 are deferred completely by 
 - Repository-controlled issues fixed: replaced placeholder database types, restored generated-type compatibility in `packages/db`, gave the heavy ESLint-config import smoke test a Node environment and Windows-safe timeout, and allowed the loopback Playwright host as a development origin without weakening production CSP.
 - Complete validation passed: `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm db:validate`, `pnpm test:server-only`, `pnpm build`, `pnpm test:e2e`, `pnpm test:a11y`, and final `pnpm test:db`.
 - Remaining Tasks 0–13 action: None.
+
+## Phase 2C independent audit
+
+- Date: 2026-07-16.
+- Artifact: `docs/architecture/phase-2c-audit.md`.
+- Result: No CRITICAL or HIGH findings; 2 MEDIUM, 8 LOW, and 3 observations; verdict `READY FOR PHASE 2D REMEDIATION`.
+- Integrity: The audit artifact is preserved unchanged.
+
+## Phase 2D audit remediation
+
+- Date: 2026-07-16.
+- Artifact: `docs/architecture/phase-2d-remediation.md`.
+- Result: Both MEDIUM and all eight LOW findings resolved. P2C-013 observation also hardened; P2C-011 and P2C-012 reviewed with no scoped change.
+- Database: Added append-only migration `0002_phase_2d_audit_hardening.sql`; reset/lint/types pass; pgTAP passes 3 files and 18 assertions; generated types are deterministic.
+- Security: Health is read-only and audit-isolated; audit UPDATE/DELETE/TRUNCATE fail; audit is absent from PostgREST; server-only RPC preserves legitimate audit writes; CSP scripts use per-request nonces; nested secrets and payloads are redacted.
+- Runtime/PWA/testing: Playground is dynamically denied outside local/test; neutral any/maskable icons exist; Playwright covers Chromium, mobile Chromium, Firefox, and WebKit.
+- Validation: Frozen install, format, lint/boundaries, typecheck, 38 unit/component tests, complete database suite, server-only negative build, production build, 16 E2E executions, and 4 a11y executions pass.
+- Scope: No Tasks 14–18 implementation, Phase 3 work, auth flow, business table, cloud wiring, public bucket, real provider, or production secret was added.
