@@ -41,7 +41,16 @@ export const projectColumns: Array<TableColumn<(typeof projects)[number]>> = [
     key: "risk",
     header: "Risk",
     render: (row) => (
-      <RiskIndicator level={row.risk as RiskLevel} drivers="Sample driver explanation" />
+      <RiskIndicator
+        level={row.risk as RiskLevel}
+        drivers={
+          row.risk === "High"
+            ? "Owner review and an approaching closeout date"
+            : row.risk === "Medium"
+              ? "Overdue closeout requirements"
+              : "No overdue closeout requirements"
+        }
+      />
     )
   },
   { key: "pm", header: "PM", render: (row) => <UserCell name={row.pm} /> }
@@ -111,7 +120,7 @@ export const equipmentColumns: Array<TableColumn<(typeof equipment)[number]>> = 
     header: "Warranty",
     render: (row) => <Badge tone="neutral">{row.warranty}</Badge>
   },
-  { key: "docs", header: "Linked docs" }
+  { key: "docs", header: "Linked docs", className: "text-right tabular-nums" }
 ];
 
 export const warrantyColumns: Array<TableColumn<(typeof warranties)[number]>> = [
@@ -126,8 +135,8 @@ export const warrantyColumns: Array<TableColumn<(typeof warranties)[number]>> = 
 export const companyColumns: Array<TableColumn<(typeof companies)[number]>> = [
   { key: "name", header: "Company" },
   { key: "trades", header: "Trades" },
-  { key: "contacts", header: "Contacts" },
-  { key: "projects", header: "Projects" },
+  { key: "contacts", header: "Contacts", className: "text-right tabular-nums" },
+  { key: "projects", header: "Projects", className: "text-right tabular-nums" },
   { key: "primary", header: "Primary contact", render: (row) => <UserCell name={row.primary} /> }
 ];
 
@@ -149,7 +158,7 @@ export const teamColumns: Array<TableColumn<(typeof team)[number]>> = [
 export const templateColumns: Array<TableColumn<(typeof templates)[number]>> = [
   { key: "name", header: "Template" },
   { key: "type", header: "Project type" },
-  { key: "items", header: "Items" },
+  { key: "items", header: "Items", className: "text-right tabular-nums" },
   {
     key: "version",
     header: "Version",

@@ -8,7 +8,6 @@ import {
   CardTitle,
   EmptyState,
   KeyValue,
-  MetricCard,
   Progress
 } from "@closeoutflow/ui";
 
@@ -24,7 +23,8 @@ export function ProjectOverviewPage() {
     <>
       <PageHeader
         title={project.name}
-        description="Static project-workspace preview. Project creation and records arrive in Phase 5."
+        description="Project closeout status, ownership, and current progress."
+        previewPhase={5}
         meta={<StatusBadge category="project" status={project.status} />}
         actions={
           <>
@@ -53,10 +53,17 @@ export function ProjectOverviewPage() {
             <div className="mt-6">
               <Progress value={72} label="18 of 25 sample requirements complete" />
             </div>
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              <MetricCard label="Missing" value={2} />
-              <MetricCard label="Overdue" value={1} />
-              <MetricCard label="Awaiting review" value={2} />
+            <div className="mt-6 grid grid-cols-3 divide-x border-t pt-4">
+              {[
+                ["Missing", 2],
+                ["Overdue", 1],
+                ["Awaiting review", 2]
+              ].map(([label, value]) => (
+                <div key={label} className="px-3 first:pl-0 last:pr-0">
+                  <p className="text-xs text-muted-foreground">{label}</p>
+                  <p className="mt-1 text-xl font-semibold tabular-nums">{value}</p>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -72,7 +79,7 @@ export function ProjectOverviewPage() {
             ].map((item) => (
               <div key={item} className="border-b pb-3 text-sm last:border-0">
                 <p>{item}</p>
-                <p className="text-xs text-muted-foreground">Static provenance example</p>
+                <p className="text-xs text-muted-foreground">Updated recently</p>
               </div>
             ))}
           </CardContent>
@@ -93,13 +100,10 @@ export function FutureProjectPage({
 }) {
   return (
     <>
-      <PageHeader
-        title={title}
-        description={description ?? `This project section arrives in Phase ${phase}.`}
-      />
+      <PageHeader title={title} {...(description ? { description } : {})} previewPhase={phase} />
       <EmptyState
-        title={`${title} arrives in Phase ${phase}`}
-        description="This route exists only to review the future project-navigation structure. It contains no records or feature behavior."
+        title={`No ${title.toLowerCase()} yet`}
+        description="This workspace section has no records to show."
       />
     </>
   );

@@ -6,7 +6,6 @@ import {
   companies,
   documents,
   equipment,
-  mockNotice,
   projects,
   requirements,
   reviews,
@@ -46,8 +45,9 @@ export function ListPage({ kind }: { kind: ListKind }) {
     <>
       <PageHeader
         title={config.title}
-        description={`${config.description} ${mockNotice}`}
+        description={config.description}
         actions={<DisabledPhaseAction label={config.action} phase={config.phase} />}
+        previewPhase={config.phase}
       />
       {config.table}
     </>
@@ -61,7 +61,7 @@ function listConfigs(): Record<
   return {
     projects: {
       title: "Projects",
-      description: "Review the project-list pattern using three static sample projects.",
+      description: "Track closeout progress, risk, and ownership across projects.",
       action: "New project",
       phase: 5,
       table: (
@@ -77,7 +77,7 @@ function listConfigs(): Record<
     },
     requirements: {
       title: "Requirements",
-      description: "Sample obligations remain separate from documents, reviews, and approvals.",
+      description: "Track every closeout obligation separately from its documents and approvals.",
       action: "New requirement",
       phase: 6,
       table: (
@@ -92,7 +92,7 @@ function listConfigs(): Record<
     },
     documents: {
       title: "Documents",
-      description: "Static file-version presentation; no stored files exist.",
+      description: "Review document status and version context for this project.",
       action: "Upload",
       phase: 8,
       table: (
@@ -107,7 +107,7 @@ function listConfigs(): Record<
     },
     reviews: {
       title: "Reviews",
-      description: "A mock queue demonstrating human-controlled review states only.",
+      description: "Review items awaiting human decisions and follow-up.",
       action: "Assign review",
       phase: 9,
       table: (
@@ -122,7 +122,7 @@ function listConfigs(): Record<
     },
     equipment: {
       title: "Equipment",
-      description: "Sample asset-register structure; no equipment records exist.",
+      description: "Organize equipment records and their closeout documents.",
       action: "Add equipment",
       phase: 12,
       table: (
@@ -137,7 +137,7 @@ function listConfigs(): Record<
     },
     warranties: {
       title: "Warranties",
-      description: "Illustrative dates requiring later professional verification.",
+      description: "Review warranty coverage, responsible parties, and key dates.",
       action: "Add warranty",
       phase: 12,
       table: (
@@ -152,7 +152,7 @@ function listConfigs(): Record<
     },
     companies: {
       title: "Companies",
-      description: "Org-wide directory layout using clearly fake subcontractors.",
+      description: "Find project partners, trades, and primary contacts.",
       action: "Add company",
       phase: 5,
       table: (
@@ -167,7 +167,7 @@ function listConfigs(): Record<
     },
     team: {
       title: "Team",
-      description: "Static role examples; no users, invitations, or permissions are active.",
+      description: "Review organization membership and role assignments.",
       action: "Invite member",
       phase: 4,
       table: (
@@ -182,7 +182,7 @@ function listConfigs(): Record<
     },
     templates: {
       title: "Requirement Templates",
-      description: "Starter-template rows are visual samples only.",
+      description: "Standardize recurring closeout requirements by project type.",
       action: "New template",
       phase: 6,
       table: (

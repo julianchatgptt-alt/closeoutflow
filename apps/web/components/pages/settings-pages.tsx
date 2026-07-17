@@ -8,11 +8,12 @@ export function ReportsPage() {
     <>
       <PageHeader
         title="Reports"
-        description="Company-wide analytics and reports arrive in Phase 11. No charts or live metrics are shown."
+        description="Portfolio reporting and project closeout insights."
+        previewPhase={11}
       />
       <EmptyState
-        title="Reports arrive in Phase 11"
-        description="This intentionally disabled preview makes no claim that reporting is functional."
+        title="No reports yet"
+        description="Reporting views will appear in this workspace."
       />
     </>
   );
@@ -23,7 +24,8 @@ export function SettingsGeneralPage() {
     <>
       <PageHeader
         title="Settings"
-        description="Organization settings are a read-only Phase 3 preview."
+        description="Organization identity and workspace preferences."
+        previewPhase={4}
       />
       <OrganizationSettingsForm />
     </>
@@ -33,13 +35,10 @@ export function SettingsGeneralPage() {
 export function FutureSettingsPage({ title, phase }: { title: string; phase: number }) {
   return (
     <>
-      <PageHeader
-        title={title}
-        description={`This settings area becomes functional in Phase ${phase}.`}
-      />
+      <PageHeader title={title} previewPhase={phase} />
       <EmptyState
-        title={`${title} arrives in Phase ${phase}`}
-        description="No configuration, credentials, billing information, or audit data exists on this preview route."
+        title={`No ${title.toLowerCase()} settings yet`}
+        description="This settings area has no configuration to show."
       />
     </>
   );

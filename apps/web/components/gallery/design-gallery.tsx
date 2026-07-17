@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Trash2 } from "lucide-react";
+import { Bell, Building2, LayoutDashboard, Lock, Search, Trash2 } from "lucide-react";
 
 import {
   Accordion,
@@ -48,6 +48,14 @@ import {
 } from "@closeoutflow/ui";
 
 import { SampleValidationForm } from "../form/sample-form";
+import {
+  DashboardEmptyState,
+  DashboardErrorState,
+  DashboardLoadingState
+} from "../dashboard/dashboard-states";
+import { StatStrip } from "../dashboard/stat-strip";
+import { PreviewPill } from "../shell/preview-pill";
+import { useTheme } from "../theme/theme-provider";
 import { ThemeToggle } from "../theme/theme-toggle";
 import { RiskIndicator } from "../status/risk-indicator";
 import {
@@ -68,6 +76,22 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
+function GalleryControls() {
+  const { density, setDensity } = useTheme();
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <ThemeToggle />
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setDensity(density === "compact" ? "comfortable" : "compact")}
+      >
+        Density: {density}
+      </Button>
+    </div>
+  );
+}
+
 export function DesignGallery() {
   return (
     <ToastProvider>
@@ -79,10 +103,24 @@ export function DesignGallery() {
             Living Phase 3 reference. Static samples only; this route returns 404 in production.
           </p>
           <div className="mt-4">
-            <ThemeToggle />
+            <GalleryControls />
           </div>
         </div>
-        <Section title="Palette and typography">
+        <Section title="Surfaces, type ladder, and color tokens">
+          <div className="grid gap-3 md:grid-cols-3">
+            <div className="rounded-lg bg-background p-5 ring-1 ring-border">
+              <p className="text-overline">Desk</p>
+              <p className="mt-2 text-sm">Tinted application canvas</p>
+            </div>
+            <div className="rounded-lg bg-surface p-5 shadow-card">
+              <p className="text-overline">Paper</p>
+              <p className="mt-2 text-sm">Operational work surface</p>
+            </div>
+            <div className="rounded-lg border bg-surface-raised p-5 shadow-md">
+              <p className="text-overline">Raised</p>
+              <p className="mt-2 text-sm">Menus and overlays</p>
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {[
               ["primary", "bg-info-subtle text-primary"],
@@ -94,16 +132,48 @@ export function DesignGallery() {
             ].map(([tone, classes]) => (
               <div key={tone} className={`rounded-lg border p-4 ${classes}`}>
                 <p className="font-medium capitalize">{tone}</p>
-                <p className="text-xs">Semantic token</p>
+                <p className="text-xs">AA ≥ 4.5:1</p>
               </div>
             ))}
           </div>
           <div className="grid gap-2">
-            <p className="text-3xl font-semibold">IBM Plex Sans display</p>
-            <p className="text-h1 font-semibold">Page heading at production density</p>
+            <p className="text-display">32 Metric numeral</p>
+            <p className="text-page-title">24 Page heading</p>
+            <p className="text-h2 font-semibold">18 Panel heading</p>
+            <p className="text-overline">11 Binder-tab overline</p>
             <p>The well-run closeout binder, made live.</p>
             <p className="font-mono tabular-nums">DOC-004 · v03 · 2026-07-16 · 42.8 MB</p>
           </div>
+        </Section>
+        <Section title="Shell and page-header specimens">
+          <div className="overflow-hidden rounded-lg bg-background shadow-card">
+            <div className="grid min-h-56 grid-cols-[12rem_1fr]">
+              <aside className="p-3">
+                <p className="mb-4 px-2 font-semibold">Closeout</p>
+                <div className="grid gap-1 text-[13.5px]">
+                  <div className="flex min-h-11 items-center gap-3 rounded-lg bg-[hsl(var(--sidebar-active))] px-3 font-semibold text-primary">
+                    <LayoutDashboard className="h-4 w-4" /> Dashboard
+                  </div>
+                  <div className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-muted-foreground">
+                    <Building2 className="h-4 w-4" /> Companies
+                  </div>
+                </div>
+              </aside>
+              <div className="border-l">
+                <div className="flex h-14 items-center justify-end gap-2 border-b px-4 text-muted-foreground">
+                  <Search className="h-4 w-4" /> Search
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center gap-2">
+                    <p className="text-page-title">Workspace title</p>
+                    <PreviewPill phase={4} />
+                  </div>
+                  <p className="mt-1 text-[13px] text-muted-foreground">Context metadata</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <StatStrip />
         </Section>
         <Section title="Buttons, controls, and form fields">
           <div className="flex flex-wrap gap-2">
@@ -115,6 +185,13 @@ export function DesignGallery() {
               Destructive
             </Button>
             <Button variant="link">Link</Button>
+            <Tooltip content="Available in Phase 4">
+              <span>
+                <Button variant="outline" disabled>
+                  <Lock aria-hidden="true" className="h-4 w-4" /> Locked
+                </Button>
+              </span>
+            </Tooltip>
             <Button loading>Saving</Button>
             <IconButton label="Notifications">
               <Bell aria-hidden="true" className="h-4 w-4" />
@@ -175,9 +252,11 @@ export function DesignGallery() {
             <MetricCard label="Complete" value="72%" />
             <Card>
               <CardHeader>
-                <CardTitle>Flat card</CardTitle>
+                <CardTitle>Paper card</CardTitle>
               </CardHeader>
-              <CardContent>Borders provide structure; no decorative shadow.</CardContent>
+              <CardContent>
+                One coherent work object; internal sections use dividers, never nested cards.
+              </CardContent>
             </Card>
           </div>
           <Alert tone="success" title="Sample saved">
@@ -261,6 +340,61 @@ export function DesignGallery() {
         </Section>
         <Section title="Form validation and save states">
           <SampleValidationForm />
+          <Card className="max-w-xl">
+            <CardHeader>
+              <CardTitle>Read-only form mode</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <dl className="divide-y">
+                <div className="grid grid-cols-[9rem_1fr] gap-3 py-3">
+                  <dt className="text-[13px] text-muted-foreground">Organization</dt>
+                  <dd className="font-medium">Sample Construction Co.</dd>
+                </div>
+                <div className="grid grid-cols-[9rem_1fr] gap-3 py-3">
+                  <dt className="text-[13px] text-muted-foreground">Time zone</dt>
+                  <dd>Eastern Time</dd>
+                </div>
+              </dl>
+            </CardContent>
+          </Card>
+        </Section>
+        <Section title="Public auth-card readiness pattern">
+          <div className="grid gap-5 rounded-lg bg-background p-6 md:grid-cols-2">
+            <Card className="mx-auto w-full max-w-sm">
+              <CardHeader>
+                <CardTitle>Sign in to Closeout</CardTitle>
+                <p className="text-[13px] text-muted-foreground">
+                  Presentation specimen only — no authentication behavior.
+                </p>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <Field label="Work email" htmlFor="gallery-auth-email">
+                  <Input
+                    id="gallery-auth-email"
+                    type="email"
+                    placeholder="name@company.com"
+                    readOnly
+                  />
+                </Field>
+                <Button variant="outline" disabled>
+                  <Lock aria-hidden="true" className="h-4 w-4" /> Continue
+                </Button>
+              </CardContent>
+            </Card>
+            <div className="mx-auto w-full max-w-[390px] rounded-[2rem] border-[8px] border-foreground/80 bg-background p-4 shadow-lg">
+              <p className="text-overline mb-3">Mobile frame · 390px</p>
+              <div className="grid grid-cols-2 overflow-hidden rounded-lg bg-surface shadow-card">
+                {["Projects 3", "Due 7", "Reviews 2", "Overdue 1"].map((item) => (
+                  <div
+                    key={item}
+                    className="min-h-16 border-b border-r p-3 text-[13px] last:border-r-0"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </Section>
         <Section title="Empty, error, and permission states">
           <EmptyState title="No requirements yet" description="Requirements arrive in Phase 6." />
@@ -269,6 +403,9 @@ export function DesignGallery() {
             onRetry={() => undefined}
           />
           <PermissionDenied />
+          <Alert tone="warning" title="Account suspended">
+            Contact an organization owner to restore workspace access.
+          </Alert>
           <KeyValue
             items={[
               { label: "Version", value: "v3" },
@@ -283,6 +420,11 @@ export function DesignGallery() {
             ]}
           />
           <Calendar />
+        </Section>
+        <Section title="Dashboard empty, loading, and error states">
+          <DashboardEmptyState />
+          <DashboardLoadingState />
+          <DashboardErrorState />
         </Section>
         <Separator />
       </main>

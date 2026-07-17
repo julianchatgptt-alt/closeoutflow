@@ -76,6 +76,7 @@ export function DataTable<T extends { id: string }>({
           <Checkbox
             id={`${caption}-all`}
             label={`Select all ${caption}`}
+            visuallyHiddenLabel
             checked={table.getIsAllPageRowsSelected()}
             onCheckedChange={(value) => table.toggleAllPageRowsSelected(Boolean(value))}
           />
@@ -84,6 +85,7 @@ export function DataTable<T extends { id: string }>({
           <Checkbox
             id={`${caption}-${row.original.id}`}
             label={`Select ${String(row.original[columns[0]!.key])}`}
+            visuallyHiddenLabel
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(Boolean(value))}
           />
@@ -118,9 +120,9 @@ export function DataTable<T extends { id: string }>({
   const selected = table.getSelectedRowModel().rows.length;
   if (error) return <ErrorState description={error} onRetry={() => undefined} />;
   return (
-    <section aria-label={caption} className="grid gap-3">
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <label className="relative block min-w-64">
+    <section aria-label={caption} className="overflow-hidden rounded-lg bg-surface shadow-card">
+      <div className="flex flex-col gap-2 border-b p-3 md:flex-row md:items-center md:justify-between">
+        <label className="relative block md:w-56">
           <span className="sr-only">Search {caption}</span>
           <Search
             aria-hidden="true"
@@ -130,13 +132,13 @@ export function DataTable<T extends { id: string }>({
             value={globalFilter}
             onChange={(event) => setGlobalFilter(event.target.value)}
             placeholder={`Search ${caption.toLowerCase()}…`}
-            className="pl-9"
+            className="border-transparent bg-transparent pl-9 hover:border-input focus:border-input"
           />
         </label>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" disabled>
             <Filter aria-hidden="true" className="h-4 w-4" />
-            Filters <BadgeText>Mock</BadgeText>
+            Filters
           </Button>
           <DropdownMenu
             trigger={
@@ -158,20 +160,16 @@ export function DataTable<T extends { id: string }>({
       {selected > 0 ? (
         <div
           role="status"
-          className="sticky top-16 z-sticky flex items-center justify-between rounded-md border border-info-border bg-info-subtle p-3 text-sm"
+          className="sticky top-16 z-sticky flex items-center justify-between border-b border-info-border bg-info-subtle p-3 text-sm"
         >
           <span>{selected} selected</span>
-          <Button size="sm" disabled>
+          <Button size="sm" variant="outline" disabled>
             Bulk actions — preview
           </Button>
         </div>
       ) : null}
       {loading ? (
-        <div
-          aria-busy="true"
-          aria-label={`Loading ${caption}`}
-          className="grid gap-2 rounded-lg border p-4"
-        >
+        <div aria-busy="true" aria-label={`Loading ${caption}`} className="grid gap-2 p-4">
           {Array.from({ length: 5 }, (_, index) => (
             <Skeleton key={index} className="h-10 w-full" />
           ))}
@@ -193,14 +191,14 @@ export function DataTable<T extends { id: string }>({
       ) : (
         <>
           <div
-            className="hidden overflow-x-auto rounded-lg border md:block"
+            className="hidden overflow-x-auto md:block"
             tabIndex={0}
             role="region"
             aria-label={`${caption} table, horizontally scrollable`}
           >
             <table className="w-full min-w-[760px] border-collapse text-left text-sm">
               <caption className="sr-only">{caption}</caption>
-              <thead className="sticky top-0 bg-surface-sunken">
+              <thead className="sticky top-0 bg-surface">
                 <tr>
                   {table.getHeaderGroups()[0]!.headers.map((header) => {
                     const sorted = header.column.getIsSorted();
@@ -217,7 +215,7 @@ export function DataTable<T extends { id: string }>({
                                 ? "none"
                                 : undefined
                         }
-                        className="h-11 border-b px-3 font-medium"
+                        className={`h-11 border-b border-border-strong px-3 text-xs font-semibold text-muted-foreground ${header.id === "select" ? "w-10" : (columns.find((column) => column.key === header.id)?.className ?? "")}`}
                       >
                         {header.column.getCanSort() ? (
                           <button
@@ -248,10 +246,13 @@ export function DataTable<T extends { id: string }>({
                 {table.getRowModel().rows.map((row) => (
                   <tr
                     key={row.id}
-                    className="h-[var(--row-h)] border-b last:border-0 hover:bg-muted/60"
+                    className={`group h-[var(--row-h)] border-b transition-colors duration-[var(--dur-fast)] last:border-0 hover:bg-muted/50 ${row.getIsSelected() ? "bg-[hsl(var(--selection))] shadow-[inset_2px_0_0_hsl(var(--primary))]" : ""}`}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="px-3 py-2">
+                      <td
+                        key={cell.id}
+                        className={`px-3 py-2 ${cell.column.id === "select" ? "w-10" : (columns.find((column) => column.key === cell.column.id)?.className ?? "")}`}
+                      >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
                     ))}
@@ -260,9 +261,12 @@ export function DataTable<T extends { id: string }>({
               </tbody>
             </table>
           </div>
-          <div className="grid gap-3 md:hidden">
+          <div className="divide-y md:hidden">
             {table.getRowModel().rows.map((row) => (
-              <article key={row.id} className="rounded-lg border bg-surface p-4">
+              <article
+                key={row.id}
+                className={`p-4 ${row.getIsSelected() ? "bg-[hsl(var(--selection))] shadow-[inset_2px_0_0_hsl(var(--primary))]" : ""}`}
+              >
                 <div className="mb-3 flex items-start justify-between gap-3">
                   <div className="font-medium">
                     {cardTitle ? cardTitle(row.original) : String(row.original[columns[0]!.key])}
@@ -270,6 +274,7 @@ export function DataTable<T extends { id: string }>({
                   <Checkbox
                     id={`${caption}-mobile-${row.original.id}`}
                     label={`Select ${String(row.original[columns[0]!.key])}`}
+                    visuallyHiddenLabel
                     checked={row.getIsSelected()}
                     onCheckedChange={(value) => row.toggleSelected(Boolean(value))}
                   />
@@ -294,8 +299,8 @@ export function DataTable<T extends { id: string }>({
           </div>
         </>
       )}
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>{table.getFilteredRowModel().rows.length} sample records</span>
+      <div className="flex items-center justify-between border-t p-3 text-sm text-muted-foreground">
+        <span>{table.getFilteredRowModel().rows.length} records</span>
         <div className="flex items-center gap-2">
           <Button
             size="sm"
@@ -320,17 +325,16 @@ export function DataTable<T extends { id: string }>({
   );
 }
 
-function BadgeText({ children }: { children: ReactNode }) {
-  return (
-    <span className="rounded-sm bg-muted px-1.5 text-xs text-muted-foreground">{children}</span>
-  );
-}
-
 export function RowActions() {
   return (
     <DropdownMenu
       trigger={
-        <Button variant="ghost" size="sm" aria-label="Row actions">
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label="Row actions"
+          className="opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
+        >
           <MoreHorizontal aria-hidden="true" className="h-4 w-4" />
         </Button>
       }

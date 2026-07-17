@@ -26,6 +26,7 @@ describe("DataTable", () => {
     });
     expect(screen.getAllByText("Alpha").length).toBeGreaterThan(0);
     expect(screen.queryByText("Zulu")).not.toBeInTheDocument();
+    expect(screen.getByText("Select all Samples")).toHaveClass("sr-only");
     fireEvent.click(screen.getAllByRole("checkbox", { name: "Select Alpha" })[0]!);
     expect(screen.getByText("1 selected")).toBeVisible();
   });

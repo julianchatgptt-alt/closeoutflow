@@ -4,16 +4,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Lock } from "lucide-react";
 
 import {
   Alert,
   AlertDialog,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   Field,
-  FileUploadPlaceholder,
   Input,
-  Select,
-  Switch
+  Tooltip
 } from "@closeoutflow/ui";
 
 import { ThemeToggle } from "../theme/theme-toggle";
@@ -166,23 +169,46 @@ export function SampleValidationForm({
 
 export function OrganizationSettingsForm() {
   return (
-    <div className="grid max-w-[var(--content-max-form)] gap-6">
-      <Alert title="Read-only preview">Organization settings become editable in Phase 4.</Alert>
-      <Field label="Organization name" htmlFor="org-name" help="Static sample organization">
-        <Input id="org-name" value="Sample Construction Co." readOnly />
-      </Field>
-      <Field label="Time zone" htmlFor="timezone">
-        <Select id="timezone" disabled defaultValue="eastern">
-          <option value="eastern">Eastern Time</option>
-        </Select>
-      </Field>
-      <FileUploadPlaceholder phase={4} />
-      <div>
-        <p className="mb-2 text-sm font-medium">Theme preference</p>
-        <ThemeToggle />
-      </div>
-      <Switch id="weekly-summary" label="Weekly summary emails — Phase 10" disabled />
-      <Button disabled>Save settings — Phase 4</Button>
+    <div className="grid max-w-[35rem] gap-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Organization profile</CardTitle>
+          <p className="text-[13px] text-muted-foreground">Editable in Phase 4.</p>
+        </CardHeader>
+        <CardContent>
+          <dl className="divide-y">
+            {[
+              ["Organization name", "Sample Construction Co."],
+              ["Time zone", "Eastern Time"],
+              ["Workspace domain", "closeoutflow.com"]
+            ].map(([label, value]) => (
+              <div key={label} className="grid gap-1 py-3 sm:grid-cols-[10rem_1fr] sm:gap-4">
+                <dt className="text-[13px] text-muted-foreground">{label}</dt>
+                <dd className="text-sm font-medium">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Appearance</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="mb-3 text-[13px] text-muted-foreground">
+            Choose how this preview appears on this device.
+          </p>
+          <ThemeToggle />
+        </CardContent>
+      </Card>
+      <Tooltip content="Available in Phase 4">
+        <span className="w-fit">
+          <Button variant="outline" disabled>
+            <Lock aria-hidden="true" className="h-4 w-4" />
+            Save settings
+          </Button>
+        </span>
+      </Tooltip>
     </div>
   );
 }
