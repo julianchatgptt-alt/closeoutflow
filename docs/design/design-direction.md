@@ -141,6 +141,10 @@ The guiding metaphor is **"the well-run closeout binder, made live"** — the cr
 - **System-preference aware**, user-overridable, persisted, flash-free (nonce'd init script) — see [design-tokens.md](./design-tokens.md) and [accessibility-and-responsive.md](./accessibility-and-responsive.md).
 - **Contrast target:** both themes meet WCAG 2.1 AA for text and UI components; status colors are chosen to pass in both themes and to remain distinguishable for common color-vision deficiencies (reinforced by icon + label).
 
+## 16. Phase 3E implementation amendment
+
+Phase 3E implements the refined direction “the workspace is the paper; the shell is the desk.” The earlier flat-by-default card guidance is refined to permit the approved light-only `--shadow-card` paper lift while dark mode remains border/lightness driven. Dashboard metrics now use one divided stat strip, section headings use binder-tab overlines, and nested bordered cards are prohibited. The authoritative refinement remains [phase-3e-visual-direction.md](./phase-3e-visual-direction.md).
+
 ---
 
 *Continue to [design-tokens.md](./design-tokens.md).*

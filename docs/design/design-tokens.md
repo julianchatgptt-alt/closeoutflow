@@ -294,6 +294,10 @@ Shell breakpoints (see [application-shell.md](./application-shell.md)): sidebar 
 ## 15. Tailwind preset exposure (guidance, not CSS)
 Phase 3B extends `packages/config/tailwind.preset.ts` to expose the new semantic tokens as Tailwind colors (`surface`, `surface-raised`, `surface-sunken`, `foreground`, `muted`/`muted-foreground`, `subtle-foreground`, `border`/`border-strong`, `input`, `ring`, `primary` + `hover`/`active`, `accent`, `success`/`warning`/`danger`/`info`/`neutral-status`/`owner` with `-foreground`/`-subtle`/`-border`), plus `borderRadius` (sm/md/lg/xl), `boxShadow` (sm/md/lg), `zIndex`, `fontFamily` (sans/mono), `fontSize` (the scale above), and `screens` (breakpoints). All map to `hsl(var(--token))` so theme switching is a class flip on `<html>`.
 
+## 16. Phase 3E implementation amendment
+
+Phase 3E supersedes the earlier light/dark summary values above with the exact implemented values in [phase-3e-visual-direction.md](./phase-3e-visual-direction.md). The implementation adds the cool-neutral desk (`--background: 216 20% 95.5%`), white paper, desaturated three-step graphite dark surfaces, `--shadow-card`, a 10px panel radius, a 240px expanded sidebar, 32px metric numerals, 24px page titles, and the binder-tab overline utility. See [phase-3e-exit-review.md](./phase-3e-exit-review.md) for validation evidence.
+
 ---
 
 *Continue to [application-shell.md](./application-shell.md).*

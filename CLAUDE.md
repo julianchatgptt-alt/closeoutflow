@@ -4,7 +4,7 @@ Instructions for Claude (Claude Code and other Claude agents) in this repository
 
 ## Start here, every session
 1. Read the relevant Phase 1 docs in [`/docs/product/`](docs/product/) and Phase 2 docs in [`/docs/architecture/`](docs/architecture/) for the area you're touching. Do not work from memory of the product — the docs are the source of truth.
-2. Confirm which phase/task you are on. For the frontend foundation, follow [`docs/design/phase-3-implementation-plan.md`](docs/design/phase-3-implementation-plan.md) and **do not begin later feature phases**.
+2. Confirm which phase/task you are on. Phase 3E is closed out in [`docs/design/phase-3e-exit-review.md`](docs/design/phase-3e-exit-review.md). The next plan is [`docs/auth/phase-4-implementation-plan.md`](docs/auth/phase-4-implementation-plan.md); **do not begin Phase 4B unless explicitly assigned**.
 
 ## The rules you must never break (summary — full text in AGENTS.md §1)
 - Never weaken **tenant isolation**; every tenant table has `organization_id` + RLS (deny by default).
@@ -32,6 +32,6 @@ Requirement, Submission, Document, Document Version, Review, Approval are **sepa
 - **Update docs/ADRs** when a decision changes.
 
 ## Where to look
-- Product truth: `docs/product/*`. Architecture truth: `docs/architecture/*`. Phase 3 frontend design truth: `docs/design/*`. Architecture decisions: `architecture-decisions.md`. What needs a human: `open-decisions.md` and `open-design-decisions.md`. Current frontend plan: `docs/design/phase-3-implementation-plan.md`.
+- Product truth: `docs/product/*`. Architecture truth: `docs/architecture/*`. Implemented Phase 3 frontend truth: `docs/design/*`. Phase 4A identity specifications: `docs/auth/*`. Architecture decisions: `architecture-decisions.md`. What needs a human: the relevant `open-decisions.md`. Next implementation plan: `docs/auth/phase-4-implementation-plan.md`.
 
 > Optimize for a small, correct, well-tested change that upholds every isolation/security/integrity rule — not for doing more at once.

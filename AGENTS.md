@@ -40,7 +40,8 @@ A task is done when: it meets its completion criteria in the plan, required chec
 ## 6. Current frontend design source
 
 - Phase 3 design direction and implementation specifications live in [`docs/design/`](docs/design/).
-- Start with [`docs/design/phase-3-implementation-plan.md`](docs/design/phase-3-implementation-plan.md), and use the sibling token, shell, component, pattern, route, and accessibility documents as its specifications.
+- Phase 3E visual polish is closed out in [`docs/design/phase-3e-exit-review.md`](docs/design/phase-3e-exit-review.md); its implemented visual source remains [`docs/design/phase-3e-visual-direction.md`](docs/design/phase-3e-visual-direction.md).
+- The next implementation plan is [`docs/auth/phase-4-implementation-plan.md`](docs/auth/phase-4-implementation-plan.md). Do not start it unless Phase 4B is explicitly assigned.
 - Phase 3 is presentation-only: static labeled mock content is allowed, but authentication, business tables, business APIs, integrations, billing, AI processing, and external portals are later-phase work.
 
 > If you can only remember one thing: **isolation, RLS, private files, version integrity, human-only approvals, one authz source, append-only audit/migrations — never compromised to save effort.**
