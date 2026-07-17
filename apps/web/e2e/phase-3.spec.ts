@@ -83,7 +83,7 @@ test("command palette traps focus, restores it, and supports listbox keys", asyn
 }) => {
   test.skip(isMobile, "Desktop trigger focus restoration; mobile behavior is covered separately");
   await page.goto("/dashboard");
-  const trigger = page.getByRole("button", { name: /Search sample data/ });
+  const trigger = page.getByRole("button", { name: /^Search/ });
   await trigger.click();
   const dialog = page.getByRole("dialog", { name: "Command palette" });
   const input = page.getByRole("combobox");
@@ -157,6 +157,56 @@ test("invalid theme and collapsed sidebar values normalize before interaction", 
   ).toBe("64px");
 });
 
+test("sidebar and density preferences persist after interaction", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Desktop sidebar preference");
+  await page.goto("/dashboard");
+  await page.getByRole("button", { name: "Collapse sidebar" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-sidebar", "collapsed");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-sidebar", "collapsed");
+
+  await page.getByRole("button", { name: "User menu" }).click();
+  await page.getByRole("menuitem", { name: "Density: comfortable" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-density", "compact");
+});
+
+test("selection labels stay accessible but visually hidden", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "chromium", "DOM presentation check runs once");
+  await page.goto("/projects");
+  await expect(page.getByText("Select all Projects")).toHaveClass(/sr-only/);
+  await expect(
+    page.getByRole("checkbox", { name: "Select Riverside Medical Office" })
+  ).toBeVisible();
+});
+
+test("organization name truncates safely on narrow screens", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "chromium", "Narrow viewport check runs once");
+  await page.setViewportSize({ width: 320, height: 720 });
+  await page.goto("/dashboard");
+  const switcher = page.getByRole("button", { name: /Switch organization/ });
+  await expect(switcher).toHaveAttribute("title", "Sample Construction Co.");
+  const styles = await switcher.locator("span").evaluate((element) => {
+    const computed = getComputedStyle(element);
+    return {
+      overflow: computed.overflow,
+      textOverflow: computed.textOverflow,
+      whiteSpace: computed.whiteSpace
+    };
+  });
+  expect(styles).toEqual({ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" });
+});
+
+test("dashboard keeps the compact operational hierarchy on tablet", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "chromium", "Tablet viewport check runs once");
+  await page.setViewportSize({ width: 834, height: 1112 });
+  await page.goto("/dashboard");
+  await expect(page.getByRole("region", { name: "Portfolio summary" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Needs attention/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Upcoming deadlines" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Project health" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open navigation" })).toBeVisible();
+});
+
 test("unknown routes use the branded not-found surface", async ({ page }) => {
   const response = await page.goto("/this-route-does-not-exist");
   expect(response?.status()).toBe(404);
@@ -173,7 +223,7 @@ test("all approved internal placeholder routes are honest", async ({ page }, tes
   );
   for (const route of previewRoutes) {
     await page.goto(route);
-    await expect(page.getByText("Preview — not yet functional").first()).toBeVisible();
+    await expect(page.getByRole("button", { name: "Preview information" })).toHaveCount(1);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   }
 });
@@ -182,7 +232,7 @@ test("cross-browser shell and project workspace smoke", async ({ page }) => {
   await page.goto("/projects/riverside-medical-office/requirements");
   await expect(page.getByRole("heading", { level: 1, name: "Requirements" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Project navigation" })).toBeVisible();
-  await expect(page.getByText("Preview — not yet functional")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Preview information" })).toHaveCount(1);
 });
 
 test("reduced motion removes design-system durations", async ({ page }) => {
@@ -216,9 +266,11 @@ test("design gallery is available locally and absent from production navigation"
   await expect(page.getByRole("link", { name: /design/i })).toHaveCount(0);
 });
 
-test("@a11y command palette has no detectable violations", async ({ page }) => {
+test("@a11y command palette has no detectable violations", async ({ page, isMobile }) => {
   await page.goto("/dashboard");
-  await page.keyboard.press("Control+K");
+  if (isMobile) await page.getByRole("button", { name: "Search", exact: true }).click();
+  else await page.keyboard.press("Control+K");
+  await expect(page.getByRole("dialog", { name: "Command palette" })).toBeVisible();
   const results = await new AxeBuilder({ page }).include('[role="dialog"]').analyze();
   expect(results.violations).toEqual([]);
 });
