@@ -42,6 +42,7 @@ const preset = {
         xl: "var(--radius-xl)"
       },
       boxShadow: {
+        card: "var(--shadow-card)",
         sm: "var(--shadow-sm)",
         md: "var(--shadow-md)",
         lg: "var(--shadow-lg)"

@@ -32,7 +32,7 @@ export function Toast({ title, description, open, onOpenChange, tone = "info" }:
       {...changeProps}
       role={tone === "danger" ? "alert" : "status"}
       className={cn(
-        "rounded-lg border bg-surface-raised p-4 shadow-md",
+        "cof-toast rounded-lg border bg-surface-raised p-4 shadow-md",
         tone === "success" && "border-success-border",
         tone === "warning" && "border-warning-border",
         tone === "danger" && "border-danger-border",

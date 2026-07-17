@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 
 import { STATUS_PRESENTATION, StatusBadge, statusValues } from "./status-badge";
@@ -36,12 +36,18 @@ describe("StatusBadge", () => {
     expect(screen.getByText(level)).toBeVisible();
   });
 
-  it("exposes risk drivers as visible associated text", () => {
+  it("exposes risk drivers through a keyboard-accessible tooltip", async () => {
     render(<RiskIndicator level="High" drivers="Two overdue sample requirements" />);
-    const badge = screen.getByText("High").closest("span");
-    const driver = screen.getByText("Two overdue sample requirements");
+    fireEvent.focus(screen.getByText("High"));
+    const driver = await screen.findByRole("tooltip");
 
     expect(driver).toBeVisible();
-    expect(badge).toHaveAttribute("aria-describedby", driver.id);
+    expect(driver).toHaveTextContent("Two overdue sample requirements");
+  });
+
+  it("renders closed lifecycle states as quiet text and icon", () => {
+    const { container } = render(<StatusBadge category="project" status="Archived" />);
+    expect(screen.getByText("Archived").parentElement).toHaveClass("text-muted-foreground");
+    expect(container.querySelector("svg")).toBeTruthy();
   });
 });

@@ -49,7 +49,7 @@ export function CommandPalette({
       open={open}
       onOpenChange={changeOpen}
       title="Command palette"
-      description="Navigate among Closeout preview pages and sample projects."
+      description="Navigate among Closeout pages."
       variant="command"
       showClose={false}
       bodyClassName="flex flex-col"
@@ -105,6 +105,7 @@ export function CommandPalette({
         aria-label="Navigation results"
         className="max-h-96 overflow-auto p-2"
       >
+        <p className="text-overline px-3 pb-2 pt-1">Navigate</p>
         {results.length ? (
           results.map((item, index) => (
             <button
@@ -126,8 +127,12 @@ export function CommandPalette({
             No sample results for “{query}”.
           </p>
         )}
-        <p className="border-t p-3 text-xs text-muted-foreground">
-          Sample navigation only — no live search or API.
+        <p className="mt-2 flex items-center justify-between gap-3 border-t bg-surface-sunken p-3 text-xs text-muted-foreground">
+          <span>Sample navigation only — no live search or API.</span>
+          <span className="whitespace-nowrap">
+            <kbd className="rounded border px-1.5 py-0.5">↑↓</kbd> move ·{" "}
+            <kbd className="rounded border px-1.5 py-0.5">↵</kbd> open
+          </span>
         </p>
       </div>
     </Dialog>

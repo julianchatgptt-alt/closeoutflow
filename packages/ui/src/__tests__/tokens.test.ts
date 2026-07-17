@@ -6,6 +6,7 @@ const css = fs.readFileSync("packages/ui/src/tokens.css", "utf8");
 describe("Phase 3 design tokens", () => {
   it.each([
     "--surface",
+    "--shadow-card",
     "--primary-hover",
     "--success-subtle",
     "--warning-foreground",
@@ -24,8 +25,10 @@ describe("Phase 3 design tokens", () => {
   });
 
   it("keeps key light and dark text pairs at AA contrast", () => {
-    expect(contrast([220, 33, 11], [210, 20, 98])).toBeGreaterThanOrEqual(4.5);
-    expect(contrast([210, 40, 96], [222, 40, 7])).toBeGreaterThanOrEqual(4.5);
+    expect(contrast([220, 33, 11], [216, 20, 95.5])).toBeGreaterThanOrEqual(4.5);
+    expect(contrast([214, 20, 93], [224, 18, 6.5])).toBeGreaterThanOrEqual(4.5);
+    expect(contrast([215, 20, 34], [216, 20, 95.5])).toBeGreaterThanOrEqual(4.5);
+    expect(contrast([215, 16, 72], [220, 15, 11.5])).toBeGreaterThanOrEqual(4.5);
     expect(contrast([0, 0, 100], [216, 68, 36])).toBeGreaterThanOrEqual(4.5);
   });
 });

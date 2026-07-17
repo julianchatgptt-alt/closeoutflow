@@ -13,7 +13,7 @@ export function PrimaryNavigation({ collapsed = false }: { collapsed?: boolean }
     <nav
       aria-label="Primary navigation"
       id="primary-navigation"
-      className="flex flex-1 flex-col gap-1 p-2"
+      className="flex flex-1 flex-col gap-1 px-2 pb-2 pt-1"
     >
       {globalNavigation.map((item, index) => {
         const disabled = "disabled" in item;
@@ -31,7 +31,7 @@ export function PrimaryNavigation({ collapsed = false }: { collapsed?: boolean }
             ) : null}
           </>
         );
-        const classes = `flex min-h-11 items-center gap-3 rounded-md border-l-2 px-3 text-sm font-medium ${active ? "border-primary bg-info-subtle text-primary" : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"} ${disabled ? "cursor-not-allowed opacity-55" : ""} ${index === 4 ? "mt-auto" : ""}`;
+        const classes = `flex min-h-11 items-center gap-3 rounded-lg px-3 text-[13.5px] font-medium transition-colors duration-[var(--dur-fast)] ${active ? "bg-[hsl(var(--sidebar-active))] font-semibold text-primary" : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"} ${disabled ? "cursor-not-allowed opacity-55" : ""} ${index === 4 ? "mt-auto" : ""}`;
         if (disabled)
           return (
             <Tooltip key={item.href} content={`Available in Phase ${item.phase}`}>

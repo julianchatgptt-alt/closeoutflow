@@ -218,6 +218,20 @@ export const STATUS_PRESENTATION: Record<StatusCategory, Record<string, Presenta
   }
 };
 
+const quietStatuses = new Set([
+  "Archived",
+  "Superseded",
+  "Waived",
+  "Not applicable requested",
+  "Not applicable approved",
+  "Complete",
+  "Expired",
+  "Cancelled",
+  "Revoked",
+  "Suppressed",
+  "Deleted (soft)"
+]);
+
 export function StatusBadge({ category, status }: StatusBadgeProps) {
   const presentation = STATUS_PRESENTATION[category][status];
   if (!presentation) {
@@ -231,9 +245,17 @@ export function StatusBadge({ category, status }: StatusBadgeProps) {
     );
   }
   const Icon = presentation.icon;
+  if (quietStatuses.has(status)) {
+    return (
+      <span className="inline-flex min-h-5 items-center gap-1 text-[11px] font-semibold text-muted-foreground">
+        <Icon aria-hidden="true" className="h-3 w-3 shrink-0" />
+        <span>{status}</span>
+      </span>
+    );
+  }
   return (
     <Badge tone={presentation.tone}>
-      <Icon aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+      <Icon aria-hidden="true" className="h-3 w-3 shrink-0" />
       <span>{status}</span>
     </Badge>
   );

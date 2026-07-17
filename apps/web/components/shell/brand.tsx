@@ -4,10 +4,10 @@ export function Brand() {
   return (
     <Link
       href="/dashboard"
-      className="flex h-14 items-center gap-2 border-b px-4 font-semibold"
+      className="flex h-14 items-center gap-2.5 px-4 font-semibold"
       aria-label="Closeout dashboard"
     >
-      <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
+      <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-primary text-xs font-bold text-primary-foreground shadow-sm">
         C
       </span>
       <span className="sidebar-expanded-only">Closeout</span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, CircleHelp, Menu, Search, UserRound } from "lucide-react";
+import { Bell, Building2, ChevronDown, CircleHelp, Menu, Search, UserRound } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { Button, DropdownMenu, IconButton, Sheet } from "@closeoutflow/ui";
@@ -14,7 +14,7 @@ export function AppHeader({ onOpenPalette }: { onOpenPalette: (trigger: HTMLElem
   const pathname = usePathname();
   const { density, setDensity, theme, setTheme } = useTheme();
   return (
-    <header className="sticky top-0 z-header flex h-14 items-center gap-2 border-b bg-surface px-3 sm:px-4">
+    <header className="sticky top-0 z-header flex h-14 items-center gap-1.5 border-b bg-background px-3 sm:gap-2 sm:px-4">
       <div className="lg:hidden">
         <Sheet
           key={pathname}
@@ -31,8 +31,19 @@ export function AppHeader({ onOpenPalette }: { onOpenPalette: (trigger: HTMLElem
       </div>
       <DropdownMenu
         trigger={
-          <Button variant="ghost" size="sm" className="max-w-52 truncate">
-            Sample Construction Co. <span aria-hidden="true">⌄</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="min-w-0 max-w-[10.5rem] justify-start px-2 sm:max-w-52"
+            aria-label="Switch organization: Sample Construction Co."
+            title="Sample Construction Co."
+          >
+            <Building2 aria-hidden="true" className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <span className="truncate">Sample Construction Co.</span>
+            <ChevronDown
+              aria-hidden="true"
+              className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
+            />
           </Button>
         }
         items={[
@@ -44,14 +55,14 @@ export function AppHeader({ onOpenPalette }: { onOpenPalette: (trigger: HTMLElem
       <Button
         variant="outline"
         size="sm"
-        className="hidden min-w-52 justify-between text-muted-foreground md:flex"
+        className="hidden min-w-52 justify-between border-transparent bg-transparent text-muted-foreground hover:border-border hover:bg-surface/70 md:flex"
         onClick={(event) => onOpenPalette(event.currentTarget)}
       >
         <span className="flex items-center gap-2">
           <Search aria-hidden="true" className="h-4 w-4" />
-          Search sample data
+          Search
         </span>
-        <kbd>⌘K</kbd>
+        <kbd className="rounded border bg-surface px-1.5 py-0.5 text-[11px]">⌘K</kbd>
       </Button>
       <IconButton
         label="Search"

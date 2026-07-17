@@ -31,10 +31,7 @@ export function SettingsNavigation({ children }: { children: React.ReactNode }) 
             ))}
           </Select>
         </div>
-        <nav
-          aria-label="Settings navigation"
-          className="hidden rounded-lg border bg-surface p-2 lg:grid"
-        >
+        <nav aria-label="Settings navigation" className="hidden gap-1 lg:grid">
           {settingsNavigation.map((item) => {
             const active = pathname === item.href;
             return "disabled" in item ? (
@@ -53,7 +50,7 @@ export function SettingsNavigation({ children }: { children: React.ReactNode }) 
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-11 items-center rounded-md px-3 text-sm ${active ? "bg-info-subtle font-medium text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                className={`flex min-h-11 items-center rounded-lg px-3 text-[13.5px] transition-colors ${active ? "bg-[hsl(var(--sidebar-active))] font-semibold text-primary" : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"}`}
               >
                 {item.label}
               </Link>

@@ -45,7 +45,7 @@ export function Label({
   ...props
 }: LabelHTMLAttributes<HTMLLabelElement> & { required?: boolean }) {
   return (
-    <label className={cn("text-sm font-medium", className)} {...props}>
+    <label className={cn("text-[13px] font-semibold", className)} {...props}>
       {children}
       {required ? (
         <>
@@ -177,8 +177,9 @@ export function MultiSelect({ values }: { values: string[] }) {
 export function Checkbox({
   id,
   label,
+  visuallyHiddenLabel = false,
   ...props
-}: { id: string; label: string } & CheckboxPrimitive.CheckboxProps) {
+}: { id: string; label: string; visuallyHiddenLabel?: boolean } & CheckboxPrimitive.CheckboxProps) {
   return (
     <label htmlFor={id} className="inline-flex min-h-11 items-center gap-2 text-sm">
       <CheckboxPrimitive.Root
@@ -190,7 +191,7 @@ export function Checkbox({
           <Check aria-hidden="true" className="h-4 w-4" />
         </CheckboxPrimitive.Indicator>
       </CheckboxPrimitive.Root>
-      {label}
+      <span className={visuallyHiddenLabel ? "sr-only" : undefined}>{label}</span>
     </label>
   );
 }
@@ -242,7 +243,7 @@ export function Switch({
 }
 
 const badge = cva(
-  "inline-flex items-center gap-1 rounded-sm border px-2 py-0.5 text-xs font-medium",
+  "inline-flex min-h-5 items-center gap-1 rounded-md border px-1.5 py-0 text-[11px] font-semibold leading-4",
   {
     variants: {
       tone: {
@@ -382,11 +383,13 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="grid min-h-48 place-items-center rounded-lg border border-dashed border-border-strong p-8 text-center">
+    <div className="grid min-h-40 place-items-center rounded-lg bg-surface px-5 py-8 text-center shadow-card">
       <div>
-        <FileUp aria-hidden="true" className="mx-auto mb-3 h-8 w-8 text-muted-foreground" />
-        <h2 className="text-h2 font-semibold">{title}</h2>
-        <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">{description}</p>
+        <span className="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-full bg-muted">
+          <FileUp aria-hidden="true" className="h-10 w-10 text-muted-foreground" />
+        </span>
+        <h2 className="text-[15px] font-semibold">{title}</h2>
+        <p className="mx-auto mt-1 max-w-md text-[13px] text-muted-foreground">{description}</p>
         {action ? <div className="mt-4">{action}</div> : null}
       </div>
     </div>
@@ -404,13 +407,13 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className="rounded-lg border border-danger-border bg-danger-subtle p-6 text-center"
+      className="rounded-lg border-l-2 border-danger bg-surface p-5 text-left shadow-card"
     >
-      <XCircle aria-hidden="true" className="mx-auto h-8 w-8 text-danger" />
+      <XCircle aria-hidden="true" className="h-6 w-6 text-danger" />
       <h2 className="mt-2 font-semibold">{title}</h2>
       <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       {onRetry ? (
-        <Button className="mt-4" variant="outline" onClick={onRetry}>
+        <Button className="mt-4" size="sm" variant="outline" onClick={onRetry}>
           Retry
         </Button>
       ) : null}
@@ -459,9 +462,9 @@ export function MetricCard({
   detail?: string;
 }) {
   return (
-    <div className="rounded-lg border bg-surface p-5">
-      <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="mt-2 text-2xl font-semibold tabular-nums">{value}</p>
+    <div className="rounded-lg bg-surface p-4 shadow-card">
+      <p className="text-[13px] text-muted-foreground">{label}</p>
+      <p className="mt-1 text-[28px] font-semibold leading-9 tabular-nums">{value}</p>
       {detail ? <p className="mt-1 text-xs text-muted-foreground">{detail}</p> : null}
     </div>
   );

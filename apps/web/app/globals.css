@@ -23,6 +23,83 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+.text-display {
+  font-size: var(--text-display);
+  font-weight: 600;
+  line-height: 2.375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.text-page-title {
+  font-size: var(--text-h1);
+  font-weight: 600;
+  line-height: 1.875rem;
+  letter-spacing: -0.011em;
+}
+
+.text-overline {
+  font-size: var(--text-overline);
+  font-weight: 600;
+  line-height: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+@keyframes cof-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes cof-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@keyframes cof-dialog-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.98);
+  }
+}
+
+@keyframes cof-sheet-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes cof-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.cof-fade[data-state="open"] {
+  animation: cof-fade-in var(--dur-fast) var(--ease-standard);
+}
+
+.cof-menu[data-state="open"],
+.cof-menu[data-state="delayed-open"] {
+  animation: cof-rise-in var(--dur-fast) var(--ease-standard);
+}
+
+.cof-dialog[data-state="open"] {
+  animation: cof-dialog-in var(--dur-base) var(--ease-standard);
+}
+
+.cof-sheet[data-state="open"] {
+  animation: cof-sheet-in-left var(--dur-base) var(--ease-standard);
+}
+
+.cof-toast[data-state="open"] {
+  animation: cof-toast-in var(--dur-base) var(--ease-standard);
+}
+
 ::selection {
   background: hsl(var(--selection));
 }
@@ -54,6 +131,13 @@ select {
 
   html[data-sidebar="expanded"] .app-sidebar {
     width: var(--sidebar-w);
+  }
+
+  .app-shell,
+  .app-sidebar {
+    transition-duration: var(--dur-base);
+    transition-property: padding-left, width;
+    transition-timing-function: var(--ease-standard);
   }
 
   html[data-sidebar="collapsed"] .app-shell {
