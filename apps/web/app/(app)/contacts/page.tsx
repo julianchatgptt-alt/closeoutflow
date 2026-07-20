@@ -9,7 +9,7 @@ import {
   outlineLink
 } from "../../../components/projects/phase-5-ui";
 import { getActiveContext } from "../../../lib/active-context";
-export const metadata = { title: "Companies" };
+export const metadata = { title: "Contacts" };
 export default async function Page({
   searchParams
 }: {
@@ -17,7 +17,7 @@ export default async function Page({
 }) {
   const query = await searchParams;
   const { client, organizationId } = await getActiveContext();
-  const { data, error } = await client.rpc("search_companies", {
+  const { data, error } = await client.rpc("search_contacts", {
     target_organization_id: organizationId,
     search_query: query.q ?? "",
     include_archived: query.archived === "1",
@@ -27,11 +27,11 @@ export default async function Page({
   return (
     <>
       <PageHeader
-        title="Companies"
-        description="Maintain one reusable organization directory; project roles are assigned per project."
+        title="Contacts"
+        description="Keep reusable project contacts separate from authenticated Closeout teammates."
         actions={
-          <Link className={linkButton} href="/companies/new">
-            Create company
+          <Link className={linkButton} href="/contacts/new">
+            Create contact
           </Link>
         }
       />
@@ -40,14 +40,14 @@ export default async function Page({
         method="get"
         className="mb-5 flex flex-col gap-3 rounded-lg bg-surface p-4 shadow-card sm:flex-row"
       >
-        <label htmlFor="company-search" className="relative flex-1">
-          <span className="sr-only">Search companies</span>
+        <label htmlFor="contact-search" className="relative flex-1">
+          <span className="sr-only">Search contacts</span>
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            id="company-search"
+            id="contact-search"
             name="q"
             defaultValue={query.q}
-            placeholder="Search company or website"
+            placeholder="Search name or email"
             className="pl-9"
           />
         </label>
@@ -61,7 +61,7 @@ export default async function Page({
           Include archived
         </label>
         <Button type="submit">Search</Button>
-        <Link className={outlineLink} href="/companies">
+        <Link className={outlineLink} href="/contacts">
           Clear
         </Link>
       </form>
@@ -70,10 +70,10 @@ export default async function Page({
           <table className="hidden w-full text-sm md:table">
             <thead className="border-b text-left text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
-                <th className="px-5 py-3">Company</th>
-                <th>Trade</th>
+                <th className="px-5 py-3">Contact</th>
+                <th>Company</th>
+                <th>Title</th>
                 <th>Projects</th>
-                <th>Contacts</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -81,16 +81,16 @@ export default async function Page({
               {rows.map((c) => (
                 <tr key={c.id}>
                   <td className="px-5 py-4">
-                    <Link href={`/companies/${c.id}`} className="font-semibold hover:text-primary">
-                      {c.display_name}
+                    <Link href={`/contacts/${c.id}`} className="font-semibold hover:text-primary">
+                      {c.first_name} {c.last_name}
                     </Link>
-                    <p className="text-xs text-muted-foreground">
-                      {c.legal_name || "Reusable organization record"}
+                    <p className="max-w-64 truncate text-xs text-muted-foreground">
+                      {c.email || "No email"}
                     </p>
                   </td>
-                  <td>{c.trade || "—"}</td>
+                  <td>{c.company_name || "Independent"}</td>
+                  <td>{c.job_title || "—"}</td>
                   <td>{c.project_count}</td>
-                  <td>{c.contact_count}</td>
                   <td>
                     <StatusBadge status={c.status} />
                   </td>
@@ -100,30 +100,33 @@ export default async function Page({
           </table>
           <div className="divide-y md:hidden">
             {rows.map((c) => (
-              <Link key={c.id} href={`/companies/${c.id}`} className="block p-4">
-                <div className="flex justify-between">
-                  <p className="font-semibold">{c.display_name}</p>
+              <Link key={c.id} href={`/contacts/${c.id}`} className="block p-4">
+                <div className="flex justify-between gap-3">
+                  <p className="font-semibold">
+                    {c.first_name} {c.last_name}
+                  </p>
                   <StatusBadge status={c.status} />
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {c.project_count} projects · {c.contact_count} contacts
+                <p className="mt-1 truncate text-sm text-muted-foreground">
+                  {c.email || c.company_name || "Independent contact"}
                 </p>
+                <p className="mt-2 text-xs text-muted-foreground">{c.project_count} projects</p>
               </Link>
             ))}
           </div>
         </div>
       ) : (
         <EmptyState
-          title={query.q ? "No matching companies" : "No companies yet"}
+          title={query.q ? "No matching contacts" : "No contacts yet"}
           description={
             query.q
-              ? "Try a broader search."
-              : "Create a reusable company once, then assign different roles on each project."
+              ? "Try a broader name or email."
+              : "Create reusable contact records without granting application access."
           }
           action={
             !query.q ? (
-              <Link className={linkButton} href="/companies/new">
-                Create company
+              <Link className={linkButton} href="/contacts/new">
+                Create contact
               </Link>
             ) : undefined
           }
