@@ -27,7 +27,8 @@ describe("environment validation", () => {
       EMAIL_PROVIDER: "resend",
       RESEND_API_KEY: "resend-key",
       UPSTASH_REDIS_REST_URL: "https://example.upstash.io",
-      UPSTASH_REDIS_REST_TOKEN: "upstash-token"
+      UPSTASH_REDIS_REST_TOKEN: "upstash-token",
+      RECOVERY_CODE_PEPPER: "production-recovery-pepper-at-least-32-characters"
     });
 
     expect(production.LOG_LEVEL).toBe("info");
@@ -51,6 +52,7 @@ describe("environment validation", () => {
         RESEND_API_KEY: "resend-key",
         UPSTASH_REDIS_REST_URL: "https://example.upstash.io",
         UPSTASH_REDIS_REST_TOKEN: "upstash-token",
+        RECOVERY_CODE_PEPPER: "production-recovery-pepper-at-least-32-characters",
         OAUTH_GOOGLE_CLIENT_ID: "client-id"
       })
     ).toThrow("must be configured together");

@@ -25,7 +25,14 @@ describe("nonce-based content security policy", () => {
   });
 
   it("forwards the nonce and CSP into the rendering request and response", async () => {
-    const response = await proxy(new NextRequest("http://localhost/"));
+    const response = await proxy(
+      new NextRequest("http://localhost/", {
+        headers: {
+          "x-request-id": "caller-controlled",
+          "x-closeout-request-id": "caller-controlled"
+        }
+      })
+    );
     const csp = response.headers.get("content-security-policy");
     const forwardedCsp = response.headers.get("x-middleware-request-content-security-policy");
     const forwardedNonce = response.headers.get("x-middleware-request-x-nonce");
@@ -33,5 +40,10 @@ describe("nonce-based content security policy", () => {
     expect(csp).toMatch(/'nonce-[A-Za-z0-9+/]{22}=='/);
     expect(forwardedCsp).toBe(csp);
     expect(csp).toContain(`'nonce-${forwardedNonce}'`);
+    expect(response.headers.get("x-request-id")).toMatch(/^[0-9a-f-]{36}$/);
+    expect(response.headers.get("x-request-id")).not.toBe("caller-controlled");
+    expect(response.headers.get("x-middleware-request-x-closeout-request-id")).toBe(
+      response.headers.get("x-request-id")
+    );
   });
 });

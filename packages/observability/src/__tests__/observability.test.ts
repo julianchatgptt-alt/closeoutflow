@@ -83,7 +83,10 @@ describe("observability foundation", () => {
   });
 
   it("uses a bounded incoming request id or creates one", () => {
-    expect(createRequestId("trace-1")).toBe("trace-1");
+    const trusted = "123e4567-e89b-42d3-a456-426614174000";
+    expect(createRequestId(trusted)).toBe(trusted);
+    expect(createRequestId("caller-controlled")).toMatch(/^[0-9a-f-]{36}$/);
+    expect(createRequestId("caller-controlled")).not.toBe("caller-controlled");
     expect(createRequestId()).toMatch(/^[0-9a-f-]{36}$/);
   });
 

@@ -63,6 +63,7 @@ from public.create_invitation(
   'viewer'
 );
 
+reset role;
 select isnt(
   (select token_hash from public.organization_invitations limit 1),
   (select token from phase4_invitation_token limit 1),
@@ -73,6 +74,7 @@ select ok(
   'the stored invitation token is a SHA-256 hex digest'
 );
 
+set local role authenticated;
 select set_config(
   'request.jwt.claims',
   '{"sub":"10000000-0000-0000-0000-000000000002","email":"member-a@example.com","aal":"aal2"}',
@@ -248,9 +250,17 @@ select is(
   'a suspended membership loses organization access immediately'
 );
 select is(
-  (select count(*) from public.organization_invitations),
+  (
+    select count(*) from public.get_organization_invitations(
+      (
+        select organization_id from public.organization_memberships
+        where user_id = '10000000-0000-0000-0000-000000000001'
+        limit 1
+      )
+    )
+  ),
   0::bigint,
-  'a suspended member cannot enumerate organization invitations'
+  'a suspended member receives no rows from the invitation administration RPC'
 );
 
 reset role;

@@ -182,11 +182,12 @@ select is(
 );
 select is(
   (
-    select count(*) from public.organization_invitations
-    where organization_id = (select id from phase4_edge_org_a)
+    select count(*) from public.get_organization_invitations(
+      (select id from phase4_edge_org_a)
+    )
   ),
   0::bigint,
-  'tenant B cannot read tenant A invitations'
+  'tenant B receives no tenant A invitations from the narrow admin RPC'
 );
 select is(
   (

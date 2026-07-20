@@ -201,8 +201,9 @@ test("new user preserves invitation continuation through sign-up and verificatio
   await invitee.goto(inviteUrl);
   await expect(invitee.getByRole("heading", { name: /Join Sample Construction/ })).toBeVisible();
   await invitee.getByRole("link", { name: "Create an account" }).click();
-  await expect(invitee.getByLabel("Email")).toHaveValue(email);
-  await expect(invitee.getByLabel("Email")).toHaveAttribute("readonly", "");
+  await expect(invitee.getByLabel("Email")).toHaveValue("");
+  await expect(invitee.getByLabel("Email")).not.toHaveAttribute("readonly", "");
+  await invitee.getByLabel("Email").fill(email);
   await invitee.getByLabel("Your name").fill("Invited New User");
   await invitee.getByLabel("Password").fill("Closeout-Invited-2026!");
   await invitee.getByRole("button", { name: "Create account" }).click();
