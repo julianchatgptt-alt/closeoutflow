@@ -23,7 +23,11 @@ describe("environment validation", () => {
       APP_ENV: "production",
       NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "public-anon-key",
-      SUPABASE_SERVICE_ROLE_KEY: "server-only-key"
+      SUPABASE_SERVICE_ROLE_KEY: "server-only-key",
+      EMAIL_PROVIDER: "resend",
+      RESEND_API_KEY: "resend-key",
+      UPSTASH_REDIS_REST_URL: "https://example.upstash.io",
+      UPSTASH_REDIS_REST_TOKEN: "upstash-token"
     });
 
     expect(production.LOG_LEVEL).toBe("info");
@@ -34,5 +38,21 @@ describe("environment validation", () => {
     expect(() => assertNoPublicSecrets()).not.toThrow();
     expect(serverSecretKeys.every((key) => !key.startsWith("NEXT_PUBLIC_"))).toBe(true);
     expect(publicEnvKeys).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
+  });
+
+  it("requires each OAuth client id and secret as a pair", () => {
+    expect(() =>
+      parseServerEnv({
+        APP_ENV: "production",
+        NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: "public-anon-key",
+        SUPABASE_SERVICE_ROLE_KEY: "server-only-key",
+        EMAIL_PROVIDER: "resend",
+        RESEND_API_KEY: "resend-key",
+        UPSTASH_REDIS_REST_URL: "https://example.upstash.io",
+        UPSTASH_REDIS_REST_TOKEN: "upstash-token",
+        OAUTH_GOOGLE_CLIENT_ID: "client-id"
+      })
+    ).toThrow("must be configured together");
   });
 });

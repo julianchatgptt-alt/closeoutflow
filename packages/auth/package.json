@@ -1,0 +1,29 @@
+{
+  "name": "@closeoutflow/auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./rate-limit": "./src/rate-limit.ts",
+    "./server": "./src/server.ts",
+    "./middleware": "./src/middleware.ts",
+    "./recovery-codes": "./src/recovery-codes.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@closeoutflow/db": "workspace:*",
+    "@closeoutflow/env": "workspace:*",
+    "@supabase/ssr": "0.12.3",
+    "@supabase/supabase-js": "2.110.6",
+    "server-only": "0.0.1"
+  },
+  "devDependencies": {
+    "@closeoutflow/config": "workspace:*",
+    "@types/node": "26.1.1",
+    "typescript": "5.9.3"
+  }
+}

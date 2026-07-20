@@ -1,5 +1,6 @@
 import { randomBytes } from "node:crypto";
 
+import { createMiddlewareAuthClient } from "@closeoutflow/auth/middleware";
 import { type NextRequest, NextResponse } from "next/server";
 
 export function createCspNonce(): string {
@@ -29,7 +30,23 @@ export function createContentSecurityPolicy(
   return directives.filter(Boolean).join("; ");
 }
 
-export function proxy(request: NextRequest) {
+function isProtectedPath(pathname: string): boolean {
+  return (
+    pathname.startsWith("/account") ||
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/mfa") ||
+    pathname.startsWith("/onboarding") ||
+    pathname.startsWith("/platform") ||
+    pathname.startsWith("/projects") ||
+    pathname.startsWith("/reauthenticate") ||
+    pathname.startsWith("/reports") ||
+    pathname.startsWith("/settings") ||
+    pathname.startsWith("/select-organization") ||
+    pathname.startsWith("/team")
+  );
+}
+
+export async function proxy(request: NextRequest) {
   const nonce = createCspNonce();
   const contentSecurityPolicy = createContentSecurityPolicy(nonce);
   const requestHeaders = new Headers(request.headers);
@@ -38,8 +55,39 @@ export function proxy(request: NextRequest) {
   requestHeaders.set("content-security-policy", contentSecurityPolicy);
   requestHeaders.set("x-nonce", nonce);
 
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  let response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set("content-security-policy", contentSecurityPolicy);
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) return response;
+
+  const client = createMiddlewareAuthClient({
+    url,
+    anonKey,
+    cookies: {
+      getAll: () => request.cookies.getAll(),
+      setAll: (updates) => {
+        for (const cookie of updates) request.cookies.set(cookie.name, cookie.value);
+        response = NextResponse.next({ request: { headers: requestHeaders } });
+        response.headers.set("content-security-policy", contentSecurityPolicy);
+        for (const cookie of updates) response.cookies.set(cookie);
+      }
+    }
+  });
+
+  const {
+    data: { user }
+  } = await client.auth.getUser();
+
+  if (!user && isProtectedPath(request.nextUrl.pathname)) {
+    const signIn = new URL("/sign-in", request.url);
+    signIn.searchParams.set("next", request.nextUrl.pathname);
+    const redirectResponse = NextResponse.redirect(signIn);
+    redirectResponse.headers.set("content-security-policy", contentSecurityPolicy);
+    return redirectResponse;
+  }
+
   return response;
 }
 

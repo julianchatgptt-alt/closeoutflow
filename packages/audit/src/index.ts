@@ -1,10 +1,68 @@
 import type { AuditEventInsert, Database, Json } from "@closeoutflow/db";
 
 export const auditActions = {
-  systemFoundationVerified: "system.foundation_verified"
+  systemFoundationVerified: "system.foundation_verified",
+  authRegistered: "auth.registered",
+  authEmailVerified: "auth.email_verified",
+  authSignedIn: "auth.signed_in",
+  authSignInFailed: "auth.sign_in_failed",
+  authSignedOut: "auth.signed_out",
+  authPasswordResetRequested: "auth.password_reset_requested",
+  authPasswordChanged: "auth.password_changed",
+  authEmailChanged: "auth.email_changed",
+  authMfaEnrolled: "auth.mfa_enrolled",
+  authMfaRemoved: "auth.mfa_removed",
+  authRecoveryCodeUsed: "auth.recovery_code_used",
+  authSessionRevoked: "auth.session_revoked",
+  authAccountDeletionRequested: "auth.account_deletion_requested",
+  profileUpdated: "profile.updated",
+  organizationCreated: "organization.created",
+  organizationUpdated: "organization.updated",
+  organizationArchived: "organization.archived",
+  organizationDeletionRequested: "organization.deletion_requested",
+  organizationDeletionCancelled: "organization.deletion_cancelled",
+  invitationCreated: "invitation.created",
+  invitationResent: "invitation.resent",
+  invitationRevoked: "invitation.revoked",
+  invitationAccepted: "invitation.accepted",
+  membershipActivated: "membership.activated",
+  membershipRoleChanged: "membership.role_changed",
+  membershipSuspended: "membership.suspended",
+  membershipReactivated: "membership.reactivated",
+  membershipRemoved: "membership.removed",
+  membershipLeft: "membership.left",
+  ownershipTransferInitiated: "ownership_transfer.initiated",
+  ownershipTransferCompleted: "ownership_transfer.completed",
+  ownershipTransferCancelled: "ownership_transfer.cancelled",
+  platformUserSuspended: "platform.user_suspended",
+  platformOrgSuspended: "platform.org_suspended",
+  platformSecurityEventsViewed: "platform.security_events_viewed",
+  platformBreakGlassUsed: "platform.break_glass_used",
+  platformRoleGranted: "platform.role_granted",
+  platformRoleRevoked: "platform.role_revoked"
 } as const;
 
 export type AuditAction = (typeof auditActions)[keyof typeof auditActions];
+
+const prohibitedMetadataKey = /(password|token|secret|recovery.?code|session|authorization)/i;
+
+export function assertSafeAuditMetadata(metadata: Json | undefined): void {
+  const inspect = (value: Json, path: string): void => {
+    if (Array.isArray(value)) {
+      value.forEach((entry, index) => inspect(entry, `${path}[${index}]`));
+      return;
+    }
+    if (value && typeof value === "object") {
+      for (const [key, entry] of Object.entries(value)) {
+        if (prohibitedMetadataKey.test(key)) {
+          throw new Error(`Unsafe audit metadata key: ${path}${key}`);
+        }
+        if (entry !== undefined) inspect(entry, `${path}${key}.`);
+      }
+    }
+  };
+  if (metadata !== undefined) inspect(metadata, "");
+}
 
 export type AuditEvent = {
   organizationId?: string;
@@ -32,6 +90,9 @@ export type AuditClient = {
 };
 
 export async function writeAuditEvent(client: AuditClient, event: AuditEvent): Promise<void> {
+  assertSafeAuditMetadata(event.metadata);
+  assertSafeAuditMetadata(event.before);
+  assertSafeAuditMetadata(event.after);
   const row: AuditEventInsert = {
     organization_id: event.organizationId ?? null,
     actor_type: event.actorType,

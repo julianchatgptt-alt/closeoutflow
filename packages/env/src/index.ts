@@ -9,6 +9,8 @@ export const publicEnvKeys = [
 
 export const serverSecretKeys = [
   "SUPABASE_SERVICE_ROLE_KEY",
+  "OAUTH_GOOGLE_CLIENT_SECRET",
+  "OAUTH_MICROSOFT_CLIENT_SECRET",
   "INNGEST_EVENT_KEY",
   "INNGEST_SIGNING_KEY",
   "RESEND_API_KEY",
@@ -29,9 +31,15 @@ export const serverEnvSchema = z
     NEXT_PUBLIC_SUPABASE_URL: optionalUrl,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: optionalString,
     SUPABASE_SERVICE_ROLE_KEY: optionalString,
+    APP_URL: optionalUrl,
+    OAUTH_GOOGLE_CLIENT_ID: optionalString,
+    OAUTH_GOOGLE_CLIENT_SECRET: optionalString,
+    OAUTH_MICROSOFT_CLIENT_ID: optionalString,
+    OAUTH_MICROSOFT_CLIENT_SECRET: optionalString,
     INNGEST_EVENT_KEY: optionalString,
     INNGEST_SIGNING_KEY: optionalString,
     EMAIL_PROVIDER: z.enum(["noop", "mailpit", "resend"]).default("noop"),
+    MAILPIT_URL: optionalUrl,
     RESEND_API_KEY: optionalString,
     EMAIL_FROM: optionalString,
     LOG_LEVEL: logLevelSchema.optional(),
@@ -62,6 +70,40 @@ export const serverEnvSchema = z
           message: key + " is required when APP_ENV is " + value.APP_ENV
         });
       }
+    }
+
+    for (const pair of [
+      ["OAUTH_GOOGLE_CLIENT_ID", "OAUTH_GOOGLE_CLIENT_SECRET"],
+      ["OAUTH_MICROSOFT_CLIENT_ID", "OAUTH_MICROSOFT_CLIENT_SECRET"]
+    ] as const) {
+      if (Boolean(value[pair[0]]) !== Boolean(value[pair[1]])) {
+        context.addIssue({
+          code: "custom",
+          path: [pair[0]],
+          message: pair.join(" and ") + " must be configured together"
+        });
+      }
+    }
+    if (!value.UPSTASH_REDIS_REST_URL || !value.UPSTASH_REDIS_REST_TOKEN) {
+      context.addIssue({
+        code: "custom",
+        path: ["UPSTASH_REDIS_REST_URL"],
+        message: "Upstash REST URL and token are required in staging and production"
+      });
+    }
+    if (value.EMAIL_PROVIDER === "noop") {
+      context.addIssue({
+        code: "custom",
+        path: ["EMAIL_PROVIDER"],
+        message: "A real email provider is required in staging and production"
+      });
+    }
+    if (value.EMAIL_PROVIDER === "resend" && !value.RESEND_API_KEY) {
+      context.addIssue({
+        code: "custom",
+        path: ["RESEND_API_KEY"],
+        message: "RESEND_API_KEY is required when EMAIL_PROVIDER is resend"
+      });
     }
   })
   .transform((value) => ({

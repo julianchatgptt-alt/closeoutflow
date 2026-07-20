@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { auditActions, type AuditClient, writeAuditEvent } from "../index";
+import { assertSafeAuditMetadata, auditActions, type AuditClient, writeAuditEvent } from "../index";
 
 describe("audit writer", () => {
   it("writes through the service-role-only RPC rather than exposing the audit schema", async () => {
@@ -22,5 +22,20 @@ describe("audit writer", () => {
         p_request_id: "request-1"
       })
     );
+  });
+});
+
+describe("identity audit metadata", () => {
+  it("contains the complete Phase 4 action catalog without free-form values", () => {
+    expect(Object.values(auditActions)).toContain("auth.mfa_enrolled");
+    expect(Object.values(auditActions)).toContain("ownership_transfer.completed");
+    expect(Object.values(auditActions)).toContain("platform.org_suspended");
+  });
+
+  it("rejects sensitive keys recursively", () => {
+    expect(() => assertSafeAuditMetadata({ safe: { nested: { recovery_code: "never" } } })).toThrow(
+      "Unsafe audit metadata key"
+    );
+    expect(() => assertSafeAuditMetadata({ role: "viewer", method: "password" })).not.toThrow();
   });
 });

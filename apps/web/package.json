@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "@closeoutflow/audit": "workspace:*",
+    "@closeoutflow/auth": "workspace:*",
+    "@closeoutflow/authz": "workspace:*",
     "@closeoutflow/db": "workspace:*",
+    "@closeoutflow/email": "workspace:*",
     "@closeoutflow/env": "workspace:*",
     "@closeoutflow/observability": "workspace:*",
     "@closeoutflow/ui": "workspace:*",

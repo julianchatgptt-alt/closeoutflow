@@ -24,8 +24,8 @@ describe("nonce-based content security policy", () => {
     expect(csp).toContain("upgrade-insecure-requests");
   });
 
-  it("forwards the nonce and CSP into the rendering request and response", () => {
-    const response = proxy(new NextRequest("http://localhost/"));
+  it("forwards the nonce and CSP into the rendering request and response", async () => {
+    const response = await proxy(new NextRequest("http://localhost/"));
     const csp = response.headers.get("content-security-policy");
     const forwardedCsp = response.headers.get("x-middleware-request-content-security-policy");
     const forwardedNonce = response.headers.get("x-middleware-request-x-nonce");
