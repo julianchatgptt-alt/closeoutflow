@@ -8,8 +8,17 @@ import { AppHeader } from "./app-header";
 import { CommandPalette } from "./command-palette";
 import { ProjectSubnav } from "./project-subnav";
 import { Sidebar } from "./sidebar";
+import type { OrganizationContext } from "../../lib/organization-context";
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  userName,
+  organizationContext
+}: {
+  children: React.ReactNode;
+  userName: string;
+  organizationContext: OrganizationContext;
+}) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -72,7 +81,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         Skip to main content
       </a>
       <Sidebar collapsed={collapsed} onToggle={toggleSidebar} />
-      <AppHeader onOpenPalette={openPalette} />
+      <AppHeader
+        onOpenPalette={openPalette}
+        userName={userName}
+        organizationContext={organizationContext}
+      />
       <ProjectSubnav />
       <main
         id="main"

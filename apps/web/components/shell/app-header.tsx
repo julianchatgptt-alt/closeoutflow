@@ -6,11 +6,22 @@ import { usePathname } from "next/navigation";
 import { Button, DropdownMenu, IconButton, Sheet } from "@closeoutflow/ui";
 
 import { useTheme } from "../theme/theme-provider";
+import { signOutAction } from "../../actions/auth";
+import { selectOrganizationAction } from "../../actions/organizations";
+import type { OrganizationContext } from "../../lib/organization-context";
 import { Brand } from "./brand";
 import { Breadcrumbs } from "./breadcrumbs";
 import { PrimaryNavigation } from "./primary-navigation";
 
-export function AppHeader({ onOpenPalette }: { onOpenPalette: (trigger: HTMLElement) => void }) {
+export function AppHeader({
+  onOpenPalette,
+  userName,
+  organizationContext
+}: {
+  onOpenPalette: (trigger: HTMLElement) => void;
+  userName: string;
+  organizationContext: OrganizationContext;
+}) {
   const pathname = usePathname();
   const { density, setDensity, theme, setTheme } = useTheme();
   return (
@@ -35,11 +46,13 @@ export function AppHeader({ onOpenPalette }: { onOpenPalette: (trigger: HTMLElem
             variant="ghost"
             size="sm"
             className="min-w-0 max-w-[10.5rem] justify-start px-2 sm:max-w-52"
-            aria-label="Switch organization: Sample Construction Co."
-            title="Sample Construction Co."
+            aria-label={`Switch organization: ${organizationContext.active?.displayName ?? "None"}`}
+            title={organizationContext.active?.displayName}
           >
             <Building2 aria-hidden="true" className="h-4 w-4 shrink-0 text-muted-foreground" />
-            <span className="truncate">Sample Construction Co.</span>
+            <span className="truncate">
+              {organizationContext.active?.displayName ?? "Select organization"}
+            </span>
             <ChevronDown
               aria-hidden="true"
               className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
@@ -47,8 +60,14 @@ export function AppHeader({ onOpenPalette }: { onOpenPalette: (trigger: HTMLElem
           </Button>
         }
         items={[
-          { label: "Sample Construction Co." },
-          { label: "Create organization — Phase 4", disabled: true }
+          ...organizationContext.organizations.map((organization) => ({
+            label: `${organization.id === organizationContext.active?.id ? "✓ " : ""}${organization.displayName}`,
+            onSelect: () => void selectOrganizationAction(organization.id)
+          })),
+          {
+            label: "Create organization",
+            onSelect: () => void (window.location.href = "/onboarding")
+          }
         ]}
       />
       <Breadcrumbs />
@@ -97,7 +116,7 @@ export function AppHeader({ onOpenPalette }: { onOpenPalette: (trigger: HTMLElem
           </IconButton>
         }
         items={[
-          { label: "Jordan Lee — Preview", disabled: true },
+          { label: userName, disabled: true },
           {
             label: `${theme === "system" ? "✓ " : ""}Use system theme`,
             onSelect: () => setTheme("system")
@@ -114,7 +133,7 @@ export function AppHeader({ onOpenPalette }: { onOpenPalette: (trigger: HTMLElem
             label: `Density: ${density}`,
             onSelect: () => setDensity(density === "compact" ? "comfortable" : "compact")
           },
-          { label: "Sign out — Phase 4", disabled: true }
+          { label: "Sign out", onSelect: () => void signOutAction() }
         ]}
       />
     </header>

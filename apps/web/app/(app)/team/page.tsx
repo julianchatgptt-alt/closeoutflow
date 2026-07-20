@@ -1,5 +1,5 @@
-import { ListPage } from "../../../components/pages/phase-3-pages";
-export const metadata = { title: "Team" };
+import { redirect } from "next/navigation";
+
 export default function Page() {
-  return <ListPage kind="team" />;
+  redirect("/settings/team");
 }

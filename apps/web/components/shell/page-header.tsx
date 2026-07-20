@@ -14,7 +14,7 @@ export function PageHeader({
   description?: string;
   meta?: ReactNode;
   actions?: ReactNode;
-  previewPhase: number;
+  previewPhase?: number;
   previewMessage?: string;
 }) {
   return (
@@ -23,10 +23,12 @@ export function PageHeader({
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-page-title truncate">{title}</h1>
           {meta}
-          <PreviewPill
-            phase={previewPhase}
-            {...(previewMessage ? { message: previewMessage } : {})}
-          />
+          {previewPhase ? (
+            <PreviewPill
+              phase={previewPhase}
+              {...(previewMessage ? { message: previewMessage } : {})}
+            />
+          ) : null}
         </div>
         {description ? (
           <p className="mt-1 max-w-3xl text-[13px] text-muted-foreground">{description}</p>

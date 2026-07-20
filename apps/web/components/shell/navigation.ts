@@ -12,8 +12,8 @@ export const globalNavigation = [
   { href: "/projects", label: "Projects", icon: FolderKanban },
   { href: "/companies", label: "Companies", icon: Building2 },
   { href: "/reports", label: "Reports", icon: BarChart3, disabled: true, phase: 11 },
-  { href: "/team", label: "Team", icon: UsersRound },
-  { href: "/settings/general", label: "Settings", icon: Settings }
+  { href: "/settings/team", label: "Team", icon: UsersRound },
+  { href: "/settings/organization", label: "Settings", icon: Settings }
 ] as const;
 
 export const projectNavigation = [
@@ -33,8 +33,9 @@ export const projectNavigation = [
 ] as const;
 
 export const settingsNavigation = [
-  { href: "/settings/general", label: "General", phase: 4 },
-  { href: "/settings/members", label: "Members", phase: 4 },
+  { href: "/settings/organization", label: "Organization", phase: 4 },
+  { href: "/settings/team", label: "Team", phase: 4 },
+  { href: "/settings/roles", label: "Roles", phase: 4 },
   { href: "/settings/templates", label: "Requirement Templates", phase: 6 },
   { href: "/settings/trades", label: "Trades & Divisions", phase: 6, disabled: true },
   { href: "/settings/billing", label: "Billing", phase: 16, disabled: true },
