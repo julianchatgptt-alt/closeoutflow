@@ -14,7 +14,7 @@ export default defineConfig({
   webServer: {
     command: "pnpm --filter @closeoutflow/web dev",
     url: "http://127.0.0.1:3000/api/health",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env.CI && process.env.PLAYWRIGHT_MANAGED_HARNESS !== "1",
     timeout: 120000
   },
   projects: [

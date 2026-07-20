@@ -53,6 +53,9 @@ const forbiddenBusinessTables = [
   "notifications",
   "billing"
 ];
+// Phase 5 must explicitly extend this list and the approved-table allowlist when
+// its product schema is authorized. Until then, every known business table is
+// prohibited and the guard self-tests both schema-qualified and quoted forms.
 for (const table of forbiddenBusinessTables) {
   if (containsTableCreation(combined, table)) {
     errors.push("Forbidden business table found before Phase 5: " + table + ".");
@@ -67,7 +70,13 @@ for (const table of approvedPhase4Tables) {
 
 for (const [sql, table] of [
   ['create table if not exists "public"."projects" (id uuid);', "projects"],
-  ['create unlogged table "requirements" (id uuid);', "requirements"]
+  ['create unlogged table "requirements" (id uuid);', "requirements"],
+  ["create table submissions(id uuid);", "submissions"],
+  ['create table public."documents" (id uuid);', "documents"],
+  ["create table if not exists reviews (id uuid);", "reviews"],
+  ["create unlogged table public.packages(id uuid);", "packages"],
+  ["create table notifications (id uuid);", "notifications"],
+  ["create table public.billing(id uuid);", "billing"]
 ]) {
   if (!containsTableCreation(sql, table)) {
     errors.push("Migration business-table guard failed its self-test for " + table + ".");

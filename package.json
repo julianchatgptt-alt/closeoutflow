@@ -23,10 +23,12 @@
     "lint": "eslint . --max-warnings=0 && node scripts/check-boundaries.mjs",
     "prepare": "husky",
     "test": "vitest run",
-    "test:a11y": "playwright test --grep @a11y",
+    "test:a11y": "node scripts/run-playwright.mjs --grep @a11y",
     "test:db": "supabase test db",
-    "test:e2e": "playwright test",
+    "test:e2e": "node scripts/run-playwright.mjs",
     "test:server-only": "node scripts/verify-server-only.mjs",
+    "test:production-probe": "node scripts/probe-production-runtime.mjs",
+    "test:live-security": "node scripts/probe-live-database-security.mjs",
     "typecheck": "turbo run typecheck"
   },
   "lint-staged": {

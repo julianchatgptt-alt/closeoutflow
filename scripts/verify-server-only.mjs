@@ -12,6 +12,16 @@ if (!pnpmCli) {
   process.exit(1);
 }
 
+function removeProbePath(target) {
+  rmSync(target, {
+    recursive: true,
+    force: true,
+    maxRetries: 10,
+    retryDelay: 150
+  });
+}
+
+removeProbePath(nextBuildDirectory);
 mkdirSync(fixtureDirectory, { recursive: true });
 function writeProbe(importLine, expression) {
   writeFileSync(
@@ -65,6 +75,12 @@ try {
     }
   }
 } finally {
-  rmSync(fixtureDirectory, { recursive: true, force: true });
-  rmSync(nextBuildDirectory, { recursive: true, force: true });
+  for (const target of [fixtureDirectory, nextBuildDirectory]) {
+    try {
+      removeProbePath(target);
+    } catch (error) {
+      console.error(`Unable to clean server-only probe path ${target}:`, error);
+      process.exitCode = 1;
+    }
+  }
 }
