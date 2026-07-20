@@ -1,6 +1,7 @@
 import {
   BarChart3,
   Building2,
+  ContactRound,
   FolderKanban,
   LayoutDashboard,
   Settings,
@@ -11,6 +12,7 @@ export const globalNavigation = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/projects", label: "Projects", icon: FolderKanban },
   { href: "/companies", label: "Companies", icon: Building2 },
+  { href: "/contacts", label: "Contacts", icon: ContactRound },
   { href: "/reports", label: "Reports", icon: BarChart3, disabled: true, phase: 11 },
   { href: "/settings/team", label: "Team", icon: UsersRound },
   { href: "/settings/organization", label: "Settings", icon: Settings }
@@ -18,6 +20,11 @@ export const globalNavigation = [
 
 export const projectNavigation = [
   { segment: "", label: "Overview", phase: 5 },
+  { segment: "team", label: "Team", phase: 5 },
+  { segment: "companies", label: "Companies", phase: 5 },
+  { segment: "contacts", label: "Contacts", phase: 5 },
+  { segment: "activity", label: "Activity", phase: 5 },
+  { segment: "settings", label: "Settings", phase: 5 },
   { segment: "requirements", label: "Requirements", phase: 6 },
   { segment: "documents", label: "Documents", phase: 8 },
   { segment: "reviews", label: "Reviews", phase: 9 },
@@ -27,9 +34,7 @@ export const projectNavigation = [
   { segment: "training", label: "Training", phase: 12, previewOnly: true },
   { segment: "lien-waivers", label: "Lien Waivers", phase: 12, previewOnly: true },
   { segment: "drawings", label: "Drawings", phase: 12, previewOnly: true },
-  { segment: "package", label: "Package", phase: 13, previewOnly: true },
-  { segment: "contacts", label: "Contacts", phase: 5, previewOnly: true },
-  { segment: "activity", label: "Activity", phase: 10, previewOnly: true }
+  { segment: "package", label: "Package", phase: 13, previewOnly: true }
 ] as const;
 
 export const settingsNavigation = [

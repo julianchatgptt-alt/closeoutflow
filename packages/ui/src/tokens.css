@@ -189,6 +189,11 @@
   color-scheme: dark;
 }
 
+/* Primary actions retain AA text contrast regardless of the persisted theme resolving mid-hydration. */
+.cof-primary-contrast {
+  color: #fff !important;
+}
+
 [data-density="compact"] {
   --row-h: var(--row-h-compact);
   --control-h: var(--control-h-sm);

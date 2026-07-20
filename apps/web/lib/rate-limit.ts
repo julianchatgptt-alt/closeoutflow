@@ -33,7 +33,10 @@ export type LimitedOperation =
   | "membership-update"
   | "ownership-transfer"
   | "ownership-transfer-accept"
-  | "account-recovery";
+  | "account-recovery"
+  | "project-mutation"
+  | "directory-mutation"
+  | "project-assignment";
 
 const rules: Record<LimitedOperation, RateLimitRule> = {
   "sign-up": { limit: 5, windowSeconds: 900 },
@@ -56,7 +59,10 @@ const rules: Record<LimitedOperation, RateLimitRule> = {
   "membership-update": { limit: 30, windowSeconds: 3600 },
   "ownership-transfer": { limit: 5, windowSeconds: 3600 },
   "ownership-transfer-accept": { limit: 5, windowSeconds: 3600 },
-  "account-recovery": { limit: 5, windowSeconds: 900 }
+  "account-recovery": { limit: 5, windowSeconds: 900 },
+  "project-mutation": { limit: 60, windowSeconds: 900 },
+  "directory-mutation": { limit: 60, windowSeconds: 900 },
+  "project-assignment": { limit: 90, windowSeconds: 900 }
 };
 
 const localStore = new LocalRateLimitStore();
