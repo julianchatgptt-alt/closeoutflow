@@ -31,20 +31,37 @@ for (const name of names) {
   combined += "\n" + (await readFile(path.join(directory, name), "utf8")).toLowerCase();
 }
 
-const forbiddenBusinessTables = [
+const approvedPhase4Tables = new Set([
   "organizations",
+  "organization_memberships",
+  "organization_invitations",
+  "organization_ownership_transfers",
+  "platform_roles",
+  "user_profiles",
+  "user_preferences",
+  "user_security_events"
+]);
+
+const forbiddenBusinessTables = [
   "memberships",
   "projects",
   "requirements",
   "submissions",
   "documents",
   "reviews",
+  "packages",
   "notifications",
   "billing"
 ];
 for (const table of forbiddenBusinessTables) {
   if (containsTableCreation(combined, table)) {
-    errors.push("Business table found during Phase 2: " + table + ".");
+    errors.push("Forbidden business table found before Phase 5: " + table + ".");
+  }
+}
+
+for (const table of approvedPhase4Tables) {
+  if (!containsTableCreation(combined, table)) {
+    errors.push("Missing approved Phase 4 identity table: " + table + ".");
   }
 }
 
@@ -54,6 +71,13 @@ for (const [sql, table] of [
 ]) {
   if (!containsTableCreation(sql, table)) {
     errors.push("Migration business-table guard failed its self-test for " + table + ".");
+  }
+}
+
+for (const table of approvedPhase4Tables) {
+  const sql = `create table public.${table} (id uuid);`;
+  if (!containsTableCreation(sql, table)) {
+    errors.push("Phase 4 allowlist guard failed its self-test for " + table + ".");
   }
 }
 
@@ -74,4 +98,6 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log("Migration files are ordered, infrastructure-only, and include audit/RLS invariants.");
+console.log(
+  "Migration files are ordered, limited to infrastructure and approved Phase 4 identity tables, and include audit/RLS invariants."
+);
