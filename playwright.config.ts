@@ -18,10 +18,36 @@ export default defineConfig({
     timeout: 120000
   },
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "mobile-chrome", use: { ...devices["Pixel 7"] } },
-    { name: "mobile-safari", use: { ...devices["iPhone 15"] } },
-    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
-    { name: "webkit", use: { ...devices["Desktop Safari"] } }
+    { name: "setup", testMatch: /auth\.setup\.ts/ },
+    {
+      name: "chromium",
+      testIgnore: /auth\.setup\.ts/,
+      dependencies: ["setup"],
+      use: { ...devices["Desktop Chrome"], storageState: "playwright/.auth/owner.json" }
+    },
+    {
+      name: "mobile-chrome",
+      testIgnore: /auth\.setup\.ts/,
+      dependencies: ["setup"],
+      use: { ...devices["Pixel 7"], storageState: "playwright/.auth/owner.json" }
+    },
+    {
+      name: "mobile-safari",
+      testIgnore: /auth\.setup\.ts/,
+      dependencies: ["setup"],
+      use: { ...devices["iPhone 15"], storageState: "playwright/.auth/owner.json" }
+    },
+    {
+      name: "firefox",
+      testIgnore: /auth\.setup\.ts/,
+      dependencies: ["setup"],
+      use: { ...devices["Desktop Firefox"], storageState: "playwright/.auth/owner.json" }
+    },
+    {
+      name: "webkit",
+      testIgnore: /auth\.setup\.ts/,
+      dependencies: ["setup"],
+      use: { ...devices["Desktop Safari"], storageState: "playwright/.auth/owner.json" }
+    }
   ]
 });
