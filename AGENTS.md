@@ -5,7 +5,7 @@ Guardrails for **any coding agent** (Codex, Claude, others) working in this repo
 ## 0. Before you touch anything
 1. Read the Phase 1 product blueprint in [`/docs/product/`](docs/product/): `product-requirements.md`, `user-roles.md`, `workflows.md`, `statuses.md`, `feature-roadmap.md`, `glossary.md`.
 2. Read the Phase 2 architecture in [`/docs/architecture/`](docs/architecture/), starting with `architecture-overview.md` and the doc for your area.
-3. Follow the current phase plan. For the frontend foundation, that is [`phase-3-implementation-plan.md`](docs/design/phase-3-implementation-plan.md). **Do not start a later phase's feature work.**
+3. Follow the current phase plan. Phase 4B is implemented and recorded in [`phase-4-implementation-progress.md`](docs/auth/phase-4-implementation-progress.md); the next activity is the independent Phase 4C audit. **Do not start Phase 5 feature work.**
 
 ## 1. Non-negotiable rules
 - **Never weaken tenant isolation.** Every tenant table has `organization_id` and RLS (default deny). Do not add a query path that could cross organizations.
@@ -37,11 +37,11 @@ Requirement ≠ Submission ≠ Document ≠ Document Version ≠ Review ≠ Appr
 ## 5. Definition of done (foundation tasks)
 A task is done when: it meets its completion criteria in the plan, required checks pass, new behavior has tests, boundaries and security rules are intact, no secret is committed, docs are updated if a decision changed, and **no out-of-scope/business tables or features were added**.
 
-## 6. Current frontend design source
+## 6. Current implementation source
 
 - Phase 3 design direction and implementation specifications live in [`docs/design/`](docs/design/).
 - Phase 3E visual polish is closed out in [`docs/design/phase-3e-exit-review.md`](docs/design/phase-3e-exit-review.md); its implemented visual source remains [`docs/design/phase-3e-visual-direction.md`](docs/design/phase-3e-visual-direction.md).
-- The next implementation plan is [`docs/auth/phase-4-implementation-plan.md`](docs/auth/phase-4-implementation-plan.md). Do not start it unless Phase 4B is explicitly assigned.
-- Phase 3 is presentation-only: static labeled mock content is allowed, but authentication, business tables, business APIs, integrations, billing, AI processing, and external portals are later-phase work.
+- Phase 4 identity and tenancy specifications live in [`docs/auth/`](docs/auth/). Phase 4B implementation status is in [`docs/auth/phase-4-implementation-progress.md`](docs/auth/phase-4-implementation-progress.md) and its exit evidence is in [`docs/auth/phase-4-exit-review.md`](docs/auth/phase-4-exit-review.md).
+- Phase 4C is audit-only. Do not begin Phase 5 business tables, business APIs, integrations, billing, AI processing, or external portals until the audit is accepted and the founder explicitly assigns the next phase.
 
 > If you can only remember one thing: **isolation, RLS, private files, version integrity, human-only approvals, one authz source, append-only audit/migrations — never compromised to save effort.**
