@@ -12,6 +12,7 @@ import {
   Section,
   StatusBadge
 } from "../../../../../components/projects/phase-5-ui";
+import { ConfirmAction } from "../../../../../components/projects/confirm-action";
 import { PageHeader } from "../../../../../components/shell/page-header";
 import { getActiveContext } from "../../../../../lib/active-context";
 
@@ -53,23 +54,24 @@ export default async function Page({
               </form>
             ) : null}
             {p.status !== "archived" ? (
-              <form
-                action={archiveProjectAction}
-                className="rounded-md border border-warning-border bg-warning-subtle p-4"
-              >
-                <input type="hidden" name="projectId" value={p.id} />
+              <div className="rounded-md border border-warning-border bg-warning-subtle p-4">
                 <p className="font-semibold">Archive project</p>
                 <p className="my-2 text-sm text-muted-foreground">
                   Archiving makes the project read-only and removes it from active lists. History is
                   preserved.
                 </p>
-                <Field label="Reason" htmlFor="archiveReason">
-                  <Input id="archiveReason" name="reason" />
-                </Field>
-                <Button className="mt-3" type="submit" variant="outline">
-                  Archive project
-                </Button>
-              </form>
+                <ConfirmAction
+                  action={archiveProjectAction}
+                  fields={{ projectId: p.id }}
+                  title="Archive this project?"
+                  description="The project becomes read-only and leaves active lists. Team, company, contact, and audit history remain intact."
+                  actionLabel="Archive project"
+                >
+                  <Field label="Reason" htmlFor="archiveReason">
+                    <Input id="archiveReason" name="reason" />
+                  </Field>
+                </ConfirmAction>
+              </div>
             ) : (
               <form action={restoreProjectAction} className="rounded-md bg-surface-sunken p-4">
                 <input type="hidden" name="projectId" value={p.id} />
@@ -81,23 +83,23 @@ export default async function Page({
               </form>
             )}
             {["draft", "active", "closeout_in_progress", "owner_review"].includes(p.status) ? (
-              <form
-                action={changeProjectStatusAction}
-                className="rounded-md border border-danger-border bg-danger-subtle p-4"
-              >
-                <input type="hidden" name="projectId" value={p.id} />
-                <input type="hidden" name="status" value="cancelled" />
+              <div className="rounded-md border border-danger-border bg-danger-subtle p-4">
                 <p className="font-semibold">Cancel project</p>
                 <p className="my-2 text-sm text-muted-foreground">
                   Cancellation preserves the project record and audit history.
                 </p>
-                <Field label="Cancellation reason" htmlFor="cancelReason" required>
-                  <Input id="cancelReason" name="reason" required minLength={3} />
-                </Field>
-                <Button className="mt-3" type="submit" variant="destructive">
-                  Cancel project
-                </Button>
-              </form>
+                <ConfirmAction
+                  action={changeProjectStatusAction}
+                  fields={{ projectId: p.id, status: "cancelled" }}
+                  title="Cancel this project?"
+                  description="Cancellation preserves the project and immutable history, but the status transition cannot be undone from this Phase 5 screen."
+                  actionLabel="Cancel project"
+                >
+                  <Field label="Cancellation reason" htmlFor="cancelReason" required>
+                    <Input id="cancelReason" name="reason" required minLength={3} />
+                  </Field>
+                </ConfirmAction>
+              </div>
             ) : null}
           </div>
         </Section>

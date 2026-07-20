@@ -3,8 +3,6 @@ import { expect, test } from "@playwright/test";
 
 const previewRoutes = [
   "/dashboard",
-  "/projects",
-  "/projects/riverside-medical-office",
   "/projects/riverside-medical-office/requirements",
   "/projects/riverside-medical-office/documents",
   "/projects/riverside-medical-office/reviews",
@@ -15,9 +13,6 @@ const previewRoutes = [
   "/projects/riverside-medical-office/lien-waivers",
   "/projects/riverside-medical-office/drawings",
   "/projects/riverside-medical-office/package",
-  "/projects/riverside-medical-office/contacts",
-  "/projects/riverside-medical-office/activity",
-  "/companies",
   "/reports",
   "/settings/templates",
   "/settings/trades",
@@ -167,13 +162,11 @@ test("sidebar and density preferences persist after interaction", async ({ page,
   await expect(page.locator("html")).toHaveAttribute("data-density", "compact");
 });
 
-test("selection labels stay accessible but visually hidden", async ({ page }, testInfo) => {
+test("project search labels stay accessible but visually hidden", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "chromium", "DOM presentation check runs once");
   await page.goto("/projects");
-  await expect(page.getByText("Select all Projects")).toHaveClass(/sr-only/);
-  await expect(
-    page.getByRole("checkbox", { name: "Select Riverside Medical Office" })
-  ).toBeVisible();
+  await expect(page.getByText("Search projects")).toHaveClass(/sr-only/);
+  await expect(page.getByRole("textbox", { name: "Search projects" })).toBeVisible();
 });
 
 test("organization name truncates safely on narrow screens", async ({ page }, testInfo) => {

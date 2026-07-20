@@ -24,6 +24,27 @@ export default async function Page({
         description="Create one reusable company record. Project roles are added from each project workspace."
       />
       <Notice error={query.error} />
+      <form
+        method="get"
+        className="mx-auto mb-5 flex max-w-3xl gap-3 rounded-lg bg-surface p-4 shadow-card"
+      >
+        <label htmlFor="duplicate-company" className="sr-only">
+          Check for an existing company
+        </label>
+        <input
+          id="duplicate-company"
+          name="name"
+          defaultValue={query.name}
+          placeholder="Check for an existing company"
+          className="h-10 min-w-0 flex-1 rounded-md border border-input bg-surface px-3 text-sm"
+        />
+        <button
+          className="min-h-10 rounded-md border border-border-strong px-4 text-sm font-medium"
+          type="submit"
+        >
+          Check duplicates
+        </button>
+      </form>
       {duplicates?.length ? (
         <div
           role="status"

@@ -161,21 +161,25 @@ export default async function Page({
           </table>
           <div className="divide-y md:hidden">
             {projects.map((p) => (
-              <Link key={p.id} href={`/projects/${p.id}`} className="block p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-semibold">{p.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {p.project_number || "No project number"}
-                    </p>
+              <article key={p.id}>
+                <Link href={`/projects/${p.id}`} className="block p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold">{p.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {p.project_number || "No project number"}
+                      </p>
+                    </div>
+                    <StatusBadge status={p.status} />
                   </div>
-                  <StatusBadge status={p.status} />
-                </div>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {p.team_count} teammates ·{" "}
-                  {p.closeout_target_date ? `Target ${p.closeout_target_date}` : "No closeout date"}
-                </p>
-              </Link>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    {p.team_count} teammates ·{" "}
+                    {p.closeout_target_date
+                      ? `Target ${p.closeout_target_date}`
+                      : "No closeout date"}
+                  </p>
+                </Link>
+              </article>
             ))}
           </div>
         </div>

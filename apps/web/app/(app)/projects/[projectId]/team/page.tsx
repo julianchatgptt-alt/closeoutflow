@@ -31,15 +31,9 @@ export default async function Page({
 }) {
   const [{ projectId }, query] = await Promise.all([params, searchParams]);
   const { client, organizationId } = await getActiveContext();
-  const [{ data: project }, { data: assigned }, { data: members }] = await Promise.all([
+  const [{ data: project }, { data: overview }, { data: members }] = await Promise.all([
     client.from("projects").select("id,name,status").eq("id", projectId).maybeSingle(),
-    client
-      .from("project_members")
-      .select(
-        "id,membership_id,project_role,status,organization_memberships!inner(user_profiles!inner(display_name),role,status)"
-      )
-      .eq("project_id", projectId)
-      .eq("status", "active"),
+    client.rpc("get_project_overview", { target_project_id: projectId }),
     client
       .from("organization_memberships")
       .select("id,role,user_profiles!inner(display_name)")
@@ -47,6 +41,15 @@ export default async function Page({
       .eq("status", "active")
   ]);
   if (!project) notFound();
+  const assigned =
+    overview && !Array.isArray(overview) && typeof overview === "object" && "team" in overview
+      ? (overview.team as Array<{
+          id: string;
+          membership_id: string;
+          project_role: string;
+          display_name: string;
+        }>)
+      : [];
   return (
     <>
       <PageHeader
@@ -60,17 +63,11 @@ export default async function Page({
           {assigned?.length ? (
             <div className="divide-y">
               {assigned.map((a) => {
-                const membership = Array.isArray(a.organization_memberships)
-                  ? a.organization_memberships[0]
-                  : a.organization_memberships;
-                const profile =
-                  membership && Array.isArray(membership.user_profiles)
-                    ? membership.user_profiles[0]
-                    : membership?.user_profiles;
+                const membership = members?.find((member) => member.id === a.membership_id);
                 return (
                   <div key={a.id} className="grid gap-3 py-4 sm:grid-cols-[1fr_15rem_auto]">
                     <div>
-                      <p className="font-medium">{profile?.display_name ?? "Teammate"}</p>
+                      <p className="font-medium">{a.display_name}</p>
                       <p className="text-xs text-muted-foreground">
                         Organization role: {membership?.role ? humanize(membership.role) : "Member"}
                       </p>
@@ -126,7 +123,7 @@ export default async function Page({
                     : m.user_profiles;
                   return (
                     <option key={m.id} value={m.id}>
-                      {profile?.display_name ?? "Member"} · {humanize(m.role)}
+                      {profile?.display_name ?? "Member"} / {humanize(m.role)}
                     </option>
                   );
                 })}

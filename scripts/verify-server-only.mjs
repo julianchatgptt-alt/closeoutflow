@@ -4,7 +4,7 @@ import path from "node:path";
 
 const fixtureDirectory = path.join(process.cwd(), "apps", "web", "app", "server-only-build-probe");
 const fixtureFile = path.join(fixtureDirectory, "page.tsx");
-const nextBuildDirectory = path.join(process.cwd(), "apps", "web", ".next");
+const probeBuildDirectory = path.join(process.cwd(), "apps", "web", ".next-server-only-probe");
 const pnpmCli = process.env.npm_execpath;
 
 if (!pnpmCli) {
@@ -21,7 +21,7 @@ function removeProbePath(target) {
   });
 }
 
-removeProbePath(nextBuildDirectory);
+removeProbePath(probeBuildDirectory);
 mkdirSync(fixtureDirectory, { recursive: true });
 function writeProbe(importLine, expression) {
   writeFileSync(
@@ -56,7 +56,8 @@ try {
       process.execPath,
       [pnpmCli, "--filter", "@closeoutflow/web", "build"],
       {
-        encoding: "utf8"
+        encoding: "utf8",
+        env: { ...process.env, NEXT_DIST_DIR: ".next-server-only-probe" }
       }
     );
     const output = (result.stdout || "") + (result.stderr || "");
@@ -75,7 +76,7 @@ try {
     }
   }
 } finally {
-  for (const target of [fixtureDirectory, nextBuildDirectory]) {
+  for (const target of [fixtureDirectory, probeBuildDirectory]) {
     try {
       removeProbePath(target);
     } catch (error) {

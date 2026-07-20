@@ -1,11 +1,14 @@
 import { spawnSync } from "node:child_process";
-import { rmSync } from "node:fs";
+import { readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
 const supabaseCli = path.join(root, "node_modules", "supabase", "dist", "supabase.js");
 const pnpmCli = process.env.npm_execpath;
 const authState = path.join(root, "playwright", ".auth");
+const playwrightBuildDirectory = path.join(root, "apps", "web", ".next-playwright");
+const nextEnvironmentFile = path.join(root, "apps", "web", "next-env.d.ts");
+const originalNextEnvironment = readFileSync(nextEnvironmentFile, "utf8");
 
 if (!pnpmCli) {
   console.error("Run the browser harness through pnpm.");
@@ -34,7 +37,17 @@ function cleanAuthState() {
   });
 }
 
+function cleanPlaywrightBuild() {
+  rmSync(playwrightBuildDirectory, {
+    recursive: true,
+    force: true,
+    maxRetries: 10,
+    retryDelay: 100
+  });
+}
+
 cleanAuthState();
+cleanPlaywrightBuild();
 run(process.execPath, [supabaseCli, "start"]);
 run(process.execPath, [supabaseCli, "db", "reset", "--local"], { stdio: "inherit" });
 
@@ -42,7 +55,8 @@ const status = JSON.parse(run(process.execPath, [supabaseCli, "status", "-o", "j
 const environment = {
   ...process.env,
   APP_ENV: "test",
-  BUILD_VERSION: "phase-4d-browser-harness",
+  BUILD_VERSION: "phase-5b-browser-harness",
+  NEXT_DIST_DIR: ".next-playwright",
   APP_URL: "http://127.0.0.1:3000",
   NEXT_PUBLIC_SUPABASE_URL: status.API_URL,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: status.ANON_KEY,
@@ -64,4 +78,6 @@ try {
   process.exitCode = result.status ?? 1;
 } finally {
   cleanAuthState();
+  cleanPlaywrightBuild();
+  writeFileSync(nextEnvironmentFile, originalNextEnvironment);
 }
