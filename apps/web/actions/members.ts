@@ -11,6 +11,7 @@ import { createRequestAuthClient, getRequestUser } from "../lib/server-auth";
 import { authorizeOrganizationAction } from "../lib/authorization";
 import { rateLimitRequest } from "../lib/rate-limit";
 import { sendIdentityEmail } from "../lib/email-delivery";
+import { canAcceptOwnershipTransfer } from "../lib/ownership-transfer";
 
 const membershipIdSchema = z.uuid();
 const roleSchema = z.enum([
@@ -120,6 +121,9 @@ async function runMembershipAction(
 ): Promise<never> {
   const membershipId = membershipIdSchema.safeParse(formData.get("membershipId"));
   if (!membershipId.success) teamError("Invalid membership");
+  if (!(await rateLimitRequest("membership-update", membershipId.data))) {
+    teamError("Too many attempts. Try again later.");
+  }
   const { client, user, organizationId } = await getActiveClient();
   const { data: target } = await client
     .from("organization_memberships")
@@ -168,12 +172,13 @@ async function runInvitationAction(
     teamError("Too many attempts. Try again later.");
   }
   const { client, user, organizationId } = await getActiveClient();
-  const { data: invitationContext } = await client
-    .from("organization_invitations")
-    .select("organization_id")
-    .eq("id", invitationId.data)
-    .maybeSingle();
-  if (invitationContext?.organization_id !== organizationId) {
+  const { data: organizationInvitations } = await client.rpc("get_organization_invitations", {
+    target_organization_id: organizationId
+  });
+  const invitation = organizationInvitations?.find(
+    (candidate) => candidate.id === invitationId.data
+  );
+  if (!invitation) {
     teamError("Invalid organization context");
   }
   const authorization = await authorizeOrganizationAction({
@@ -184,16 +189,6 @@ async function runInvitationAction(
     resource: { type: "organization_invitation", id: invitationId.data }
   });
   if (!authorization.allowed) teamError("Invitation permission denied");
-  const invitation =
-    functionName === "resend_invitation"
-      ? (
-          await client
-            .from("organization_invitations")
-            .select("email,organization_id")
-            .eq("id", invitationId.data)
-            .single()
-        ).data
-      : null;
   const result =
     functionName === "resend_invitation"
       ? await client.rpc("resend_invitation", { target_invitation_id: invitationId.data })
@@ -205,7 +200,7 @@ async function runInvitationAction(
     const { data: organization } = await client
       .from("organizations")
       .select("display_name")
-      .eq("id", invitation.organization_id)
+      .eq("id", organizationId)
       .single();
     const delivery = await sendIdentityEmail({
       kind: "invitation_reminder",
@@ -271,13 +266,23 @@ export async function initiateOwnershipTransferAction(formData: FormData): Promi
 export async function completeOwnershipTransferAction(formData: FormData): Promise<void> {
   const transferId = z.uuid().safeParse(formData.get("transferId"));
   if (!transferId.success) teamError("Invalid ownership transfer");
+  if (!(await rateLimitRequest("ownership-transfer-accept", transferId.data))) {
+    teamError("Too many attempts. Try again later.");
+  }
   const { client, user, organizationId } = await getActiveClient();
-  const { data: transfer } = await client
-    .from("organization_ownership_transfers")
-    .select("organization_id")
-    .eq("id", transferId.data)
-    .maybeSingle();
-  if (transfer?.organization_id !== organizationId) teamError("Invalid organization context");
+  const [transferResult, claimsResult] = await Promise.all([
+    client
+      .from("organization_ownership_transfers")
+      .select("organization_id,to_user,status,expires_at")
+      .eq("id", transferId.data)
+      .maybeSingle(),
+    client.auth.getClaims()
+  ]);
+  const transfer = transferResult.data;
+  const claims = claimsResult.data?.claims;
+  if (!canAcceptOwnershipTransfer({ transfer, userId: user.id, organizationId, claims })) {
+    teamError("Invalid ownership transfer");
+  }
   const authorization = await authorizeOrganizationAction({
     client,
     userId: user.id,
@@ -285,7 +290,9 @@ export async function completeOwnershipTransferAction(formData: FormData): Promi
     permission: permissions.organizationView,
     resource: { type: "organization_ownership_transfer", id: transferId.data }
   });
-  if (!authorization.allowed) teamError("Ownership transfer requires recent AAL2 verification");
+  if (!authorization.allowed) {
+    teamError("Ownership transfer requires recent AAL2 verification");
+  }
   const { error } = await client.rpc("complete_ownership_transfer", {
     target_transfer_id: transferId.data
   });
@@ -296,6 +303,9 @@ export async function completeOwnershipTransferAction(formData: FormData): Promi
 export async function cancelOwnershipTransferAction(formData: FormData): Promise<void> {
   const transferId = z.uuid().safeParse(formData.get("transferId"));
   if (!transferId.success) teamError("Invalid ownership transfer");
+  if (!(await rateLimitRequest("ownership-transfer", transferId.data))) {
+    teamError("Too many attempts. Try again later.");
+  }
   const { client, user, organizationId } = await getActiveClient();
   const { data: transfer } = await client
     .from("organization_ownership_transfers")

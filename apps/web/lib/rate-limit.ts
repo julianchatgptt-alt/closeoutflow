@@ -1,6 +1,7 @@
 import "server-only";
 
 import {
+  allowRateLimitStoreFailure,
   enforceRateLimit,
   hashRateLimitIdentifier,
   LocalRateLimitStore,
@@ -16,14 +17,22 @@ export type LimitedOperation =
   | "sign-in"
   | "verification-resend"
   | "password-reset"
+  | "password-reset-complete"
   | "oauth-callback"
   | "invitation-create"
   | "invitation-resend"
   | "invitation-accept"
   | "mfa-attempt"
+  | "mfa-enrollment"
+  | "mfa-removal"
+  | "recovery-code"
+  | "session-revoke"
   | "organization-create"
+  | "organization-sensitive"
   | "role-change"
+  | "membership-update"
   | "ownership-transfer"
+  | "ownership-transfer-accept"
   | "account-recovery";
 
 const rules: Record<LimitedOperation, RateLimitRule> = {
@@ -31,14 +40,22 @@ const rules: Record<LimitedOperation, RateLimitRule> = {
   "sign-in": { limit: 10, windowSeconds: 900 },
   "verification-resend": { limit: 3, windowSeconds: 900 },
   "password-reset": { limit: 3, windowSeconds: 900 },
+  "password-reset-complete": { limit: 5, windowSeconds: 900 },
   "oauth-callback": { limit: 20, windowSeconds: 300 },
   "invitation-create": { limit: 20, windowSeconds: 3600 },
   "invitation-resend": { limit: 10, windowSeconds: 3600 },
   "invitation-accept": { limit: 10, windowSeconds: 900 },
   "mfa-attempt": { limit: 10, windowSeconds: 900 },
+  "mfa-enrollment": { limit: 5, windowSeconds: 900 },
+  "mfa-removal": { limit: 5, windowSeconds: 900 },
+  "recovery-code": { limit: 5, windowSeconds: 900 },
+  "session-revoke": { limit: 10, windowSeconds: 900 },
   "organization-create": { limit: 5, windowSeconds: 3600 },
+  "organization-sensitive": { limit: 5, windowSeconds: 3600 },
   "role-change": { limit: 30, windowSeconds: 3600 },
+  "membership-update": { limit: 30, windowSeconds: 3600 },
   "ownership-transfer": { limit: 5, windowSeconds: 3600 },
+  "ownership-transfer-accept": { limit: 5, windowSeconds: 3600 },
   "account-recovery": { limit: 5, windowSeconds: 900 }
 };
 
@@ -65,6 +82,6 @@ export async function rateLimitRequest(
     return (await enforceRateLimit(getStore(), `cof:rl:${operation}:${key}`, rules[operation]))
       .allowed;
   } catch {
-    return serverEnv.APP_ENV === "local" || serverEnv.APP_ENV === "test";
+    return allowRateLimitStoreFailure(serverEnv.APP_ENV);
   }
 }

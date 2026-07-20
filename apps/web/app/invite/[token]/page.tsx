@@ -37,7 +37,6 @@ export default async function InvitationPage({
     );
   }
 
-  const emailMatches = user?.email?.toLowerCase() === invitation.invitation_email.toLowerCase();
   return (
     <AuthCard
       title={`Join ${invitation.organization_name}`}
@@ -48,7 +47,7 @@ export default async function InvitationPage({
       </div>
       <dl className="mb-6 space-y-3 rounded-md bg-muted p-4 text-sm">
         <div className="flex justify-between gap-3">
-          <dt className="text-muted-foreground">Email</dt>
+          <dt className="text-muted-foreground">Sent to</dt>
           <dd className="truncate font-medium">{invitation.invitation_email}</dd>
         </div>
         <div className="flex justify-between gap-3">
@@ -68,21 +67,17 @@ export default async function InvitationPage({
           </Link>
           <Link
             className="text-center text-sm text-primary hover:underline"
-            href={`/sign-up?email=${encodeURIComponent(invitation.invitation_email)}&next=${encodeURIComponent(`/invite/${token}`)}`}
+            href={`/sign-up?next=${encodeURIComponent(`/invite/${token}`)}`}
           >
             Create an account
           </Link>
         </div>
-      ) : emailMatches ? (
+      ) : (
         <form action={acceptInvitationAction.bind(null, token)}>
           <Button type="submit" className="w-full">
             Accept invitation
           </Button>
         </form>
-      ) : (
-        <AuthMessage
-          error={`This invitation is for ${invitation.invitation_email}. Sign out to accept it with that account.`}
-        />
       )}
     </AuthCard>
   );

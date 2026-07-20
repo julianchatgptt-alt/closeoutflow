@@ -78,3 +78,7 @@ export async function enforceRateLimit(
     retryAfterSeconds: result.ttlSeconds
   };
 }
+
+export function allowRateLimitStoreFailure(appEnvironment: string): boolean {
+  return appEnvironment === "local" || appEnvironment === "test";
+}

@@ -533,6 +533,17 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      get_organization_invitations: {
+        Args: { target_organization_id: string }
+        Returns: {
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          role: string
+          status: string
+        }[]
+      }
       get_organization_members: {
         Args: { target_organization_id: string }
         Returns: {

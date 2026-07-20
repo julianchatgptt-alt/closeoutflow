@@ -1,6 +1,8 @@
 "use server";
 
 import { createRecoveryCodes, findMatchingRecoveryHash } from "@closeoutflow/auth/recovery-codes";
+import { isFreshAuthentication } from "@closeoutflow/auth";
+import { serverEnv } from "@closeoutflow/env/server";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -36,7 +38,7 @@ async function requireSecurityClient() {
 export async function startMfaEnrollmentAction(_previous: MfaActionState): Promise<MfaActionState> {
   void _previous;
   const { client, user } = await requireSecurityClient();
-  if (!(await rateLimitRequest("mfa-attempt", user.id))) {
+  if (!(await rateLimitRequest("mfa-enrollment", user.id))) {
     return { error: "Too many attempts. Try again later." };
   }
   const { data: factors } = await client.auth.mfa.listFactors();
@@ -63,7 +65,7 @@ export async function verifyMfaEnrollmentAction(
   const factorId = z.uuid().safeParse(formData.get("factorId"));
   const code = codeSchema.safeParse(formData.get("code"));
   const { client, user } = await requireSecurityClient();
-  if (!factorId.success || !code.success || !(await rateLimitRequest("mfa-attempt", user.id))) {
+  if (!factorId.success || !code.success || !(await rateLimitRequest("mfa-enrollment", user.id))) {
     return { error: "The verification code is invalid or rate limited." };
   }
   const { error } = await client.auth.mfa.challengeAndVerify({
@@ -72,7 +74,10 @@ export async function verifyMfaEnrollmentAction(
   });
   if (error) return { error: "The verification code is invalid or expired." };
 
-  const { codes: recoveryCodes, hashes } = createRecoveryCodes();
+  if (!serverEnv.RECOVERY_CODE_PEPPER) {
+    return { error: "Recovery-code protection is not configured." };
+  }
+  const { codes: recoveryCodes, hashes } = createRecoveryCodes(serverEnv.RECOVERY_CODE_PEPPER);
   const { error: hashError } = await client.rpc("replace_recovery_code_hashes", {
     target_hashes: hashes
   });
@@ -91,10 +96,16 @@ export async function verifyMfaEnrollmentAction(
 export async function removeMfaFactorAction(formData: FormData): Promise<void> {
   const factorId = z.uuid().safeParse(formData.get("factorId"));
   const { client, user } = await requireSecurityClient();
+  const claimsResult = await client.auth.getClaims();
+  const claims = claimsResult.data?.claims;
+  const authenticatedAt =
+    typeof claims?.auth_time === "number" ? new Date(claims.auth_time * 1000) : null;
   if (
     !factorId.success ||
-    !(await rateLimitRequest("mfa-attempt", user.id)) ||
-    (await getVerifiedAssuranceLevel(client)) !== "aal2"
+    !(await rateLimitRequest("mfa-removal", user.id)) ||
+    (await getVerifiedAssuranceLevel(client)) !== "aal2" ||
+    claims?.aal !== "aal2" ||
+    !isFreshAuthentication(authenticatedAt)
   ) {
     redirect("/account/security?error=Recent MFA verification is required");
   }
@@ -116,11 +127,7 @@ export async function useRecoveryCodeAction(
   const code = z.string().trim().min(10).max(32).safeParse(formData.get("recoveryCode"));
   const factorId = z.uuid().safeParse(formData.get("factorId"));
   const { client, user } = await requireSecurityClient();
-  if (
-    !code.success ||
-    !factorId.success ||
-    !(await rateLimitRequest("account-recovery", user.id))
-  ) {
+  if (!code.success || !factorId.success || !(await rateLimitRequest("recovery-code", user.id))) {
     return { error: "The recovery code is invalid or rate limited." };
   }
   const { data: profile } = await client
@@ -128,7 +135,14 @@ export async function useRecoveryCodeAction(
     .select("recovery_codes_hash")
     .eq("id", user.id)
     .single();
-  const match = findMatchingRecoveryHash(code.data, profile?.recovery_codes_hash ?? []);
+  if (!serverEnv.RECOVERY_CODE_PEPPER) {
+    return { error: "Recovery-code protection is not configured." };
+  }
+  const match = findMatchingRecoveryHash(
+    code.data,
+    profile?.recovery_codes_hash ?? [],
+    serverEnv.RECOVERY_CODE_PEPPER
+  );
   if (!match) return { error: "The recovery code is invalid or already used." };
   const { data: consumed } = await client.rpc("consume_recovery_code_hash", {
     target_hash: match
@@ -174,7 +188,10 @@ export async function changePasswordAction(formData: FormData): Promise<void> {
 }
 
 export async function revokeOtherSessionsAction(): Promise<void> {
-  const { client } = await requireSecurityClient();
+  const { client, user } = await requireSecurityClient();
+  if (!(await rateLimitRequest("session-revoke", user.id))) {
+    redirect("/account/sessions?error=Too many attempts. Try again later.");
+  }
   await client.auth.signOut({ scope: "others" });
   await client.rpc("record_identity_event", {
     target_action: "auth.session_revoked",

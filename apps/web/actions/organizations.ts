@@ -183,6 +183,9 @@ export async function updateOrganizationAction(formData: FormData): Promise<void
 
 export async function archiveOrganizationAction(): Promise<void> {
   const { client, user, organizationId } = await getValidatedActiveOrganization();
+  if (!(await rateLimitRequest("organization-sensitive", organizationId))) {
+    redirect("/settings/organization?error=Too many attempts. Try again later.");
+  }
   const authorization = await authorizeOrganizationAction({
     client,
     userId: user.id,
@@ -205,6 +208,9 @@ export async function requestOrganizationDeletionAction(formData: FormData): Pro
   if (!confirmation.success)
     redirect("/settings/organization?error=Enter the organization name exactly");
   const { client, user, organizationId } = await getValidatedActiveOrganization();
+  if (!(await rateLimitRequest("organization-sensitive", organizationId))) {
+    redirect("/settings/organization?error=Too many attempts. Try again later.");
+  }
   const authorization = await authorizeOrganizationAction({
     client,
     userId: user.id,

@@ -14,7 +14,8 @@ export const serverSecretKeys = [
   "INNGEST_EVENT_KEY",
   "INNGEST_SIGNING_KEY",
   "RESEND_API_KEY",
-  "UPSTASH_REDIS_REST_TOKEN"
+  "UPSTASH_REDIS_REST_TOKEN",
+  "RECOVERY_CODE_PEPPER"
 ] as const;
 
 const optionalString = z.preprocess(
@@ -51,7 +52,8 @@ export const serverEnvSchema = z
     NEXT_PUBLIC_POSTHOG_KEY: optionalString,
     NEXT_PUBLIC_POSTHOG_HOST: optionalUrl,
     UPSTASH_REDIS_REST_URL: optionalUrl,
-    UPSTASH_REDIS_REST_TOKEN: optionalString
+    UPSTASH_REDIS_REST_TOKEN: optionalString,
+    RECOVERY_CODE_PEPPER: optionalString
   })
   .superRefine((value, context) => {
     if (!["staging", "production"].includes(value.APP_ENV)) return;
@@ -91,6 +93,13 @@ export const serverEnvSchema = z
         message: "Upstash REST URL and token are required in staging and production"
       });
     }
+    if (!value.RECOVERY_CODE_PEPPER || value.RECOVERY_CODE_PEPPER.length < 32) {
+      context.addIssue({
+        code: "custom",
+        path: ["RECOVERY_CODE_PEPPER"],
+        message: "RECOVERY_CODE_PEPPER of at least 32 characters is required"
+      });
+    }
     if (value.EMAIL_PROVIDER === "noop") {
       context.addIssue({
         code: "custom",
@@ -108,7 +117,12 @@ export const serverEnvSchema = z
   })
   .transform((value) => ({
     ...value,
-    LOG_LEVEL: value.LOG_LEVEL ?? (["local", "test"].includes(value.APP_ENV) ? "debug" : "info")
+    LOG_LEVEL: value.LOG_LEVEL ?? (["local", "test"].includes(value.APP_ENV) ? "debug" : "info"),
+    RECOVERY_CODE_PEPPER:
+      value.RECOVERY_CODE_PEPPER ??
+      (["local", "test"].includes(value.APP_ENV)
+        ? "closeoutflow-local-recovery-pepper-not-for-production"
+        : undefined)
   }));
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

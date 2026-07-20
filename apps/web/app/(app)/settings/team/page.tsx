@@ -49,12 +49,9 @@ export default async function TeamSettingsPage({
     client.rpc("get_organization_members", {
       target_organization_id: context.active.id
     }),
-    client
-      .from("organization_invitations")
-      .select("id,email,role,status,expires_at,created_at")
-      .eq("organization_id", context.active.id)
-      .eq("status", "pending")
-      .order("created_at", { ascending: false }),
+    client.rpc("get_organization_invitations", {
+      target_organization_id: context.active.id
+    }),
     client
       .from("organization_ownership_transfers")
       .select("id,from_user,to_user,status,expires_at")

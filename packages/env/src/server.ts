@@ -27,7 +27,8 @@ export const serverEnv = createEnv({
     SENTRY_DSN: z.url().optional(),
     SENTRY_ENABLED: z.boolean(),
     UPSTASH_REDIS_REST_URL: z.url().optional(),
-    UPSTASH_REDIS_REST_TOKEN: z.string().optional()
+    UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+    RECOVERY_CODE_PEPPER: z.string().min(32).optional()
   },
   client: {
     NEXT_PUBLIC_SUPABASE_URL: z.url().optional(),
@@ -58,7 +59,8 @@ export const serverEnv = createEnv({
     NEXT_PUBLIC_POSTHOG_KEY: validated.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: validated.NEXT_PUBLIC_POSTHOG_HOST,
     UPSTASH_REDIS_REST_URL: validated.UPSTASH_REDIS_REST_URL,
-    UPSTASH_REDIS_REST_TOKEN: validated.UPSTASH_REDIS_REST_TOKEN
+    UPSTASH_REDIS_REST_TOKEN: validated.UPSTASH_REDIS_REST_TOKEN,
+    RECOVERY_CODE_PEPPER: validated.RECOVERY_CODE_PEPPER
   },
   skipValidation: false,
   emptyStringAsUndefined: true

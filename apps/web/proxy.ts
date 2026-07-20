@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 
 import { createMiddlewareAuthClient } from "@closeoutflow/auth/middleware";
 import { type NextRequest, NextResponse } from "next/server";
@@ -48,15 +48,20 @@ function isProtectedPath(pathname: string): boolean {
 
 export async function proxy(request: NextRequest) {
   const nonce = createCspNonce();
+  const requestId = randomUUID();
   const contentSecurityPolicy = createContentSecurityPolicy(nonce);
   const requestHeaders = new Headers(request.headers);
 
   // Next.js extracts the nonce from the request CSP and applies it to framework scripts.
   requestHeaders.set("content-security-policy", contentSecurityPolicy);
   requestHeaders.set("x-nonce", nonce);
+  // Always overwrite caller-controlled correlation headers at the application boundary.
+  requestHeaders.set("x-closeout-request-id", requestId);
+  requestHeaders.set("x-request-id", requestId);
 
   let response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set("content-security-policy", contentSecurityPolicy);
+  response.headers.set("x-request-id", requestId);
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -71,6 +76,7 @@ export async function proxy(request: NextRequest) {
         for (const cookie of updates) request.cookies.set(cookie.name, cookie.value);
         response = NextResponse.next({ request: { headers: requestHeaders } });
         response.headers.set("content-security-policy", contentSecurityPolicy);
+        response.headers.set("x-request-id", requestId);
         for (const cookie of updates) response.cookies.set(cookie);
       }
     }
@@ -85,6 +91,7 @@ export async function proxy(request: NextRequest) {
     signIn.searchParams.set("next", request.nextUrl.pathname);
     const redirectResponse = NextResponse.redirect(signIn);
     redirectResponse.headers.set("content-security-policy", contentSecurityPolicy);
+    redirectResponse.headers.set("x-request-id", requestId);
     return redirectResponse;
   }
 

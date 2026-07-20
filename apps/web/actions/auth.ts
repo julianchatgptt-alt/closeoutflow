@@ -129,6 +129,9 @@ export async function resetPasswordAction(formData: FormData): Promise<void> {
     data: { user }
   } = await client.auth.getUser();
   if (!user) authError("/reset-password", "This reset session is no longer valid");
+  if (!(await rateLimitRequest("password-reset-complete", user.id))) {
+    authError("/reset-password", "Too many attempts. Try again later.");
+  }
   const { error } = await client.auth.updateUser({ password: password.data });
   if (error) authError("/reset-password", "This reset session is no longer valid");
   const { error: auditError } = await client.rpc("record_identity_event", {
