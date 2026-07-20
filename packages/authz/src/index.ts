@@ -9,6 +9,16 @@ export const roles = [
 
 export type OrgRole = (typeof roles)[number];
 
+export const projectRoles = [
+  "project_administrator",
+  "project_manager",
+  "closeout_coordinator",
+  "internal_reviewer",
+  "viewer"
+] as const;
+
+export type ProjectRole = (typeof projectRoles)[number];
+
 export const permissions = {
   profileUpdateSelf: "profile.update_self",
   organizationView: "organization.view",
@@ -28,6 +38,23 @@ export const permissions = {
   membershipLeave: "membership.leave",
   auditView: "audit.view",
   securityManage: "security.manage",
+  projectCreate: "project.create",
+  projectView: "project.view",
+  projectViewAll: "project.view_all",
+  projectUpdate: "project.update",
+  projectArchive: "project.archive",
+  projectRestore: "project.restore",
+  projectManageTeam: "project.manage_team",
+  projectManageCompanies: "project.manage_companies",
+  projectManageContacts: "project.manage_contacts",
+  companyView: "company.view",
+  companyCreate: "company.create",
+  companyUpdate: "company.update",
+  companyArchive: "company.archive",
+  contactView: "contact.view",
+  contactCreate: "contact.create",
+  contactUpdate: "contact.update",
+  contactArchive: "contact.archive",
   platformSuspendOrg: "platform.suspend_org",
   platformSuspendUser: "platform.suspend_user",
   platformViewSecurityEvents: "platform.view_security_events"
@@ -40,7 +67,18 @@ const memberReadPermissions = [
   permissions.profileUpdateSelf,
   permissions.organizationView,
   permissions.membershipView,
-  permissions.membershipLeave
+  permissions.membershipLeave,
+  permissions.companyView,
+  permissions.contactView
+] as const;
+
+const directoryManagePermissions = [
+  permissions.companyCreate,
+  permissions.companyUpdate,
+  permissions.companyArchive,
+  permissions.contactCreate,
+  permissions.contactUpdate,
+  permissions.contactArchive
 ] as const;
 
 const administratorPermissions = [
@@ -53,7 +91,10 @@ const administratorPermissions = [
   permissions.membershipSuspend,
   permissions.membershipReactivate,
   permissions.membershipRemove,
-  permissions.auditView
+  permissions.auditView,
+  permissions.projectCreate,
+  permissions.projectViewAll,
+  ...directoryManagePermissions
 ] as const;
 
 export const rolePermissions: Readonly<Record<OrgRole, readonly Permission[]>> = {
@@ -66,8 +107,16 @@ export const rolePermissions: Readonly<Record<OrgRole, readonly Permission[]>> =
     permissions.securityManage
   ],
   administrator: administratorPermissions,
-  project_manager: memberReadPermissions,
-  closeout_coordinator: memberReadPermissions,
+  project_manager: [
+    ...memberReadPermissions,
+    permissions.projectCreate,
+    ...directoryManagePermissions
+  ],
+  closeout_coordinator: [
+    ...memberReadPermissions,
+    permissions.projectCreate,
+    ...directoryManagePermissions
+  ],
   internal_reviewer: memberReadPermissions,
   viewer: memberReadPermissions
 };
@@ -87,12 +136,16 @@ export type Actor = {
   assuranceLevel?: "aal1" | "aal2";
   reauthenticated?: boolean;
   platformRole?: "platform_admin" | "platform_support";
+  projectAccess?: boolean;
+  projectRole?: ProjectRole | string;
 };
 
 export type AuthorizationResource = {
   type: string;
   id: string;
   organizationId?: string;
+  projectId?: string;
+  projectStatus?: string;
   ownerProtected?: boolean;
   soleOwner?: boolean;
 };
@@ -115,6 +168,44 @@ export type AuthorizationDecision = { allowed: true } | { allowed: false; reason
 
 const permissionValues = new Set<string>(Object.values(permissions));
 const roleValues = new Set<string>(roles);
+const projectRoleValues = new Set<string>(projectRoles);
+
+const projectScopedPermissions = new Set<Permission>([
+  permissions.projectView,
+  permissions.projectUpdate,
+  permissions.projectArchive,
+  permissions.projectRestore,
+  permissions.projectManageTeam,
+  permissions.projectManageCompanies,
+  permissions.projectManageContacts
+]);
+
+export const projectRolePermissions: Readonly<Record<ProjectRole, readonly Permission[]>> = {
+  project_administrator: [
+    permissions.projectView,
+    permissions.projectUpdate,
+    permissions.projectArchive,
+    permissions.projectRestore,
+    permissions.projectManageTeam,
+    permissions.projectManageCompanies,
+    permissions.projectManageContacts
+  ],
+  project_manager: [
+    permissions.projectView,
+    permissions.projectUpdate,
+    permissions.projectManageTeam,
+    permissions.projectManageCompanies,
+    permissions.projectManageContacts
+  ],
+  closeout_coordinator: [
+    permissions.projectView,
+    permissions.projectUpdate,
+    permissions.projectManageCompanies,
+    permissions.projectManageContacts
+  ],
+  internal_reviewer: [permissions.projectView],
+  viewer: [permissions.projectView]
+};
 
 const sensitiveMfaPermissions = new Set<Permission>([
   permissions.organizationTransferOwnership,
@@ -173,6 +264,26 @@ export function can(
   if (!roleValues.has(actor.membership.role)) return { allowed: false, reason: "unknown_role" };
 
   const role = actor.membership.role as OrgRole;
+  if (projectScopedPermissions.has(knownPermission)) {
+    if (!resource.projectId) return { allowed: false, reason: "permission_denied" };
+    const effectiveProjectRole: ProjectRole | null =
+      role === "owner" || role === "administrator"
+        ? "project_administrator"
+        : actor.projectAccess && actor.projectRole && projectRoleValues.has(actor.projectRole)
+          ? (actor.projectRole as ProjectRole)
+          : null;
+    if (!effectiveProjectRole) return { allowed: false, reason: "permission_denied" };
+    if (
+      resource.projectStatus === "archived" &&
+      knownPermission !== permissions.projectView &&
+      knownPermission !== permissions.projectRestore
+    ) {
+      return { allowed: false, reason: "permission_denied" };
+    }
+    return projectRolePermissions[effectiveProjectRole].includes(knownPermission)
+      ? { allowed: true }
+      : { allowed: false, reason: "permission_denied" };
+  }
   if (!rolePermissions[role].includes(knownPermission)) {
     return { allowed: false, reason: "permission_denied" };
   }

@@ -78,7 +78,84 @@ export async function authorizeOrganizationAction({
       ...(resource?.ownerProtected === undefined
         ? {}
         : { ownerProtected: resource.ownerProtected }),
-      ...(resource?.soleOwner === undefined ? {} : { soleOwner: resource.soleOwner })
+      ...(resource?.soleOwner === undefined ? {} : { soleOwner: resource.soleOwner }),
+      ...(resource?.projectId === undefined ? {} : { projectId: resource.projectId }),
+      ...(resource?.projectStatus === undefined ? {} : { projectStatus: resource.projectStatus })
+    }
+  );
+}
+
+export async function authorizeProjectAction({
+  client,
+  userId,
+  organizationId,
+  projectId,
+  permission
+}: {
+  client: RequestAuthClient;
+  userId: string;
+  organizationId: string;
+  projectId: string;
+  permission: Permission;
+}) {
+  const [projectResult, membershipResult, profileResult, organizationResult, claimsResult] =
+    await Promise.all([
+      client.from("projects").select("organization_id,status").eq("id", projectId).maybeSingle(),
+      client
+        .from("organization_memberships")
+        .select("id,role,status")
+        .eq("organization_id", organizationId)
+        .eq("user_id", userId)
+        .maybeSingle(),
+      client.from("user_profiles").select("account_status").eq("id", userId).maybeSingle(),
+      client.from("organizations").select("status").eq("id", organizationId).maybeSingle(),
+      client.auth.getClaims()
+    ]);
+  const project = projectResult.data;
+  const membership = membershipResult.data;
+  const assignmentResult =
+    project?.organization_id === organizationId && membership
+      ? await client
+          .from("project_members")
+          .select("project_role,status")
+          .eq("project_id", projectId)
+          .eq("membership_id", membership.id)
+          .eq("status", "active")
+          .maybeSingle()
+      : { data: null };
+  const claims = claimsResult.data?.claims;
+  const authenticationTime =
+    typeof claims?.auth_time === "number" ? new Date(claims.auth_time * 1000) : null;
+
+  return can(
+    {
+      type: "internal_user",
+      id: userId,
+      ...(membership
+        ? {
+            membership: {
+              organizationId,
+              role: membership.role,
+              status: membership.status
+            }
+          }
+        : {}),
+      accountStatus: accountStatus(profileResult.data?.account_status),
+      organizationStatus: organizationStatus(organizationResult.data?.status),
+      assuranceLevel: claims?.aal === "aal2" ? "aal2" : "aal1",
+      reauthenticated: isFreshAuthentication(authenticationTime),
+      projectAccess: project?.organization_id === organizationId,
+      ...(assignmentResult.data?.project_role
+        ? { projectRole: assignmentResult.data.project_role }
+        : {})
+    },
+    permission,
+    {
+      type: "project",
+      id: projectId,
+      organizationId,
+      projectId,
+      projectStatus: project?.organization_id === organizationId ? project.status : "inaccessible"
     }
   );
 }

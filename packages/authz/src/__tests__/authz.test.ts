@@ -1,6 +1,16 @@
 import { describe, expect, it } from "vitest";
 
-import { can, permissions, rolePermissions, roles, type OrgRole, type Permission } from "../index";
+import {
+  can,
+  permissions,
+  projectRolePermissions,
+  projectRoles,
+  rolePermissions,
+  roles,
+  type OrgRole,
+  type Permission,
+  type ProjectRole
+} from "../index";
 
 const resource = { type: "organization", id: "org-a", organizationId: "org-a" };
 
@@ -15,6 +25,21 @@ function actor(role: OrgRole) {
     reauthenticated: true
   };
 }
+
+function projectActor(role: OrgRole, projectRole?: ProjectRole) {
+  return {
+    ...actor(role),
+    ...(projectRole ? { projectAccess: true, projectRole } : {})
+  };
+}
+
+const projectResource = {
+  type: "project",
+  id: "project-a",
+  projectId: "project-a",
+  organizationId: "org-a",
+  projectStatus: "active"
+};
 
 describe("Phase 4 authorization policy", () => {
   it("matches the complete declared role-permission matrix", () => {
@@ -69,6 +94,57 @@ describe("Phase 4 authorization policy", () => {
         resource
       )
     ).toEqual({ allowed: false, reason: "permission_denied" });
+  });
+
+  it("matches the complete project-role permission matrix", () => {
+    const projectPermissions = [
+      permissions.projectView,
+      permissions.projectUpdate,
+      permissions.projectArchive,
+      permissions.projectRestore,
+      permissions.projectManageTeam,
+      permissions.projectManageCompanies,
+      permissions.projectManageContacts
+    ];
+
+    for (const projectRole of projectRoles) {
+      for (const permission of projectPermissions) {
+        expect(
+          can(projectActor("project_manager", projectRole), permission, projectResource).allowed,
+          `${projectRole}: ${permission}`
+        ).toBe(projectRolePermissions[projectRole].includes(permission));
+      }
+    }
+  });
+
+  it("requires assignment for non-admin project access and grants owner/admin implicit access", () => {
+    expect(can(projectActor("project_manager"), permissions.projectView, projectResource)).toEqual({
+      allowed: false,
+      reason: "permission_denied"
+    });
+    expect(can(projectActor("viewer", "viewer"), permissions.projectView, projectResource)).toEqual(
+      {
+        allowed: true
+      }
+    );
+    expect(can(projectActor("owner"), permissions.projectArchive, projectResource)).toEqual({
+      allowed: true
+    });
+    expect(
+      can(projectActor("administrator"), permissions.projectManageTeam, projectResource)
+    ).toEqual({
+      allowed: true
+    });
+  });
+
+  it("keeps archived projects read-only except for authorized restore", () => {
+    const archived = { ...projectResource, projectStatus: "archived" };
+    expect(
+      can(projectActor("project_manager", "project_manager"), permissions.projectUpdate, archived)
+    ).toEqual({ allowed: false, reason: "permission_denied" });
+    expect(can(projectActor("owner"), permissions.projectRestore, archived)).toEqual({
+      allowed: true
+    });
   });
 
   it("requires reauthentication and AAL2 for ownership transfer", () => {
