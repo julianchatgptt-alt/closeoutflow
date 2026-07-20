@@ -77,3 +77,25 @@ As in Phase 2/3, the **DB/RLS/permission layer is over-weighted** — it is the 
 ---
 
 *Continue to [phase-4-implementation-plan.md](./phase-4-implementation-plan.md).*
+
+## Phase 4D implementation note
+
+The implemented browser harness is `scripts/run-playwright.mjs`. Both
+`pnpm test:e2e` and `pnpm test:a11y` start/reset local Supabase, inject current
+local Supabase and Mailpit values only into the child process, launch a fresh web
+server, run the five configured projects, and remove authentication state.
+
+Authentication mutation limits now cover sign-in, sign-up, verification resend,
+reset request/completion, OAuth callback, invitation create/resend/accept,
+organization create/sensitive lifecycle, role/member lifecycle, ownership
+initiation/completion, MFA attempt/enrollment/removal, recovery-code use, session
+revocation, and reauthentication/account recovery. Keys are hashed after combining
+operation, request IP, and subject. Store failure is allowed only for local/test;
+preview/staging/production fail closed, and staging/production environment
+validation requires the distributed store.
+
+`scripts/probe-production-runtime.mjs` provides the local-only staging-mode route,
+metadata, redirect, CSP, header, design-gate, and health/audit probe.
+`scripts/probe-live-database-security.mjs` covers live audit mutation blocking and
+PostgREST exclusion. Full results are recorded in
+[phase-4d-remediation.md](./phase-4d-remediation.md).

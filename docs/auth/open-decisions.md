@@ -86,6 +86,13 @@
 ## Summary
 **Nothing blocks local Phase 4B** — every default lets Codex build and test locally (local Supabase + Mailpit + stubbed OAuth + no-op rate limiter). **Founder cloud actions gate staging/production:** Supabase project/URLs (AOD-1), OAuth creds (AOD-2), Resend/email domain (AOD-3), app domain (AOD-4), and (before public prod) MFA/CAPTCHA posture (AOD-5/6) and platform-admin provisioning (AOD-12). **Legal sign-off (AOD-11) gates production account/org deletion only.** All other items have safe defaults.
 
+Phase 4D adds one deployment secret to the existing MFA posture: staging and
+production must provide an independently generated 32+ character
+`RECOVERY_CODE_PEPPER`. It is used only for versioned recovery-code HMACs, must
+not reuse a Supabase/provider secret, and must be stored as a server-only secret.
+Local/test use the documented non-production fallback and require no founder
+action.
+
 ---
 
 *End of Phase 4A specification. Index: [phase-4-overview.md](./phase-4-overview.md).*

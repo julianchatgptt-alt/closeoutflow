@@ -180,3 +180,31 @@ Phase 4B meets the approved local definition of done without weakening RLS, CSP,
 audit immutability, service-role protections, owner safeguards, or the Phase 5
 boundary. The implementation may proceed to the independent Phase 4C audit. Phase
 5 must not begin until that audit is accepted.
+
+## Phase 4D remediation addendum
+
+The independent Phase 4C audit was preserved in
+[phase-4c-audit.md](./phase-4c-audit.md). Phase 4D resolved all six MEDIUM
+findings and resolved or strongly justified all seven LOW findings without
+rewriting the Phase 4B history. The detailed root-cause and per-finding record is
+[phase-4d-remediation.md](./phase-4d-remediation.md).
+
+The final local evidence supersedes the Phase 4B counts above:
+
+- 35 Vitest files / 145 tests pass;
+- 8 pgTAP files / 149 assertions pass after reset through migration 0011;
+- the deterministic generated-type SHA-256 is
+  `5B3F84F3260D30F9CC40317F37B76E8CDBE3E72B2B9379071592CC8E5503D36F`;
+- `pnpm test:e2e` passes 151 tests with 55 intentional capability-scoped skips
+  across Chromium, Firefox, WebKit, Pixel 7, and iPhone 15;
+- `pnpm test:a11y` passes all 71 checks;
+- server-only Windows cleanup, production-like auth/invitation routes,
+  hostile/protected redirects, Closeout metadata/canonical URL, unique nonce CSP,
+  production `/design` 404, health/audit separation, audit mutation rejection,
+  and PostgREST audit exclusion all pass.
+
+Phase 4D retains the Phase 5 schema guard, forced RLS, narrow grants,
+target-accepted fresh-AAL2 ownership transfer, platform/tenant separation,
+server-only privileged clients, immutable audit history, Closeout branding, and
+the Phase 3E visual system. Local Phase 4 is complete; only the founder-managed
+staging/production and legal gates in `open-decisions.md` remain.
