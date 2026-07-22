@@ -162,6 +162,14 @@ select {
   html[data-sidebar="collapsed"] .sidebar-expanded-only {
     display: none;
   }
+
+  html[data-sidebar="collapsed"] .sidebar-collapsed-only {
+    display: block;
+  }
+
+  html[data-sidebar="expanded"] .sidebar-collapsed-only {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

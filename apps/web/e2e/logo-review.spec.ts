@@ -1,6 +1,27 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+test("final Phase 5E review includes every selected brand application", async ({ page }) => {
+  await page.goto("/design");
+
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Phase 5E Final Brand & Authentication Review" })
+  ).toBeVisible();
+  for (const testId of [
+    "final-logo-system",
+    "final-shell-branding",
+    "final-auth-experience",
+    "final-invitation-onboarding",
+    "final-mfa-recovery",
+    "final-system-states",
+    "final-email-social"
+  ]) {
+    await expect(page.getByTestId(testId)).toBeVisible();
+  }
+  await expect(page.getByText(/not configured/i)).toHaveCount(0);
+  await expect(page.getByText(/CloseoutFlow/)).toHaveCount(0);
+});
+
 test("logo founder review presents three equal non-selectable concepts", async ({ page }) => {
   await page.goto("/design");
   const review = page.getByTestId("logo-founder-review");
@@ -28,6 +49,19 @@ test("@a11y logo founder review has no detectable violations in light and dark",
     await page.goto("/design");
     const results = await new AxeBuilder({ page })
       .include('[data-testid="logo-founder-review"]')
+      .analyze();
+    expect(results.violations).toEqual([]);
+  }
+});
+
+test("@a11y final Phase 5E review has no detectable violations in light and dark", async ({
+  page
+}) => {
+  for (const theme of ["light", "dark"] as const) {
+    await page.addInitScript((value) => localStorage.setItem("cof-theme", value), theme);
+    await page.goto("/design");
+    const results = await new AxeBuilder({ page })
+      .include('[aria-labelledby="brand-final-title"]')
       .analyze();
     expect(results.violations).toEqual([]);
   }

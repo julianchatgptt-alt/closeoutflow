@@ -1,16 +1,20 @@
 import Link from "next/link";
 
+import { CloseoutLogo, CloseoutMark } from "../brand/closeout-logo";
+
 export function Brand() {
   return (
     <Link
       href="/dashboard"
-      className="flex h-14 items-center gap-2.5 px-4 font-semibold"
+      className="flex h-14 items-center px-[18px]"
       aria-label="Closeout dashboard"
     >
-      <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-primary text-xs font-bold text-primary-foreground shadow-sm">
-        C
+      <span className="sidebar-expanded-only">
+        <CloseoutLogo compact />
       </span>
-      <span className="sidebar-expanded-only">Closeout</span>
+      <span className="hidden text-primary sidebar-collapsed-only:block">
+        <CloseoutMark compact size={27} />
+      </span>
     </Link>
   );
 }

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <title>Closeout</title>
+  <path d="M9 14v26" stroke="#1D5AA6" stroke-width="6.5" stroke-linecap="square"/>
+  <path d="M17 8h12l9 9-7 7" stroke="#1D5AA6" stroke-width="6.5" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M9 31h13l8 8 12-15" stroke="#1D5AA6" stroke-width="6.5" stroke-linecap="square" stroke-linejoin="miter"/>
+</svg>

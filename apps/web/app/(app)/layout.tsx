@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { AppShell } from "../../components/shell/app-shell";
 import { redirect } from "next/navigation";
 
@@ -7,6 +8,10 @@ import {
   getVerifiedAssuranceLevel
 } from "../../lib/server-auth";
 import { resolveOrganizationContext } from "../../lib/organization-context";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false }
+};
 
 export default async function InternalAppLayout({ children }: { children: React.ReactNode }) {
   const user = await getRequestUser();

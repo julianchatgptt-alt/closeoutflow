@@ -7,19 +7,25 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Construction closeout software for organized project turnover.",
     start_url: "/",
     display: "standalone",
-    background_color: "#f8fafc",
-    theme_color: "#f8fafc",
+    background_color: "#f1f3f6",
+    theme_color: "#102238",
     icons: [
       {
-        src: "/icons/icon-any.svg",
-        sizes: "any",
-        type: "image/svg+xml",
+        src: "/brand/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
         purpose: "any"
       },
       {
-        src: "/icons/icon-maskable.svg",
-        sizes: "any",
-        type: "image/svg+xml",
+        src: "/brand/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any"
+      },
+      {
+        src: "/brand/icon-maskable-512.png",
+        sizes: "512x512",
+        type: "image/png",
         purpose: "maskable"
       }
     ]

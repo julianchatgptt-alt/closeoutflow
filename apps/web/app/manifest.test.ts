@@ -11,13 +11,14 @@ describe("PWA manifest", () => {
     const value = manifest();
     const icons = value.icons ?? [];
 
-    expect(value.theme_color).toBe("#f8fafc");
-    expect(icons).toHaveLength(2);
-    expect(icons.map((icon) => icon.purpose)).toEqual(["any", "maskable"]);
+    expect(value.theme_color).toBe("#102238");
+    expect(value.background_color).toBe("#f1f3f6");
+    expect(icons).toHaveLength(3);
+    expect(icons.map((icon) => icon.purpose)).toEqual(["any", "any", "maskable"]);
 
     for (const icon of icons) {
-      expect(icon.type).toBe("image/svg+xml");
-      expect(icon.sizes).toBe("any");
+      expect(icon.type).toBe("image/png");
+      expect(icon.sizes).toMatch(/^\d+x\d+$/);
       await expect(
         access(path.join(process.cwd(), "apps", "web", "public", icon.src))
       ).resolves.toBeUndefined();

@@ -114,18 +114,31 @@ function KeystoneFold({ compact }: { compact: boolean }) {
   return (
     <>
       <path
-        d="M12 5h23l9 9-7 7h-9l6-6H17l-6 6v7l6 6h17l-6-6h9l7 7-9 9H12L4 36V13l8-8Z"
-        fill="currentColor"
+        d={compact ? "M9 14v26" : "M8 14v26"}
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="square"
+        strokeLinejoin="miter"
+        strokeWidth={compact ? 6.5 : 6}
+      />
+      <path
+        d={compact ? "M17 8h12l9 9-7 7" : "M16 8h13l9 9-7 7"}
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="square"
+        strokeLinejoin="miter"
+        strokeWidth={compact ? 6.5 : 6}
+      />
+      <path
+        d={compact ? "M9 31h13l8 8 12-15" : "M8 31h14l8 8 12-15"}
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="square"
+        strokeLinejoin="miter"
+        strokeWidth={compact ? 6.5 : 6}
       />
       {!compact ? (
-        <path
-          d="m12 5 5 10v19l-5 10"
-          fill="none"
-          opacity="0.34"
-          stroke="hsl(var(--surface))"
-          strokeLinejoin="round"
-          strokeWidth="2.2"
-        />
+        <path d="M29 8v9h9" fill="none" opacity="0.34" stroke="currentColor" strokeWidth="2" />
       ) : null}
     </>
   );

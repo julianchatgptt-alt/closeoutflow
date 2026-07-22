@@ -16,12 +16,22 @@ describe("Closeout metadata", () => {
     expect(metadata.openGraph).toMatchObject({
       siteName: "Closeout",
       title: "Closeout | Construction Closeout Software",
-      description: PRODUCT_DESCRIPTION
+      description: PRODUCT_DESCRIPTION,
+      images: [expect.objectContaining({ url: "/brand/opengraph.png", width: 1200, height: 630 })]
     });
     expect(metadata.twitter).toMatchObject({
-      card: "summary",
+      card: "summary_large_image",
       title: "Closeout | Construction Closeout Software",
-      description: PRODUCT_DESCRIPTION
+      description: PRODUCT_DESCRIPTION,
+      images: ["/brand/opengraph.png"]
+    });
+    expect(metadata.icons).toMatchObject({
+      icon: expect.arrayContaining([
+        expect.objectContaining({ url: "/brand/favicon-16.png", sizes: "16x16" }),
+        expect.objectContaining({ url: "/brand/favicon-32.png", sizes: "32x32" }),
+        expect.objectContaining({ url: "/brand/favicon-48.png", sizes: "48x48" })
+      ]),
+      apple: [expect.objectContaining({ url: "/brand/apple-touch-icon.png" })]
     });
   });
 
