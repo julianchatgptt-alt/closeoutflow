@@ -1,11 +1,13 @@
 "use server";
 
 import { ACTIVE_ORGANIZATION_COOKIE } from "@closeoutflow/auth";
+import { serverEnv } from "@closeoutflow/env/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { createRequestAuthClient, getRequestUser } from "../lib/server-auth";
 import { rateLimitRequest } from "../lib/rate-limit";
+import { shouldUseSecureCookies } from "../lib/cookie-security";
 
 export async function acceptInvitationAction(token: string): Promise<void> {
   if (!(await rateLimitRequest("invitation-accept", token))) {
@@ -22,7 +24,7 @@ export async function acceptInvitationAction(token: string): Promise<void> {
   (await cookies()).set(ACTIVE_ORGANIZATION_COOKIE, accepted.organization_id, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureCookies(serverEnv.APP_ENV),
     path: "/"
   });
   redirect("/dashboard");

@@ -10,6 +10,7 @@
   },
   "scripts": {
     "build": "turbo run build",
+    "capture:phase5d": "node scripts/run-playwright.mjs --config playwright.capture.config.ts",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck",
     "db:lint": "supabase db lint --local",
     "db:reset": "node scripts/db-reset.mjs",
@@ -24,10 +25,11 @@
     "prepare": "husky",
     "test": "vitest run",
     "test:a11y": "node scripts/run-playwright.mjs --grep @a11y",
-    "test:db": "supabase test db",
+    "test:db": "node scripts/run-db-tests.mjs",
     "test:e2e": "node scripts/run-playwright.mjs",
     "test:server-only": "node scripts/verify-server-only.mjs",
     "test:production-probe": "node scripts/probe-production-runtime.mjs",
+    "test:phase5-scale": "node scripts/probe-phase-5-scale.mjs",
     "test:live-security": "node scripts/probe-live-database-security.mjs",
     "typecheck": "turbo run typecheck"
   },

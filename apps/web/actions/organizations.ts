@@ -12,6 +12,7 @@ import { authorizeOrganizationAction } from "../lib/authorization";
 import { rateLimitRequest } from "../lib/rate-limit";
 import { sendIdentityEmail } from "../lib/email-delivery";
 import { createRequestAuthClient, getRequestUser } from "../lib/server-auth";
+import { shouldUseSecureCookies } from "../lib/cookie-security";
 
 export async function createOrganizationAction(formData: FormData): Promise<void> {
   const name = z.string().trim().min(2).max(120).safeParse(formData.get("displayName"));
@@ -30,7 +31,7 @@ export async function createOrganizationAction(formData: FormData): Promise<void
   (await cookies()).set(ACTIVE_ORGANIZATION_COOKIE, data, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureCookies(serverEnv.APP_ENV),
     path: "/"
   });
   redirect("/dashboard");
@@ -59,7 +60,7 @@ export async function selectOrganizationAction(
   (await cookies()).set(ACTIVE_ORGANIZATION_COOKIE, parsed.data, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureCookies(serverEnv.APP_ENV),
     path: "/"
   });
   redirect(getSafeRedirect(destination));

@@ -49,7 +49,12 @@ function isProtectedPath(pathname: string): boolean {
 export async function proxy(request: NextRequest) {
   const nonce = createCspNonce();
   const requestId = randomUUID();
-  const contentSecurityPolicy = createContentSecurityPolicy(nonce);
+  const contentSecurityPolicy = createContentSecurityPolicy(
+    nonce,
+    process.env.APP_ENV === "test" || process.env.APP_ENV === "local"
+      ? "test"
+      : process.env.NODE_ENV
+  );
   const requestHeaders = new Headers(request.headers);
 
   // Next.js extracts the nonce from the request CSP and applies it to framework scripts.

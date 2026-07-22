@@ -55,7 +55,7 @@ const status = JSON.parse(run(process.execPath, [supabaseCli, "status", "-o", "j
 const environment = {
   ...process.env,
   APP_ENV: "test",
-  BUILD_VERSION: "phase-5b-browser-harness",
+  BUILD_VERSION: "phase-5d-browser-harness",
   NEXT_DIST_DIR: ".next-playwright",
   APP_URL: "http://127.0.0.1:3000",
   NEXT_PUBLIC_SUPABASE_URL: status.API_URL,
@@ -66,10 +66,15 @@ const environment = {
   LOG_LEVEL: "warn",
   SENTRY_ENABLED: "false",
   RECOVERY_CODE_PEPPER: "phase-4d-local-browser-recovery-pepper-not-for-production",
-  PLAYWRIGHT_MANAGED_HARNESS: "1"
+  PLAYWRIGHT_MANAGED_HARNESS: "1",
+  PLAYWRIGHT_WEB_COMMAND: "pnpm --filter @closeoutflow/web start"
 };
 
 try {
+  run(process.execPath, [pnpmCli, "--filter", "@closeoutflow/web", "build"], {
+    env: environment,
+    stdio: "inherit"
+  });
   const result = spawnSync(
     process.execPath,
     [pnpmCli, "exec", "playwright", "test", ...process.argv.slice(2)],

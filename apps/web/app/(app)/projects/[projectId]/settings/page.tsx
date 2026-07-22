@@ -35,7 +35,15 @@ export default async function Page({
         description={`Edit ${p.name} and manage its lifecycle.`}
         meta={<StatusBadge status={p.status} />}
       />
-      <Notice error={query.error} message={query.message} />
+      <Notice
+        error={query.error}
+        message={query.message}
+        recoveryHref={
+          query.error?.startsWith("This project changed while you were editing")
+            ? `/projects/${projectId}/settings`
+            : undefined
+        }
+      />
       <div className="grid gap-5">
         <Section title="Project details">
           <ProjectForm action={updateProjectAction} project={p} />

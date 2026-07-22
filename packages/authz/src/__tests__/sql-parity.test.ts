@@ -79,7 +79,10 @@ describe("TypeScript and SQL authorization parity", () => {
       matrix.set(match[1]!, allowed.sort());
     }
 
-    for (const permission of new Set(Object.values(projectRolePermissions).flat())) {
+    const projectPermissions = [...new Set(Object.values(projectRolePermissions).flat())].sort();
+    expect([...matrix.keys()].sort()).toEqual(projectPermissions);
+
+    for (const permission of projectPermissions) {
       const expectedRoles = projectRoles
         .filter((role) => projectRolePermissions[role as ProjectRole].includes(permission))
         .sort();

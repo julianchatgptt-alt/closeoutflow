@@ -9,6 +9,7 @@ import { z } from "zod";
 import { createRequestAuthClient } from "../lib/server-auth";
 import { getSafeRedirect } from "../lib/safe-redirect";
 import { rateLimitRequest } from "../lib/rate-limit";
+import { shouldUseSecureCookies } from "../lib/cookie-security";
 
 const emailSchema = z.email().max(254);
 const passwordSchema = z.string().min(12).max(128);
@@ -37,7 +38,7 @@ async function initializeOrganizationPreference(
   (await cookies()).set(ACTIVE_ORGANIZATION_COOKIE, membership.organization_id, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: shouldUseSecureCookies(serverEnv.APP_ENV),
     path: "/"
   });
 }

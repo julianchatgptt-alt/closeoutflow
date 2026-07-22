@@ -92,7 +92,7 @@ export async function updateCompanyAction(formData: FormData): Promise<void> {
   if (error)
     fail(
       path,
-      error.code === "40001"
+      error.code === "P0001" && error.message === "company was updated by another user"
         ? "This company changed while you were editing. Reload and try again."
         : "The company could not be updated"
     );

@@ -79,6 +79,13 @@ describe("Phase 4 authorization policy", () => {
         resource
       )
     ).toEqual({ allowed: false, reason: "membership_inactive" });
+    expect(
+      can(
+        { ...actor("viewer"), membership: { ...actor("viewer").membership, status: "removed" } },
+        permissions.organizationView,
+        resource
+      )
+    ).toEqual({ allowed: false, reason: "membership_inactive" });
   });
 
   it("does not accept forged metadata or a platform role as tenant access", () => {

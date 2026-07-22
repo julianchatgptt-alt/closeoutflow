@@ -26,6 +26,23 @@ describe("Phase 5 form validation", () => {
     expect(
       projectUpdateSchema.safeParse({ projectId: crypto.randomUUID(), name: "Office" }).success
     ).toBe(false);
+    expect(
+      projectUpdateSchema.safeParse({
+        projectId: crypto.randomUUID(),
+        updatedAt: "2026-07-20T22:45:10.123456+00:00",
+        name: "Office"
+      }).success
+    ).toBe(true);
+  });
+
+  it("accepts PostgreSQL offset timestamps for directory concurrency tokens", () => {
+    const updatedAt = "2026-07-20T22:45:10.123456+00:00";
+    expect(companySchema.safeParse({ displayName: "Ace Mechanical", updatedAt }).success).toBe(
+      true
+    );
+    expect(
+      contactSchema.safeParse({ firstName: "Jordan", lastName: "Lee", updatedAt }).success
+    ).toBe(true);
   });
 
   it("validates reusable company records", () => {

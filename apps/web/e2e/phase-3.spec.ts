@@ -49,7 +49,10 @@ test("shell navigation, skip link, and command palette work by keyboard", async 
 });
 
 test("mobile navigation and table card transformation are usable", async ({ page, isMobile }) => {
-  test.skip(!isMobile, "Mobile-specific transformation");
+  test.skip(
+    !isMobile || (page.viewportSize()?.width ?? 0) >= 768,
+    "Card transformation applies below the CSS md breakpoint"
+  );
   await page.goto("/projects");
   await page.getByRole("button", { name: "Open navigation" }).click();
   await expect(page.getByRole("dialog", { name: "Closeout navigation" })).toBeVisible();
@@ -258,7 +261,8 @@ test("design gallery is available locally and absent from production navigation"
 
 test("@a11y command palette has no detectable violations", async ({ page, isMobile }) => {
   await page.goto("/dashboard");
-  if (isMobile) await page.getByRole("button", { name: "Search", exact: true }).click();
+  if (isMobile && (page.viewportSize()?.width ?? 0) < 640)
+    await page.getByRole("button", { name: "Search", exact: true }).click();
   else await page.keyboard.press("Control+K");
   await expect(page.getByRole("dialog", { name: "Command palette" })).toBeVisible();
   const results = await new AxeBuilder({ page }).include('[role="dialog"]').analyze();

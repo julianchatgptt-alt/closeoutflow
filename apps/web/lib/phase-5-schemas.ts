@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const optionalText = z.string().trim().max(500).optional().default("");
+const concurrencyToken = z.iso.datetime({ offset: true });
 export const projectTypes = [
   "restaurant",
   "retail",
@@ -42,7 +43,7 @@ export const projectCreateSchema = z.object({
 
 export const projectUpdateSchema = z.object({
   projectId: z.uuid(),
-  updatedAt: z.iso.datetime(),
+  updatedAt: concurrencyToken,
   name: z.string().trim().min(2).max(160),
   projectNumber: optionalText,
   projectType: z.enum(projectTypes).optional().or(z.literal("")),
@@ -58,7 +59,7 @@ export const projectUpdateSchema = z.object({
 
 export const companySchema = z.object({
   companyId: z.uuid().optional(),
-  updatedAt: z.iso.datetime().optional(),
+  updatedAt: concurrencyToken.optional(),
   displayName: z.string().trim().min(2, "Enter a company name").max(160),
   legalName: optionalText,
   website: optionalText,
@@ -72,7 +73,7 @@ export const companySchema = z.object({
 
 export const contactSchema = z.object({
   contactId: z.uuid().optional(),
-  updatedAt: z.iso.datetime().optional(),
+  updatedAt: concurrencyToken.optional(),
   firstName: z.string().trim().min(1, "Enter a first name").max(100),
   lastName: z.string().trim().min(1, "Enter a last name").max(100),
   email: z.string().trim().email().optional().or(z.literal("")),

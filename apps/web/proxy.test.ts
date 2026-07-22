@@ -24,6 +24,13 @@ describe("nonce-based content security policy", () => {
     expect(csp).toContain("upgrade-insecure-requests");
   });
 
+  it("does not upgrade the HTTP origin used by local and test browser harnesses", () => {
+    const csp = createContentSecurityPolicy("test-nonce", "test");
+
+    expect(csp).not.toContain("upgrade-insecure-requests");
+    expect(csp).toContain("script-src 'self' 'nonce-test-nonce' 'strict-dynamic'");
+  });
+
   it("forwards the nonce and CSP into the rendering request and response", async () => {
     const response = await proxy(
       new NextRequest("http://localhost/", {

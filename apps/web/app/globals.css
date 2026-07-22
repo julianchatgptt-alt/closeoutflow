@@ -120,6 +120,17 @@ select {
   font: inherit;
 }
 
+select {
+  /* Playwright WebKit does not resolve the space-separated foreground token
+     inside native selects. Keep these values aligned with the canonical
+     light/dark --foreground tokens in packages/ui/src/tokens.css. */
+  color: hsl(220, 33%, 11%);
+}
+
+.dark select {
+  color: hsl(214, 20%, 93%);
+}
+
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }

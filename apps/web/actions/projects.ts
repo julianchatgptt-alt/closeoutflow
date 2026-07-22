@@ -102,7 +102,7 @@ export async function updateProjectAction(formData: FormData): Promise<void> {
   if (error)
     projectError(
       path,
-      error.code === "40001"
+      error.code === "P0001" && error.message === "project was updated by another user"
         ? "This project changed while you were editing. Reload and try again."
         : "The project could not be updated"
     );

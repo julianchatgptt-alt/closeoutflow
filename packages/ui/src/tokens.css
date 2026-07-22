@@ -174,8 +174,8 @@
   --danger-foreground: 2 80% 70%;
   --danger-subtle: 2 47% 15%;
   --danger-border: 2 38% 30%;
-  --destructive: var(--danger-foreground);
-  --destructive-foreground: var(--neutral-950);
+  --destructive: 2 72% 40%;
+  --destructive-foreground: var(--neutral-0);
   --info-foreground: 205 70% 68%;
   --info-subtle: 205 47% 15%;
   --info-border: 205 38% 28%;

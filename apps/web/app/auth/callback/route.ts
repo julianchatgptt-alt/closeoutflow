@@ -5,6 +5,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createRequestAuthClient } from "../../../lib/server-auth";
 import { getSafeRedirect } from "../../../lib/safe-redirect";
 import { rateLimitRequest } from "../../../lib/rate-limit";
+import { shouldUseSecureCookies } from "../../../lib/cookie-security";
 
 export async function GET(request: NextRequest) {
   const applicationUrl = serverEnv.APP_URL ?? "http://127.0.0.1:3000";
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest) {
       response.cookies.set(ACTIVE_ORGANIZATION_COOKIE, membership.organization_id, {
         httpOnly: true,
         sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        secure: shouldUseSecureCookies(serverEnv.APP_ENV),
         path: "/"
       });
     }

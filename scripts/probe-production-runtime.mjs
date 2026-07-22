@@ -25,7 +25,7 @@ const environment = {
   ...process.env,
   NODE_ENV: "production",
   APP_ENV: "staging",
-  BUILD_VERSION: "phase-4d-production-probe",
+  BUILD_VERSION: "phase-5d-production-probe",
   APP_URL: origin,
   NEXT_PUBLIC_SUPABASE_URL: status.API_URL,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: status.ANON_KEY,
@@ -137,12 +137,20 @@ try {
     if (!signIn.headers.has(header)) throw new Error(`Missing security header: ${header}`);
   }
 
-  const dashboard = await fetch(`${origin}/dashboard`, { redirect: "manual" });
-  if (
-    ![307, 308].includes(dashboard.status) ||
-    !dashboard.headers.get("location")?.includes("/sign-in")
-  ) {
-    throw new Error("Protected-route production redirect failed.");
+  for (const route of [
+    "/dashboard",
+    "/projects",
+    "/projects/50000000-0000-4000-8000-000000000002",
+    "/companies",
+    "/contacts"
+  ]) {
+    const response = await fetch(`${origin}${route}`, { redirect: "manual" });
+    if (
+      ![307, 308].includes(response.status) ||
+      !response.headers.get("location")?.includes("/sign-in")
+    ) {
+      throw new Error(`Protected-route production redirect failed: ${route}`);
+    }
   }
   const design = await fetch(`${origin}/design`, { redirect: "manual" });
   if (design.status !== 404) throw new Error("Runtime design-gallery gate failed.");
@@ -176,7 +184,7 @@ try {
   }
 
   console.log(
-    "Production-like staging probe passed: local-only config, public auth and safe invitation routes, canonical metadata, hostile/protected redirects, design 404, unique nonce CSP, security headers, request ID, and zero health audit writes."
+    "Production-like staging probe passed: local-only config, public auth and safe invitation routes, canonical metadata, hostile redirects, protected dashboard/project/directory routes, design 404, unique nonce CSP, security headers, request ID, and zero health audit writes."
   );
 } finally {
   server.kill("SIGTERM");

@@ -84,7 +84,7 @@ export async function updateContactAction(fd: FormData): Promise<void> {
   if (error)
     fail(
       path,
-      error.code === "40001"
+      error.code === "P0001" && error.message === "contact was updated by another user"
         ? "This contact changed while you were editing. Reload and try again."
         : "The contact could not be updated"
     );
