@@ -10,6 +10,7 @@
   },
   "scripts": {
     "build": "turbo run build",
+    "capture:phase5e-logo": "node scripts/run-logo-review.mjs --config playwright.logo-review.capture.config.ts",
     "capture:phase5d": "node scripts/run-playwright.mjs --config playwright.capture.config.ts",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck",
     "db:lint": "supabase db lint --local",
@@ -31,6 +32,7 @@
     "test:production-probe": "node scripts/probe-production-runtime.mjs",
     "test:phase5-scale": "node scripts/probe-phase-5-scale.mjs",
     "test:live-security": "node scripts/probe-live-database-security.mjs",
+    "test:logo-review": "node scripts/run-logo-review.mjs --config playwright.logo-review.config.ts",
     "typecheck": "turbo run typecheck"
   },
   "lint-staged": {

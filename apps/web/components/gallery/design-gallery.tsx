@@ -48,6 +48,7 @@ import {
 } from "@closeoutflow/ui";
 
 import { SampleValidationForm } from "../form/sample-form";
+import { LogoFounderReview } from "./logo-founder-review";
 import {
   DashboardEmptyState,
   DashboardErrorState,
@@ -106,6 +107,7 @@ export function DesignGallery() {
             <GalleryControls />
           </div>
         </div>
+        <LogoFounderReview />
         <Section title="Surfaces, type ladder, and color tokens">
           <div className="grid gap-3 md:grid-cols-3">
             <div className="rounded-lg bg-background p-5 ring-1 ring-border">
