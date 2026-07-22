@@ -7,21 +7,21 @@
 
 ## Reason for checkpoint
 
-The finalized Keystone Fold reads too strongly as a capital P beside the Closeout wordmark, in the expanded sidebar, in inverse use, and at small header sizes. This checkpoint explores three Concept C refinements that remove the long vertical stem and bowl-like upper-right construction without replacing the global mark.
+The finalized Keystone Fold reads too strongly as a capital P beside the Closeout wordmark, in the expanded sidebar, in inverse use, and at small header sizes. This checkpoint returns to the founder-approved Concept C source: a compact, faceted C-frame closing around an angular aperture and paired terminal folds. The three refinements remove the long stroke-built stem and bowl-like upper-right construction without replacing the global mark.
 
 ## Neutral variants
 
-### A — Notched Beam
+### A — Balanced Aperture
 
-A centered keystone notch turns a structural beam into the receiving edge for a separate completion stroke. It keeps the construction/handoff idea while eliminating any vertical stem or enclosed bowl.
+The original faceted C-frame with equal upper and lower terminals, a centered aperture, and no extended stem. This is the closest reconstruction of the founder reference.
 
-### B — Open Packet
+### B — Wider Aperture
 
-Two separated record corners frame an open center while the lower stroke confirms completion without closing the form. It is the most explicitly record-oriented option and retains no monogram silhouette.
+A broader internal opening and shorter terminal folds make the handoff aperture clearer at header and favicon sizes while preserving the same outer silhouette.
 
-### C — Stepped Fold
+### C — Squared Notch
 
-A square construction joint replaces both bowl and chevron rhythms, then resolves through a separate completion stroke. It is the most architectural option and uses a wider, rectilinear negative space.
+Squared inner terminals turn the aperture into a deliberate receiving joint while retaining the original faceted frame. It is the least letter-like and most architectural refinement.
 
 ## Review applications
 

@@ -1,28 +1,28 @@
 type Refinement = {
-  id: "notched-beam" | "open-packet" | "stepped-fold";
+  id: "balanced-aperture" | "wider-aperture" | "squared-notch";
   name: string;
   note: string;
-  paths: string[];
+  path: string;
 };
 
 export const keystoneRefinements: Refinement[] = [
   {
-    id: "notched-beam",
-    name: "A — Notched Beam",
-    note: "A centered keystone notch turns a structural beam into the receiving edge for a separate completion stroke.",
-    paths: ["M7 12h12l5 6 5-6h12", "M8 30l10 9 22-20"]
+    id: "balanced-aperture",
+    name: "A — Balanced Aperture",
+    note: "The original faceted C-frame with equal upper and lower terminals, a centered aperture, and no extended stem.",
+    path: "M14 6H34L42 14L34 22L28 16H20L16 20V28L20 32H28L34 26L42 34L34 42H14L6 34V14Z"
   },
   {
-    id: "open-packet",
-    name: "B — Open Packet",
-    note: "Two separated record corners frame an open center while the lower stroke confirms completion without closing the form.",
-    paths: ["M8 20V10h12", "M40 20V10H29", "M9 30l9 9 21-20"]
+    id: "wider-aperture",
+    name: "B — Wider Aperture",
+    note: "A broader internal opening and shorter terminal folds make the handoff aperture clearer at header and favicon sizes.",
+    path: "M14 6H33L41 14L34 21L29 16H21L16 21V27L21 32H29L34 27L41 34L33 42H14L6 34V14Z"
   },
   {
-    id: "stepped-fold",
-    name: "C — Stepped Fold",
-    note: "A square construction joint replaces the bowl and chevron rhythms, then resolves through a separate completion stroke.",
-    paths: ["M7 12h13v7h8v-7h13", "M8 30l10 9 22-20"]
+    id: "squared-notch",
+    name: "C — Squared Notch",
+    note: "Squared inner terminals turn the aperture into a deliberate receiving joint while retaining the original faceted frame.",
+    path: "M14 6H34L42 14L35 21H29L24 16H20L16 20V28L20 32H24L29 27H35L42 34L34 42H14L6 34V14Z"
   }
 ];
 
@@ -49,17 +49,14 @@ function RefinementMark({
       width={size}
       xmlns="http://www.w3.org/2000/svg"
     >
-      {refinement.paths.map((path) => (
-        <path
-          d={path}
-          fill="none"
-          key={path}
-          stroke="currentColor"
-          strokeLinecap="square"
-          strokeLinejoin="miter"
-          strokeWidth="6"
-        />
-      ))}
+      <path d={refinement.path} fill="currentColor" />
+      {size >= 24 ? (
+        <>
+          <path d="M14 6L20 16L16 20L6 14Z" fill="#000000" opacity="0.14" />
+          <path d="M6 34L16 28L20 32L14 42Z" fill="#000000" opacity="0.14" />
+          <path d="M34 6L42 14L34 22L28 16Z" fill="#ffffff" opacity="0.1" />
+        </>
+      ) : null}
     </svg>
   );
 }
@@ -191,8 +188,9 @@ export function KeystoneRefinementReview() {
           Keystone Fold refinement review
         </h2>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
-          Three neutral Concept C refinements focused on removing the capital-P reading. These
-          specimens are review-only and do not replace the currently applied mark.
+          Three neutral refinements of the original faceted C-frame, preserving its architectural
+          aperture and paired terminal folds while removing the capital-P reading. These specimens
+          are review-only and do not replace the currently applied mark.
         </p>
       </header>
 
