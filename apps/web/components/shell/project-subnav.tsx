@@ -13,9 +13,9 @@ export function ProjectSubnav() {
   return (
     <nav
       aria-label="Project navigation"
-      className="sticky top-14 z-sticky border-b bg-background/95 backdrop-blur-sm"
+      className="sticky top-14 z-sticky min-w-0 overflow-hidden border-b bg-background/95 backdrop-blur-sm"
     >
-      <div className="flex h-11 overflow-x-auto px-[var(--page-gutter)]">
+      <div className="flex h-11 w-full max-w-full overflow-x-auto px-[var(--page-gutter)]">
         {projectNavigation.map((item) => {
           const href = item.segment ? `${base}/${item.segment}` : base;
           const active = pathname === href;

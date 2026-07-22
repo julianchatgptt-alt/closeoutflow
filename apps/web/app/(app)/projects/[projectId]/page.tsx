@@ -2,6 +2,7 @@ import { Badge, EmptyState, KeyValue } from "@closeoutflow/ui";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getActiveContext } from "../../../../lib/active-context";
+import { DateCell } from "../../../../components/table/cells";
 import { PageHeader } from "../../../../components/shell/page-header";
 import {
   Notice,
@@ -63,12 +64,30 @@ export default async function Page({
           <Section title="Important dates">
             <KeyValue
               items={[
-                { label: "Planned start", value: p.planned_start_date ?? "Not set" },
+                {
+                  label: "Planned start",
+                  value: p.planned_start_date ? (
+                    <DateCell value={p.planned_start_date} />
+                  ) : (
+                    "Not set"
+                  )
+                },
                 {
                   label: "Substantial completion",
-                  value: p.substantial_completion_date ?? "Not set"
+                  value: p.substantial_completion_date ? (
+                    <DateCell value={p.substantial_completion_date} />
+                  ) : (
+                    "Not set"
+                  )
                 },
-                { label: "Closeout target", value: p.closeout_target_date ?? "Not set" },
+                {
+                  label: "Closeout target",
+                  value: p.closeout_target_date ? (
+                    <DateCell value={p.closeout_target_date} />
+                  ) : (
+                    "Not set"
+                  )
+                },
                 {
                   label: "Location",
                   value: [p.city, p.region].filter(Boolean).join(", ") || "Not set"

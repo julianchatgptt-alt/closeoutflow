@@ -10,6 +10,8 @@ import {
   linkButton,
   outlineLink
 } from "../../../components/projects/phase-5-ui";
+import { DateCell } from "../../../components/table/cells";
+import { formatDateOnly } from "../../../lib/date-format";
 
 export const metadata = { title: "Projects" };
 export default async function Page({
@@ -153,7 +155,9 @@ export default async function Page({
                     <StatusBadge status={p.status} />
                   </td>
                   <td>{p.project_type ? humanize(p.project_type) : "—"}</td>
-                  <td>{p.closeout_target_date ?? "—"}</td>
+                  <td>
+                    {p.closeout_target_date ? <DateCell value={p.closeout_target_date} /> : "—"}
+                  </td>
                   <td>{p.team_count}</td>
                 </tr>
               ))}
@@ -173,9 +177,9 @@ export default async function Page({
                     <StatusBadge status={p.status} />
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">
-                    {p.team_count} teammates ·{" "}
+                    {p.team_count} {p.team_count === 1 ? "teammate" : "teammates"} ·{" "}
                     {p.closeout_target_date
-                      ? `Target ${p.closeout_target_date}`
+                      ? `Target ${formatDateOnly(p.closeout_target_date)}`
                       : "No closeout date"}
                   </p>
                 </Link>

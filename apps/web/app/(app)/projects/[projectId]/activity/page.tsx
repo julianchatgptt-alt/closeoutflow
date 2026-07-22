@@ -7,6 +7,7 @@ import {
   humanize
 } from "../../../../../components/projects/phase-5-ui";
 import { PageHeader } from "../../../../../components/shell/page-header";
+import { TimestampCell } from "../../../../../components/table/cells";
 import { getActiveContext } from "../../../../../lib/active-context";
 
 export const metadata = { title: "Project activity" };
@@ -20,7 +21,7 @@ export default async function Page({
   const [{ projectId }, query] = await Promise.all([params, searchParams]);
   const { client } = await getActiveContext();
   const [{ data: project }, { data: activity, error }] = await Promise.all([
-    client.from("projects").select("id,name,status").eq("id", projectId).maybeSingle(),
+    client.from("projects").select("id,name,status,timezone").eq("id", projectId).maybeSingle(),
     client.rpc("get_project_activity", { target_project_id: projectId, page_size: 50 })
   ]);
   if (!project) notFound();
@@ -40,9 +41,7 @@ export default async function Page({
                 <p className="font-medium">{humanize(event.action.replace(/^project\./, ""))}</p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {event.actor_name} ·{" "}
-                  <time dateTime={event.occurred_at}>
-                    {new Date(event.occurred_at).toLocaleString()}
-                  </time>
+                  <TimestampCell value={event.occurred_at} timeZone={project.timezone} />
                 </p>
               </li>
             ))}

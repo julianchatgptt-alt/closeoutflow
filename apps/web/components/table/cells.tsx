@@ -3,18 +3,25 @@ import type { ReactNode } from "react";
 
 import { Avatar, Tooltip } from "@closeoutflow/ui";
 
+import { formatDateOnly, formatRelativeTimestamp, formatTimestamp } from "../../lib/date-format";
+
 export function DateCell({ value, overdue = false }: { value: string; overdue?: boolean }) {
-  const formatted = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC"
-  }).format(new Date(value));
+  const formatted = formatDateOnly(value);
   return (
     <Tooltip content={new Date(value).toISOString()}>
       <time dateTime={value} className={`tabular-nums ${overdue ? "text-warning" : ""}`}>
         {formatted}
         {overdue ? " · Overdue" : ""}
+      </time>
+    </Tooltip>
+  );
+}
+export function TimestampCell({ value, timeZone }: { value: string; timeZone?: string | null }) {
+  const absolute = formatTimestamp(value, timeZone ?? undefined);
+  return (
+    <Tooltip content={absolute}>
+      <time dateTime={value} className="tabular-nums" title={absolute}>
+        {formatRelativeTimestamp(value)}
       </time>
     </Tooltip>
   );

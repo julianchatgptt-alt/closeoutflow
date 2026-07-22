@@ -21,10 +21,12 @@ export const outlineLink =
 
 export function Notice({
   error,
-  message
+  message,
+  recoveryHref
 }: {
   error?: string | undefined;
   message?: string | undefined;
+  recoveryHref?: string | undefined;
 }) {
   if (!error && !message) return null;
   return (
@@ -32,7 +34,12 @@ export function Notice({
       role={error ? "alert" : "status"}
       className={`mb-5 rounded-md border p-3 text-sm ${error ? "border-danger-border bg-danger-subtle" : "border-success-border bg-success-subtle"}`}
     >
-      {error ?? message}
+      <span>{error ?? message}</span>
+      {error && recoveryHref ? (
+        <Link className="ml-3 font-semibold underline underline-offset-2" href={recoveryHref}>
+          Reload current project
+        </Link>
+      ) : null}
     </div>
   );
 }

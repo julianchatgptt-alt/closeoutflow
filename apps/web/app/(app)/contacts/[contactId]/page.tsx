@@ -14,6 +14,7 @@ import {
   StatusBadge
 } from "../../../../components/projects/phase-5-ui";
 import { PageHeader } from "../../../../components/shell/page-header";
+import { DateCell } from "../../../../components/table/cells";
 import { getActiveContext } from "../../../../lib/active-context";
 export const metadata = { title: "Contact detail" };
 export default async function Page({
@@ -76,7 +77,18 @@ export default async function Page({
                           </a>
                           <p className="text-xs text-muted-foreground">
                             {a.job_title || "Contact"} · {a.status}
-                            {a.started_on ? ` · since ${a.started_on}` : ""}
+                            {a.started_on ? (
+                              <>
+                                {" "}
+                                · since <DateCell value={a.started_on} />
+                              </>
+                            ) : null}
+                            {a.ended_on ? (
+                              <>
+                                {" "}
+                                · ended <DateCell value={a.ended_on} />
+                              </>
+                            ) : null}
                           </p>
                         </div>
                         {a.status === "active" ? (

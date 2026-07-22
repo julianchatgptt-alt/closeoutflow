@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { SIDEBAR_STORAGE_KEY } from "../theme/theme-script";
 import { AppHeader } from "./app-header";
+import { BreadcrumbProvider } from "./breadcrumb-context";
 import { CommandPalette } from "./command-palette";
 import { ProjectSubnav } from "./project-subnav";
 import { Sidebar } from "./sidebar";
@@ -73,32 +74,34 @@ export function AppShell({
   }, [openPalette, router, toggleSidebar]);
 
   return (
-    <div className="app-shell min-h-screen bg-background">
-      <a
-        href="#main"
-        className="fixed left-3 top-2 z-[1000] -translate-y-20 rounded-md bg-primary px-3 py-2 text-primary-foreground focus:translate-y-0"
-      >
-        Skip to main content
-      </a>
-      <Sidebar collapsed={collapsed} onToggle={toggleSidebar} />
-      <AppHeader
-        onOpenPalette={openPalette}
-        userName={userName}
-        organizationContext={organizationContext}
-      />
-      <ProjectSubnav />
-      <main
-        id="main"
-        tabIndex={-1}
-        className="mx-auto w-full max-w-[var(--content-max)] p-[var(--page-gutter)]"
-      >
-        {children}
-      </main>
-      <CommandPalette
-        open={paletteOpen}
-        onOpenChange={setPaletteOpen}
-        returnFocusRef={paletteTrigger}
-      />
-    </div>
+    <BreadcrumbProvider>
+      <div className="app-shell min-h-screen bg-background">
+        <a
+          href="#main"
+          className="fixed left-3 top-2 z-[1000] -translate-y-20 rounded-md bg-primary px-3 py-2 text-primary-foreground focus:translate-y-0"
+        >
+          Skip to main content
+        </a>
+        <Sidebar collapsed={collapsed} onToggle={toggleSidebar} />
+        <AppHeader
+          onOpenPalette={openPalette}
+          userName={userName}
+          organizationContext={organizationContext}
+        />
+        <ProjectSubnav />
+        <main
+          id="main"
+          tabIndex={-1}
+          className="mx-auto w-full max-w-[var(--content-max)] p-[var(--page-gutter)]"
+        >
+          {children}
+        </main>
+        <CommandPalette
+          open={paletteOpen}
+          onOpenChange={setPaletteOpen}
+          returnFocusRef={paletteTrigger}
+        />
+      </div>
+    </BreadcrumbProvider>
   );
 }
