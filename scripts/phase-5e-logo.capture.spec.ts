@@ -28,6 +28,11 @@ async function prepare(page: Page, theme: "light" | "dark" = "light") {
 
 async function capture(locator: Locator, id: string) {
   await mkdir(outputRoot!, { recursive: true });
+  await locator.evaluate(() => {
+    document.querySelectorAll(".cof-toast").forEach((toast) => {
+      (toast as HTMLElement).style.display = "none";
+    });
+  });
   await locator.screenshot({
     animations: "disabled",
     path: path.join(outputRoot!, `${id}.png`)
