@@ -11,22 +11,28 @@ export function OAuthButtons({ next = "/onboarding" }: { next?: string }) {
     serverEnv.OAUTH_MICROSOFT_CLIENT_ID && serverEnv.OAUTH_MICROSOFT_CLIENT_SECRET
   );
 
+  if (!googleEnabled && !microsoftEnabled) return null;
+
   return (
     <div className="mb-5 space-y-2" aria-label="Single sign-on options">
-      <form action={oauthSignInAction}>
-        <input type="hidden" name="provider" value="google" />
-        <input type="hidden" name="next" value={next} />
-        <Button className="w-full" variant="outline" type="submit" disabled={!googleEnabled}>
-          Continue with Google{googleEnabled ? "" : " (not configured)"}
-        </Button>
-      </form>
-      <form action={oauthSignInAction}>
-        <input type="hidden" name="provider" value="azure" />
-        <input type="hidden" name="next" value={next} />
-        <Button className="w-full" variant="outline" type="submit" disabled={!microsoftEnabled}>
-          Continue with Microsoft{microsoftEnabled ? "" : " (not configured)"}
-        </Button>
-      </form>
+      {googleEnabled ? (
+        <form action={oauthSignInAction}>
+          <input type="hidden" name="provider" value="google" />
+          <input type="hidden" name="next" value={next} />
+          <Button className="w-full" variant="outline" type="submit">
+            Continue with Google
+          </Button>
+        </form>
+      ) : null}
+      {microsoftEnabled ? (
+        <form action={oauthSignInAction}>
+          <input type="hidden" name="provider" value="azure" />
+          <input type="hidden" name="next" value={next} />
+          <Button className="w-full" variant="outline" type="submit">
+            Continue with Microsoft
+          </Button>
+        </form>
+      ) : null}
       <div className="flex items-center gap-3 py-1 text-xs text-muted-foreground">
         <span className="h-px flex-1 bg-border" />
         <span>or use email</span>

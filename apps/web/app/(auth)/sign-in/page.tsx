@@ -16,7 +16,11 @@ export default async function SignInPage({
 }) {
   const params = await searchParams;
   return (
-    <AuthCard title="Welcome back" description="Sign in to continue to your Closeout workspace.">
+    <AuthCard
+      title="Welcome back"
+      description="Sign in to continue to your Closeout workspace."
+      eyebrow="Project access"
+    >
       <div className="mb-4">
         <AuthMessage error={params.error} message={params.message} />
       </div>

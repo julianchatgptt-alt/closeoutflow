@@ -7,7 +7,10 @@ import { AuthMessage } from "../../components/auth/auth-message";
 import { resolveOrganizationContext } from "../../lib/organization-context";
 import { getRequestUser } from "../../lib/server-auth";
 
-export const metadata = { title: "Select organization" };
+export const metadata = {
+  title: "Select organization",
+  robots: { index: false, follow: false }
+};
 
 export default async function SelectOrganizationPage({
   searchParams
@@ -23,6 +26,7 @@ export default async function SelectOrganizationPage({
   return (
     <AuthCard
       title="Choose an organization"
+      eyebrow="Organization access"
       description="Access is revalidated before the workspace changes."
     >
       <div className="mb-4">

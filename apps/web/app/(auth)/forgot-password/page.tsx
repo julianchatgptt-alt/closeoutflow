@@ -16,6 +16,7 @@ export default async function ForgotPasswordPage({
   return (
     <AuthCard
       title="Reset your password"
+      eyebrow="Account recovery"
       description="We’ll send a secure reset link if the account exists."
     >
       <div className="mb-4">

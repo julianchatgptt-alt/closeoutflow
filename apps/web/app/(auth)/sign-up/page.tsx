@@ -16,7 +16,11 @@ export default async function SignUpPage({
 }) {
   const params = await searchParams;
   return (
-    <AuthCard title="Create your account" description="Start a secure Closeout workspace.">
+    <AuthCard
+      title="Create your account"
+      description="Set up your identity, then create or join a Closeout workspace."
+      eyebrow="Get started"
+    >
       <div className="mb-4">
         <AuthMessage error={params.error} />
       </div>

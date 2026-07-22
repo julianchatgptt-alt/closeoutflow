@@ -15,6 +15,7 @@ export default async function VerifyEmailPage({
   return (
     <AuthCard
       title="Check your inbox"
+      eyebrow="Email verification"
       description="Confirm your email to protect your Closeout account."
     >
       <div className="mb-4">

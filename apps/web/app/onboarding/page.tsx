@@ -6,7 +6,10 @@ import { AuthMessage } from "../../components/auth/auth-message";
 import { AuthCard } from "../../components/auth/auth-card";
 import { getRequestUser } from "../../lib/server-auth";
 
-export const metadata = { title: "Set up your organization" };
+export const metadata = {
+  title: "Set up your organization",
+  robots: { index: false, follow: false }
+};
 
 export default async function OnboardingPage({
   searchParams
@@ -20,6 +23,7 @@ export default async function OnboardingPage({
   return (
     <AuthCard
       title="Create your organization"
+      eyebrow="Workspace setup · Step 1 of 1"
       description="Your organization is the secure boundary for members and future project data."
     >
       <div className="mb-4">

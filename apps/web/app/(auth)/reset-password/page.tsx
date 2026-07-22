@@ -15,6 +15,7 @@ export default async function ResetPasswordPage({
   return (
     <AuthCard
       title="Choose a new password"
+      eyebrow="Account recovery"
       description="This will revoke your other active sessions."
     >
       <div className="mb-4">

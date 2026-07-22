@@ -57,7 +57,7 @@ test("authentication routes use Closeout branding and safe generic states", asyn
       .filter({ has: page.getByRole("button", { name: "Sign in", exact: true }) })
       .locator('input[name="next"]')
   ).toHaveValue("/dashboard");
-  await expect(page.getByText("Closeout", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Closeout home" })).toBeVisible();
   await page.goto("/forgot-password");
   await expect(page.getByRole("heading", { name: /Reset/ })).toBeVisible();
 });
@@ -174,6 +174,7 @@ test("existing user receives and accepts a hashed organization invitation", asyn
   await invitee.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(invitee).toHaveURL(/\/dashboard$/);
   await invitee.goto(invitePath!);
+  await expect(invitee.getByText("Organization administrator", { exact: true })).toBeVisible();
   await invitee.getByRole("button", { name: "Accept invitation" }).click();
   await expect(invitee).toHaveURL(/\/dashboard$/);
   await invitee.goto("/select-organization");

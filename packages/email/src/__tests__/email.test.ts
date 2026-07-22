@@ -37,6 +37,8 @@ describe("email adapter", () => {
     expect(message.subject).toContain("Closeout");
     expect(message.html).toContain('<html lang="en">');
     expect(message.html).toContain("closeoutflow.com");
+    expect(message.html).toContain("/brand/email-header.png");
+    expect(message.html).toContain('alt="Closeout"');
     expect(message.text).toContain("Closeout");
     expect(message.text).not.toMatch(/password=|secret=|recovery_code=/i);
   });

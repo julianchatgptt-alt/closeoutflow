@@ -6,7 +6,10 @@ import { AuthCard } from "../../../components/auth/auth-card";
 import { AuthMessage } from "../../../components/auth/auth-message";
 import { createRequestAuthClient, getRequestUser } from "../../../lib/server-auth";
 
-export const metadata = { title: "Organization invitation" };
+export const metadata = {
+  title: "Organization invitation",
+  robots: { index: false, follow: false }
+};
 
 export default async function InvitationPage({
   params,
@@ -28,6 +31,7 @@ export default async function InvitationPage({
     return (
       <AuthCard
         title="Invitation unavailable"
+        eyebrow="Invitation status"
         description="This invitation link is no longer valid. Ask an administrator to resend it."
       >
         <Link className="block text-center text-sm text-primary hover:underline" href="/sign-in">
@@ -40,12 +44,17 @@ export default async function InvitationPage({
   return (
     <AuthCard
       title={`Join ${invitation.organization_name}`}
-      description="This invitation creates an active organization membership."
+      description="Review the organization and assigned role before continuing."
+      eyebrow="Organization invitation"
     >
       <div className="mb-4">
         <AuthMessage error={query.error} />
       </div>
       <dl className="mb-6 space-y-3 rounded-md bg-muted p-4 text-sm">
+        <div className="flex justify-between gap-3">
+          <dt className="text-muted-foreground">Invited by</dt>
+          <dd className="font-medium">Organization administrator</dd>
+        </div>
         <div className="flex justify-between gap-3">
           <dt className="text-muted-foreground">Sent to</dt>
           <dd className="truncate font-medium">{invitation.invitation_email}</dd>
