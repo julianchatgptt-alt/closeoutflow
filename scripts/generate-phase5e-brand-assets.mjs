@@ -8,13 +8,12 @@ const output = path.join(root, "apps", "web", "public", "brand");
 await mkdir(output, { recursive: true });
 
 const detailedPaths = `
-  <path d="M8 14v26" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="square"/>
-  <path d="M16 8h13l9 9-7 7" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter"/>
-  <path d="M8 31h14l8 8 12-15" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter"/>`;
+  <path d="M14 6H34L42 14L34 22L28 16H20L16 20V28L20 32H28L34 26L42 34L34 42H14L6 34V14Z" fill="currentColor"/>
+  <path d="M14 6L20 16L16 20L6 14Z" fill="#000" opacity=".14"/>
+  <path d="M6 34L16 28L20 32L14 42Z" fill="#000" opacity=".14"/>
+  <path d="M34 6L42 14L34 22L28 16Z" fill="#fff" opacity=".1"/>`;
 const compactPaths = `
-  <path d="M9 14v26" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="square"/>
-  <path d="M17 8h12l9 9-7 7" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="square" stroke-linejoin="miter"/>
-  <path d="M9 31h13l8 8 12-15" fill="none" stroke="currentColor" stroke-width="6.5" stroke-linecap="square" stroke-linejoin="miter"/>`;
+  <path d="M14 6H33L41 14L34 21L29 16H21L16 21V27L21 32H29L34 27L41 34L33 42H14L6 34V14Z" fill="currentColor"/>`;
 
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({ deviceScaleFactor: 1 });

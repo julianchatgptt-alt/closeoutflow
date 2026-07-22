@@ -6,7 +6,7 @@
 
 ## Closeout decision
 
-The founder selected Concept C and the decision is recorded in [logo-decision.md](./logo-decision.md). The exploration mark was refined into a non-enclosing three-part construction: a record spine, a detached folded upper beam, and a lower verified-handoff stroke. A dedicated compact cut removes the secondary seam and increases the optical weight for 16×16 and 32×32 use.
+The founder selected Concept C and clarified the final geometry with the original visual reference, as recorded in [logo-decision.md](./logo-decision.md). The production mark is a compact, filled, faceted C-frame closing around an angular aperture with balanced inward terminal folds. A dedicated compact cut removes the facet overlays, widens the aperture, and shortens the terminals for 16×16 and 32×32 use.
 
 The final system avoids treating the symbol as a block letter C, enclosed token, hexagonal monogram, finance-only chevron, cryptocurrency glyph, or Autodesk-like A. The symbol remains identifiable without the wordmark, works in brand blue, monochrome, and inverse use, and uses a deliberate 14px standard lockup gap and 10px compact gap.
 

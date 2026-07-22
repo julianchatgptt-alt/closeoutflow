@@ -2,6 +2,11 @@ import type { SVGProps } from "react";
 
 type LogoVariant = "brand" | "monochrome" | "inverse";
 
+const detailedMarkPath =
+  "M14 6H34L42 14L34 22L28 16H20L16 20V28L20 32H28L34 26L42 34L34 42H14L6 34V14Z";
+const compactMarkPath =
+  "M14 6H33L41 14L34 21L29 16H21L16 21V27L21 32H29L34 27L41 34L33 42H14L6 34V14Z";
+
 export function CloseoutMark({
   size = 32,
   compact = false,
@@ -25,40 +30,13 @@ export function CloseoutMark({
       width={size}
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path
-        d={compact ? "M9 14v26" : "M8 14v26"}
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-        strokeWidth={compact ? 6.5 : 6}
-      />
-      <path
-        d={compact ? "M17 8h12l9 9-7 7" : "M16 8h13l9 9-7 7"}
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-        strokeWidth={compact ? 6.5 : 6}
-      />
-      <path
-        d={compact ? "M9 31h13l8 8 12-15" : "M8 31h14l8 8 12-15"}
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-        strokeWidth={compact ? 6.5 : 6}
-      />
-      {!compact ? (
-        <path
-          d="M29 8v9h9"
-          fill="none"
-          opacity="0.34"
-          stroke="currentColor"
-          strokeLinecap="square"
-          strokeLinejoin="miter"
-          strokeWidth="2"
-        />
+      <path d={compact ? compactMarkPath : detailedMarkPath} fill="currentColor" />
+      {!compact && size >= 24 ? (
+        <>
+          <path d="M14 6L20 16L16 20L6 14Z" fill="#000000" opacity="0.14" />
+          <path d="M6 34L16 28L20 32L14 42Z" fill="#000000" opacity="0.14" />
+          <path d="M34 6L42 14L34 22L28 16Z" fill="#ffffff" opacity="0.1" />
+        </>
       ) : null}
     </svg>
   );
@@ -101,30 +79,10 @@ export function CloseoutLogo({
 export function StaticCloseoutMark(props: SVGProps<SVGSVGElement>) {
   return (
     <svg aria-hidden="true" focusable="false" viewBox="0 0 48 48" {...props}>
-      <path
-        d="M8 14v26"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-        strokeWidth="6"
-      />
-      <path
-        d="M16 8h13l9 9-7 7"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-        strokeWidth="6"
-      />
-      <path
-        d="M8 31h14l8 8 12-15"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="square"
-        strokeLinejoin="miter"
-        strokeWidth="6"
-      />
+      <path d={detailedMarkPath} fill="currentColor" />
+      <path d="M14 6L20 16L16 20L6 14Z" fill="#000000" opacity="0.14" />
+      <path d="M6 34L16 28L20 32L14 42Z" fill="#000000" opacity="0.14" />
+      <path d="M34 6L42 14L34 22L28 16Z" fill="#ffffff" opacity="0.1" />
     </svg>
   );
 }

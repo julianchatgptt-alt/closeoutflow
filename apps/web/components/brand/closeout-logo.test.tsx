@@ -12,13 +12,14 @@ describe("Closeout final logo", () => {
     expect(screen.queryByText("CloseoutFlow")).not.toBeInTheDocument();
   });
 
-  it("uses a simplified dedicated compact cut", () => {
+  it("uses a filled faceted mark and a simplified compact cut", () => {
     const detailed = render(<CloseoutMark title="Detailed Closeout symbol" />);
     expect(detailed.container.querySelectorAll("path")).toHaveLength(4);
+    expect(detailed.container.querySelector("path")).toHaveAttribute("fill", "currentColor");
     detailed.unmount();
 
     const compact = render(<CloseoutMark compact title="Compact Closeout symbol" />);
-    expect(compact.container.querySelectorAll("path")).toHaveLength(3);
+    expect(compact.container.querySelectorAll("path")).toHaveLength(1);
     expect(screen.getByRole("img", { name: "Compact Closeout symbol" })).toHaveAttribute(
       "viewBox",
       "0 0 48 48"

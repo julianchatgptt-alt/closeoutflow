@@ -1,7 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 218 48" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 218 48">
   <title>Closeout</title>
-  <path d="M8 14v26" stroke="#1D5AA6" stroke-width="6" stroke-linecap="square"/>
-  <path d="M16 8h13l9 9-7 7" stroke="#1D5AA6" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter"/>
-  <path d="M8 31h14l8 8 12-15" stroke="#1D5AA6" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M14 6H34L42 14L34 22L28 16H20L16 20V28L20 32H28L34 26L42 34L34 42H14L6 34V14Z" fill="#1D5AA6"/>
+  <path d="M14 6L20 16L16 20L6 14Z" opacity=".14"/>
+  <path d="M6 34L16 28L20 32L14 42Z" opacity=".14"/>
+  <path d="M34 6L42 14L34 22L28 16Z" fill="#fff" opacity=".1"/>
   <text x="61" y="33" fill="#111827" font-family="IBM Plex Sans, Arial, sans-serif" font-size="26" font-weight="600" letter-spacing="-.65">Closeout</text>
 </svg>

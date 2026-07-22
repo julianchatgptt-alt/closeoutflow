@@ -1,9 +1,9 @@
 # Keystone Fold refinement review
 
-> **Status:** Awaiting founder selection.
+> **Status:** Founder selection complete — Balanced Aperture.
 >
 > **Date:** 2026-07-22.
-> **Global application:** Unchanged; the currently applied Keystone Fold remains in production components and assets until a refinement is selected.
+> **Global application:** Authorized on 2026-07-22 after the founder clarified that the supplied faceted Concept C reference is the intended production geometry.
 
 ## Reason for checkpoint
 
@@ -40,6 +40,6 @@ The deterministic side-by-side capture was generated as review evidence at:
 
 `C:\Users\julia\.codex\visualizations\2026\07\22\keystone-fold-refinement\keystone-refinement-comparison.png`
 
-## Selection gate
+## Selection outcome
 
-No variant is recommended or selected in the gallery. Founder selection is required before any production component, SVG source, favicon, PWA icon, social asset, email asset, or generated raster is replaced. After selection, the chosen geometry must receive final small-size optical tuning and the complete Phase 5E validation/capture suite before global application.
+The founder selected the reference-faithful direction represented by **A — Balanced Aperture**. The production component, SVG sources, favicon/PWA icons, social asset, email asset, Open Graph asset, and generated rasters may now be replaced with this geometry. The wider-aperture optical cut is retained only for compact and favicon use.
