@@ -1,6 +1,28 @@
-# Phase 5B exit review
+# Phase 5 exit review
 
-> Decision: Phase 5B is complete enough for independent Phase 5C audit. Date: 2026-07-20.
+> Decision: Phase 5 is complete after Phase 5D remediation and ready for dedicated brand/auth visual polish. Date: 2026-07-21.
+
+## Phase 5D closeout decision
+
+The independent Phase 5C audit found 0 CRITICAL, 0 HIGH, 5 MEDIUM, 8 LOW, 2 observations, and no Phase 6 blockers. Phase 5D resolved every actionable finding in commits `825b279` and `aded4e8`; the complete disposition is in [phase-5d-remediation.md](./phase-5d-remediation.md). The founder audit is preserved unchanged.
+
+The closing evidence confirms:
+
+- project breadcrumbs resolve authorized project names server-side, never display raw UUIDs, preserve accessible long-name labels, and return non-enumerating 404s for missing/inaccessible projects;
+- date-only values render as friendly calendar dates without timezone shifting, while activity timestamps use project timezone and retain absolute machine-readable values;
+- application authorization and live SQL/RLS behavior are independently cross-diffed, including inactive/removed membership, removed assignment, archived-project, unknown-role, unknown-permission, forged-ID, and cross-tenant cases;
+- stale project/company/contact edits return a friendly reconcile path without overwriting newer data;
+- duplicate warnings, audit email redaction, document-width containment, plural copy, mobile relationship clarity, two-writer concurrency, and larger-than-seed query behavior have direct regression evidence;
+- the complete browser and accessibility harness passed across Chromium, Firefox, WebKit, Pixel 7, iPhone 15, tablet portrait, and tablet landscape;
+- the deterministic capture harness generated and reviewed 24 Phase 5D images indexed in [phase-5d-visual-evidence.md](./phase-5d-visual-evidence.md).
+
+### Commercial journey result
+
+The name-only first-project journey remains immediate and lands on a useful setup checklist. The overview has a human project breadcrumb, friendly dates, visible setup progress, honest Phase 6 deferrals, reusable companies/contacts, internal team, and audit-backed activity. Reuse-first duplicate guidance remains advisory rather than blocking. Desktop, tablet, and phone layouts contain long names and relationship controls without whole-document overflow. No raw database language, fabricated readiness metrics, or Phase 6 workflow is presented.
+
+### Scale and production-like result
+
+The transactional scale probe passed with 75 projects, 75 companies, 75 contacts, and 75 activity events, including stable cursor behavior and tenant isolation. Recorded local query durations were 5.208 ms for search, 1.387 ms for overview, and 0.428 ms for activity. The production-like probe passed protected dashboard/project/directory routes, safe redirects, canonical metadata, unique nonce CSP, security headers, `/design` 404 behavior, and repeated health requests producing zero audit rows.
 
 ## Implementation result
 
@@ -87,28 +109,31 @@ Baseline images are retained separately under the sibling `before` directory. Th
 | `pnpm format:check` | Passed |
 | `pnpm lint` | Passed, including import boundaries |
 | `pnpm typecheck` | Passed, 15/15 packages |
-| `pnpm test` | Passed, 37 files / 156 tests |
+| `pnpm test` | Passed, 40 files / 172 tests |
 | `pnpm build` | Passed, 15/15 packages and all Phase 5 routes |
 | `pnpm test:server-only` | Passed for DB and auth privileged imports; follow-up typecheck passed |
 | `pnpm db:start` | Passed; local stack running |
-| `pnpm db:reset` | Passed through migration `0020` plus deterministic seed |
-| `pnpm db:types` | Passed; SHA-256 unchanged after regeneration |
+| `pnpm db:reset` | Passed through migration `0021` plus deterministic seed |
+| `pnpm db:types` | Passed twice; deterministic SHA-256 `8DBB300EE4AAF130D140FA65D4B837B1E1065C1E1FB02918BBA88E9AE5449DF5` |
 | `pnpm db:lint` | Passed; no schema errors |
 | `pnpm db:validate` | Passed; approved table allowlist and security invariants |
-| `pnpm test:db` | Passed, 9 files / 205 assertions |
-| `pnpm test:e2e` | Passed, 172 passed / 59 intentional skips across five projects |
-| `pnpm test:a11y` | Passed, 76/76 |
+| `pnpm test:db` | Passed, 10 pgTAP files / 214 assertions plus 1 live file / 5 tests |
+| `pnpm test:phase5-scale` | Passed with 75 records/events per tested domain; transaction rolled back |
+| `pnpm test:e2e` | Passed, 257 passed / 107 intentional skips / 0 failed across seven profiles |
+| `pnpm test:a11y` | Passed, 112/112 across seven profiles |
 | `pnpm test:live-security` | Passed |
-| `pnpm test:production-probe` | Passed |
+| `pnpm test:production-probe` | Passed, including protected Phase 5 routes and zero health audit writes |
+| `pnpm capture:phase5d` | Passed, 2/2 harness steps and 24 reviewed images |
 
-The browser matrix includes Chromium, Firefox, WebKit, Pixel 7/mobile Chrome, and iPhone 15/mobile Safari. CSP nonce tests, reduced-motion behavior, keyboard navigation, route branding, `/design` production gating, security headers, and zero health-request audit writes passed.
+The browser matrix includes Chromium, Firefox, WebKit, Pixel 7/mobile Chrome, iPhone 15/mobile Safari, tablet portrait, and tablet landscape. CSP nonce tests, reduced-motion behavior, keyboard navigation, route branding, `/design` production gating, security headers, and zero health-request audit writes passed.
 
 ## Remaining risks and deferrals
 
-- Performance was validated at deterministic local seed scale, not production-scale tenancy. Cursor pagination and indexed search are in place; load testing remains a later delivery concern.
+- Performance was validated at deterministic 75-row/event local scale, not production-scale tenancy. Cursor pagination and indexed search are in place; load testing remains a later operational concern.
 - Automated axe coverage cannot replace founder/customer usability review or assistive-technology manual testing.
+- External screenshot binaries are machine-local by policy; the committed deterministic capture harness and manifest are the durable evidence contract.
 - Requirements, documents, reviews, approvals, files, portals, billing, integrations, and AI remain intentionally deferred. Phase 5 does not fabricate substitutes for them.
-- Founder review is a soft product-quality gate, not a repository repair or security blocker.
+- The temporary logo and authentication visual treatment remain intentional inputs to the dedicated brand/auth visual-polish phase.
 
 ## Boundary confirmation
 
@@ -122,4 +147,4 @@ The browser matrix includes Chromium, Firefox, WebKit, Pixel 7/mobile Chrome, an
 
 ## Founder action
 
-No founder action is required to make the repository validation green. The remaining founder-owned action is the optional commercial/visual review before or during the independent Phase 5C audit.
+No founder action is required to make repository validation green or close Phase 5. Founder review is optional commercial feedback for the dedicated brand/auth visual-polish phase; it is not a security or repository blocker.

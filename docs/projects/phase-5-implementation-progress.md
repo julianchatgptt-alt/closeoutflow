@@ -1,8 +1,23 @@
-# Phase 5B implementation progress
+# Phase 5 implementation progress
 
-> Status: complete and ready for independent Phase 5C audit. Updated 2026-07-20.
+> Status: Phase 5D remediation complete; ready for dedicated brand/auth visual polish. Updated 2026-07-21.
 
 Phase 5B implements the project, company, contact, relationship, and internal project-team foundation described by the approved Phase 5A specifications. It stops before requirements, documents, reviews, portals, billing, integrations, and AI.
+
+## Phase 5D closeout
+
+The independent Phase 5C audit recorded 0 CRITICAL, 0 HIGH, 5 MEDIUM, 8 LOW, and 2 observations. Commits `825b279` and `aded4e8` resolve every actionable item:
+
+- authorized project names replace UUID breadcrumb labels without leaking inaccessible projects;
+- shared date formatting distinguishes date-only fields from timezone-aware timestamps;
+- an independent live TypeScript/SQL/RLS parity matrix guards future permission changes;
+- migration `0021` makes intentional stale-write conflicts return immediately with friendly reconciliation;
+- audit email redaction, two-writer concurrency, duplicate UI, overflow, pluralization, mobile relationship clarity, and larger-than-seed performance have explicit regression coverage;
+- the complete seven-profile Playwright and axe matrices are reproducible with isolated local auth states;
+- 24 deterministic screenshots were generated and reviewed outside Git through the committed capture harness;
+- production nonce CSP, secure-cookie boundaries, protected routes, `/design` gating, canonical metadata, and zero health audit writes passed a production-like probe.
+
+See [phase-5d-remediation.md](./phase-5d-remediation.md) for the finding-by-finding record and [phase-5d-visual-evidence.md](./phase-5d-visual-evidence.md) for the capture index.
 
 ## Task record
 
@@ -73,15 +88,17 @@ Requirement/document/review/equipment/warranty and later routes remain visibly l
 - Playwright output could collide with production/dev Next artifacts; browser runs now use `.next-playwright`.
 - The initial loading state was too visually quiet; it now has a visible status and structured skeleton cards.
 
-## Validation snapshot
+## Final validation snapshot
 
-- Vitest: 37 files, 156 tests passed.
-- pgTAP: 9 files, 205 assertions passed.
-- Playwright full matrix: 172 passed, 59 intentional project-specific skips.
-- Dedicated accessibility matrix: 76 passed.
-- Database migrations: `0000` through `0020` reset cleanly.
-- Generated database type SHA-256 was identical before and after regeneration.
+- Vitest: 40 files, 172 tests passed.
+- pgTAP: 10 files, 214 assertions passed; independent live database suite: 1 file, 5 tests passed.
+- Playwright full matrix: 257 passed, 107 intentional capability/route-specific skips, 0 failed.
+- Dedicated accessibility matrix: 112/112 passed.
+- Database migrations: `0000` through `0021` reset cleanly.
+- Generated database type SHA-256 was identical across two regenerations: `8DBB300EE4AAF130D140FA65D4B837B1E1065C1E1FB02918BBA88E9AE5449DF5`.
 - Live security probe blocked audit UPDATE, DELETE, and TRUNCATE and confirmed the audit schema is unavailable through PostgREST.
-- Production-like probe confirmed unique nonce CSP, security headers, safe redirects, local-only `/design`, and zero health-request audit writes.
+- Scale probe passed with 75 projects, companies, contacts, and audit events and rolled its data back.
+- Production-like probe confirmed unique nonce CSP, security headers, safe redirects, protected tenant routes, local-only `/design`, and zero health-request audit writes.
+- Deterministic capture passed and produced 24 reviewed screenshots.
 
 See [phase-5-exit-review.md](./phase-5-exit-review.md) for complete validation, visual, risk, and boundary evidence.
