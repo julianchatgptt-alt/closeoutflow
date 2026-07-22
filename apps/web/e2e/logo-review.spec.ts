@@ -1,6 +1,46 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+test("Keystone Fold refinement review presents three neutral complete variants", async ({
+  page
+}) => {
+  await page.goto("/design");
+  const review = page.getByTestId("keystone-refinement-review");
+
+  await expect(
+    review.getByRole("heading", { level: 2, name: "Keystone Fold refinement review" })
+  ).toBeVisible();
+  await expect(review.locator("article")).toHaveCount(3);
+  await expect(review.getByText(/do not replace the currently applied mark/i)).toBeVisible();
+
+  for (const label of [
+    "Symbol only",
+    "Horizontal wordmark",
+    "Expanded sidebar",
+    "Collapsed sidebar",
+    "Authentication header",
+    "16×16",
+    "32×32",
+    "48×48",
+    "Dark mode",
+    "Monochrome",
+    "Inverse"
+  ]) {
+    await expect(review.getByText(label)).toHaveCount(3);
+  }
+
+  const documentWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+  expect(documentWidth).toBeLessThanOrEqual(page.viewportSize()?.width ?? documentWidth);
+});
+
+test("@a11y Keystone Fold refinement review has no detectable violations", async ({ page }) => {
+  await page.goto("/design");
+  const results = await new AxeBuilder({ page })
+    .include('[data-testid="keystone-refinement-review"]')
+    .analyze();
+  expect(results.violations).toEqual([]);
+});
+
 test("final Phase 5E review includes every selected brand application", async ({ page }) => {
   await page.goto("/design");
 

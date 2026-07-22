@@ -49,6 +49,7 @@ import {
 
 import { SampleValidationForm } from "../form/sample-form";
 import { BrandFinalReview } from "./brand-final-review";
+import { KeystoneRefinementReview } from "./keystone-refinement-review";
 import { LogoFounderReview } from "./logo-founder-review";
 import {
   DashboardEmptyState,
@@ -108,6 +109,7 @@ export function DesignGallery() {
             <GalleryControls />
           </div>
         </div>
+        <KeystoneRefinementReview />
         <BrandFinalReview />
         <LogoFounderReview />
         <Section title="Surfaces, type ladder, and color tokens">
