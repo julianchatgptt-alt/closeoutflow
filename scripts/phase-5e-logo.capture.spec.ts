@@ -19,6 +19,9 @@ async function prepare(page: Page, theme: "light" | "dark" = "light") {
     document.querySelectorAll("nextjs-portal").forEach((portal) => {
       (portal as HTMLElement).style.display = "none";
     });
+    document.querySelectorAll(".cof-toast").forEach((toast) => {
+      (toast as HTMLElement).style.display = "none";
+    });
     await document.fonts.ready;
   }, theme);
 }

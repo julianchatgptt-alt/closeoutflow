@@ -290,7 +290,15 @@ function MockField({ dark = false }: { dark?: boolean }) {
   );
 }
 
-function DesktopSignIn({ concept, dark = false }: { concept: Concept; dark?: boolean }) {
+function DesktopSignIn({
+  concept,
+  dark = false,
+  comparison = false
+}: {
+  concept: Concept;
+  dark?: boolean;
+  comparison?: boolean;
+}) {
   return (
     <div
       className={`grid min-h-64 overflow-hidden rounded-lg border lg:grid-cols-[0.84fr_1.16fr] ${
@@ -300,9 +308,17 @@ function DesktopSignIn({ concept, dark = false }: { concept: Concept; dark?: boo
       <div className={`grid content-between gap-8 p-6 ${dark ? "bg-[#0d1117]" : "bg-background"}`}>
         <LogoLockup concept={concept.id} compact inverse={dark} />
         <div>
-          <p className="font-semibold">Project records, ready for handoff.</p>
-          <p className={`mt-2 text-xs ${dark ? "text-white/65" : "text-muted-foreground"}`}>
-            Controlled access · documented history · construction closeout focus
+          <p className={comparison ? "text-[13px] font-semibold leading-snug" : "font-semibold"}>
+            {comparison ? "Ready for project handoff." : "Project records, ready for handoff."}
+          </p>
+          <p
+            className={`${comparison ? "text-[10px]" : "text-xs"} mt-2 ${
+              dark ? "text-white/65" : "text-muted-foreground"
+            }`}
+          >
+            {comparison
+              ? "Controlled · documented · private"
+              : "Controlled access · documented history · construction closeout focus"}
           </p>
         </div>
       </div>
@@ -454,7 +470,7 @@ function AppliedComparisonBoards() {
         <div className="grid gap-3 xl:grid-cols-3" data-testid="all-desktop-auth-previews">
           {logoConcepts.map((concept) => (
             <ComparisonCard concept={concept} key={concept.id}>
-              <DesktopSignIn concept={concept} />
+              <DesktopSignIn comparison concept={concept} />
             </ComparisonCard>
           ))}
         </div>
