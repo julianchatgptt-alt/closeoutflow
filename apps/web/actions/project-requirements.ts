@@ -214,6 +214,40 @@ export async function setDueDateAction(formData: FormData): Promise<void> {
   redirect(`${path}?message=Due date updated`);
 }
 
+export async function moveRequirementAction(moveValue: string, formData: FormData): Promise<void> {
+  const projectId = z.uuid().safeParse(formValue(formData, "projectId"));
+  const [requirementIdValue, updatedAtValue, directionValue] = moveValue.split("|");
+  const movement = z
+    .object({
+      requirementId: z.uuid(),
+      updatedAt: z.iso.datetime({ offset: true }),
+      direction: z.enum(["up", "down"])
+    })
+    .safeParse({
+      requirementId: requirementIdValue,
+      updatedAt: updatedAtValue,
+      direction: directionValue
+    });
+  if (!projectId.success || !movement.success)
+    requirementError("/projects", "Invalid requirement order");
+
+  const path = `/projects/${projectId.data}/requirements`;
+  const { client, allowed } = await authorizeRequirement(
+    projectId.data,
+    permissions.requirementManage
+  );
+  if (!allowed) requirementError(path, "You do not have permission to reorder requirements");
+
+  const { error } = await client.rpc("move_project_requirement", {
+    target_requirement_id: movement.data.requirementId,
+    expected_updated_at: movement.data.updatedAt,
+    move_direction: movement.data.direction,
+    request_id: createRequestId()
+  });
+  if (error) requirementError(path, friendlyRequirementError(error));
+  redirect(`${path}?message=${encodeURIComponent("Requirement order updated")}`);
+}
+
 export async function markNotApplicableAction(formData: FormData): Promise<void> {
   const parsed = notApplicableSchema.safeParse(
     Object.fromEntries(

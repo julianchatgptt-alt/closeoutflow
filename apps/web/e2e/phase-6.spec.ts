@@ -49,7 +49,17 @@ test("requirement detail separates responsibility, dates, and lifecycle actions"
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "Responsibility" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Due date" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Mark not applicable" })).toBeVisible();
+  await page.getByLabel("Reason").fill("no");
+  await page.getByRole("button", { name: "Mark not applicable" }).click();
+  await expect(page.getByRole("alertdialog")).toHaveCount(0);
+  await expect(page.locator("#na-reason-error")).toContainText(
+    "Enter a reason between 3 and 200 characters"
+  );
+  await page.getByLabel("Reason").fill("Owner confirmed this scope never applied.");
+  await page.getByRole("button", { name: "Mark not applicable" }).click();
+  const confirmation = page.getByRole("alertdialog", { name: "Mark not applicable?" });
+  await expect(confirmation).toBeVisible();
+  await confirmation.getByRole("button", { name: "Cancel" }).click();
 });
 
 test("template library and builder are first-class surfaces", async ({ page }) => {
@@ -146,6 +156,38 @@ test("bulk selection applies one confirmed change to many requirements", async (
   );
 });
 
+test("authorized users can reorder requirements with keyboard-accessible controls", async ({
+  page
+}, testInfo) => {
+  test.skip(testInfo.project.name !== "chromium", "Mutation journey runs once");
+  const suffix = Date.now();
+  const first = `Fixture Order Alpha ${suffix}`;
+  const second = `Fixture Order Beta ${suffix}`;
+
+  for (const title of [first, second]) {
+    await page.goto(`${register}?add=1`);
+    await page.getByLabel("Requirement title").fill(title);
+    await page.getByRole("button", { name: "Add requirement", exact: true }).click();
+    await expect(page.locator('main [role="status"]').first()).toContainText("Requirement added");
+  }
+
+  const general = page.locator("tbody").filter({ hasText: "General" }).first();
+  await expect(general.getByRole("link", { name: first })).toBeVisible();
+  await expect(general.getByRole("link", { name: second })).toBeVisible();
+  await page.getByRole("button", { name: `Move ${second} up` }).click();
+  await expect(page.locator('main [role="status"]').first()).toContainText(
+    "Requirement order updated"
+  );
+
+  const orderedTitles = await page
+    .locator("tbody")
+    .filter({ hasText: "General" })
+    .first()
+    .getByRole("link")
+    .allTextContents();
+  expect(orderedTitles.indexOf(second)).toBeLessThan(orderedTitles.indexOf(first));
+});
+
 test("project overview shows real requirement configuration only", async ({ page }) => {
   await page.goto(seededProject);
   await expect(page.getByRole("heading", { name: "Closeout requirements" })).toBeVisible();
@@ -153,6 +195,7 @@ test("project overview shows real requirement configuration only", async ({ page
   await expect(page.getByText("Setup progress").first()).toBeVisible();
   const overviewText = await page.locator("main").innerText();
   expect(overviewText).not.toMatch(/submitted|approved|rejected|readiness score|risk score/i);
+  expect(overviewText).not.toContain("Sam Suspended");
   await expect(page.getByText("Add closeout requirements").first()).toBeVisible();
 });
 

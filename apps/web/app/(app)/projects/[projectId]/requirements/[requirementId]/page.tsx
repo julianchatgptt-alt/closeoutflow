@@ -23,6 +23,7 @@ import {
   RequirementStatusBadge,
   StaleChip
 } from "../../../../../../components/requirements/phase-6-ui";
+import { NotApplicableAction } from "../../../../../../components/requirements/not-applicable-action";
 import { PageHeader } from "../../../../../../components/shell/page-header";
 import { getActiveContext } from "../../../../../../lib/active-context";
 import { formatDateOnly } from "../../../../../../lib/date-format";
@@ -419,27 +420,14 @@ export default async function Page({
                         </Button>
                       </form>
                     ) : (
-                      <ConfirmAction
+                      <NotApplicableAction
                         action={markNotApplicableAction}
                         fields={{
                           projectId,
                           requirementId,
                           updatedAt: requirement.updated_at
                         }}
-                        title="Mark not applicable?"
-                        description="This records that the requirement never applied to this project. It stays visible with the reason and can be reopened."
-                        actionLabel="Mark not applicable"
-                      >
-                        <Field label="Reason" htmlFor="na-reason" required>
-                          <Input
-                            id="na-reason"
-                            name="reason"
-                            required
-                            minLength={3}
-                            maxLength={200}
-                          />
-                        </Field>
-                      </ConfirmAction>
+                      />
                     )}
                     <ConfirmAction
                       action={archiveRequirementAction}

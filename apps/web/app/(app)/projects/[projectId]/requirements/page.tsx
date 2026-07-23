@@ -1,11 +1,13 @@
 import { Button, EmptyState, Field, Input, Select } from "@closeoutflow/ui";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
 import {
   bulkUpdateRequirementsAction,
-  createRequirementAction
+  createRequirementAction,
+  moveRequirementAction
 } from "../../../../../actions/project-requirements";
 import {
   Notice,
@@ -96,6 +98,8 @@ export default async function Page({
   const registerPath = `/projects/${projectId}/requirements`;
   const hasFilters = Boolean(query.q || query.category || query.status || query.attention);
   const hasAnyConfigured = (summary.total ?? 0) + (summary.not_applicable ?? 0) > 0;
+  const canReorder =
+    canManage && !hasFilters && query.archived !== "1" && query.after === undefined;
 
   const grouped = new Map<string, RegisterRow[]>();
   for (const row of rows) {
@@ -309,6 +313,7 @@ export default async function Page({
                 <col className="w-[15%]" />
                 <col className="w-[13%]" />
                 <col className="w-32" />
+                {canReorder ? <col className="w-24" /> : null}
               </colgroup>
               <thead className="border-b text-left text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
@@ -322,13 +327,14 @@ export default async function Page({
                   <th>Internal owner</th>
                   <th>Due date</th>
                   <th className="pr-5">Status</th>
+                  {canReorder ? <th className="pr-5 text-right">Order</th> : null}
                 </tr>
               </thead>
               {[...grouped.entries()].map(([categoryName, categoryRows]) => (
                 <tbody key={categoryName} className="divide-y border-b">
                   <tr className="bg-muted/40">
                     <th
-                      colSpan={canManage ? 6 : 5}
+                      colSpan={(canManage ? 6 : 5) + (canReorder ? 1 : 0)}
                       scope="colgroup"
                       className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground"
                     >
@@ -336,7 +342,7 @@ export default async function Page({
                       <span className="font-normal tabular-nums">({categoryRows.length})</span>
                     </th>
                   </tr>
-                  {categoryRows.map((row) => (
+                  {categoryRows.map((row, rowIndex) => (
                     <tr
                       key={row.id}
                       className={`hover:bg-muted/50 ${row.archived_at ? "opacity-60" : ""}`}
@@ -376,6 +382,42 @@ export default async function Page({
                           archived={Boolean(row.archived_at)}
                         />
                       </td>
+                      {canReorder ? (
+                        <td className="pr-5">
+                          <div
+                            className="flex justify-end gap-1"
+                            role="group"
+                            aria-label={`Reorder ${row.title}`}
+                          >
+                            <button
+                              type="submit"
+                              formAction={moveRequirementAction.bind(
+                                null,
+                                `${row.id}|${row.updated_at}|up`
+                              )}
+                              disabled={rowIndex === 0}
+                              aria-label={`Move ${row.title} up`}
+                              title="Move up"
+                              className="grid h-11 w-11 place-items-center rounded-md hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40 sm:h-9 sm:w-9"
+                            >
+                              <ChevronUp className="h-4 w-4" aria-hidden />
+                            </button>
+                            <button
+                              type="submit"
+                              formAction={moveRequirementAction.bind(
+                                null,
+                                `${row.id}|${row.updated_at}|down`
+                              )}
+                              disabled={rowIndex === categoryRows.length - 1}
+                              aria-label={`Move ${row.title} down`}
+                              title="Move down"
+                              className="grid h-11 w-11 place-items-center rounded-md hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40 sm:h-9 sm:w-9"
+                            >
+                              <ChevronDown className="h-4 w-4" aria-hidden />
+                            </button>
+                          </div>
+                        </td>
+                      ) : null}
                     </tr>
                   ))}
                 </tbody>
@@ -389,7 +431,7 @@ export default async function Page({
                     <span className="tabular-nums">{categoryRows.length}</span>
                   </h2>
                   <div className="divide-y">
-                    {categoryRows.map((row) => (
+                    {categoryRows.map((row, rowIndex) => (
                       <article
                         key={row.id}
                         className={`p-4 ${row.archived_at ? "opacity-60" : ""}`}
@@ -423,6 +465,38 @@ export default async function Page({
                           <ResponsibilityCell row={row} />
                           <DueDateCell row={row} />
                         </div>
+                        {canReorder ? (
+                          <div
+                            className="mt-3 flex gap-2 border-t pt-3"
+                            role="group"
+                            aria-label={`Reorder ${row.title}`}
+                          >
+                            <button
+                              type="submit"
+                              formAction={moveRequirementAction.bind(
+                                null,
+                                `${row.id}|${row.updated_at}|up`
+                              )}
+                              disabled={rowIndex === 0}
+                              className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-md border border-border-strong bg-surface px-3 text-sm font-medium hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40"
+                            >
+                              <ChevronUp className="h-4 w-4" aria-hidden />
+                              Move up
+                            </button>
+                            <button
+                              type="submit"
+                              formAction={moveRequirementAction.bind(
+                                null,
+                                `${row.id}|${row.updated_at}|down`
+                              )}
+                              disabled={rowIndex === categoryRows.length - 1}
+                              className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-md border border-border-strong bg-surface px-3 text-sm font-medium hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40"
+                            >
+                              <ChevronDown className="h-4 w-4" aria-hidden />
+                              Move down
+                            </button>
+                          </div>
+                        ) : null}
                       </article>
                     ))}
                   </div>
