@@ -80,7 +80,7 @@ Snapshots with provenance; re-applying a template adds nothing (skips reported h
 | `pnpm db:validate` | Passed; Phase 6 allowlist + forbidden later-phase tables |
 | `pnpm test:db` | Passed, 11 pgTAP files / 290 assertions + 5 live tests |
 | `pnpm test:phase6-scale` | Passed at 2,000 requirements; transaction rolled back |
-| `pnpm test:e2e` | Passed, 396 passed / 143 intentional project skips / 0 failed across seven profiles (22.1m); re-run after final polish commits — see below |
+| `pnpm test:e2e` | Passed, 396 passed / 143 intentional project skips / 0 failed across seven profiles (final post-polish run, 20.6m) |
 | `pnpm test:a11y` | Passed, 161/161 across seven profiles (light + dark) |
 | `pnpm test:live-security` | Passed; audit UPDATE/DELETE/TRUNCATE blocked, audit schema off PostgREST |
 | `pnpm test:production-probe` | Passed; protected Phase 6 routes, canonical metadata, unique-nonce CSP, security headers, zero health audit writes |
