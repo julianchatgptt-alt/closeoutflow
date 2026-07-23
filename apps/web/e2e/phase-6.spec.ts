@@ -207,6 +207,7 @@ for (const route of [register, "/templates"] as const) {
     for (const theme of ["light", "dark"] as const) {
       await page.addInitScript((value) => localStorage.setItem("cof-theme", value), theme);
       await page.goto(route);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
       const results = await new AxeBuilder({ page }).analyze();
       expect(results.violations).toEqual([]);
     }

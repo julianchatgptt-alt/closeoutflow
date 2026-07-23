@@ -170,6 +170,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     process.exit(1);
   }
   console.log(
-    "Migration files are ordered, limited to infrastructure plus approved Phase 4/5 tables, and include audit/RLS invariants."
+    "Migration files are ordered, limited to infrastructure plus approved Phase 4/5/6 tables, and include audit/RLS invariants."
   );
 }

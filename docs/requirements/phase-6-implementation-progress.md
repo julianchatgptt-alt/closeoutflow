@@ -1,6 +1,6 @@
 # Phase 6B implementation progress
 
-> **Status:** Implementation complete pending final validation record; see [phase-6-exit-review.md](./phase-6-exit-review.md) for closing evidence.
+> **Status:** Complete. Closing evidence and the full validation record are in [phase-6-exit-review.md](./phase-6-exit-review.md).
 > **Branch:** `codex/phase-6b-requirements`. Migrations `0022`–`0026` (append-only; `0000`–`0021` untouched).
 
 ## Task record (plan T0–T20)
@@ -26,7 +26,7 @@
 | T16 overview integration | Real requirement panel (counts, needs-attention, setup-progress bar labeled as setup, next 3 upcoming dates, deep-filtered CTA); “Add closeout requirements” setup-checklist step activated; no submission/approval/readiness/risk language. |
 | T17 polish | Active-organization scoping on all list queries; a11y label associations; light/dark; reduced motion; long-title truncation; no raw UUID/ISO/database terms on Phase 6 surfaces. |
 | T18 validation | See exit review for the full command record, incl. the 2,000-requirement scale probe (`test:phase6-scale`). |
-| T19 visual review | `capture:phase6` deterministic harness (30+ captures across desktop/tablet/Pixel/iPhone × light/dark); reviewed evidence indexed in the exit review. |
+| T19 visual review | `capture:phase6` deterministic harness (35 captures across desktop/tablet/Pixel/iPhone × light/dark); the review found and fixed a Firefox table-cell collapse, a raw template-id breadcrumb, and a phone-hostile sticky bulk bar before closeout; reviewed evidence indexed in the exit review. |
 | T20 docs + exit review | This record + [phase-6-exit-review.md](./phase-6-exit-review.md); AGENTS/CLAUDE pointers updated at T0. |
 
 ## Approved deviations / notes (recorded, not hidden)

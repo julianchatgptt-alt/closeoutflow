@@ -1,6 +1,6 @@
 # Phase 6B exit review
 
-> **Decision:** pending final validation record (populated below).
+> **Decision:** Phase 6B is complete and ready for the independent Phase 6C audit.
 > **Date:** 2026-07-23.
 > **Branch:** `codex/phase-6b-requirements`.
 
@@ -73,22 +73,22 @@ Snapshots with provenance; re-applying a template adds nothing (skips reported h
 | `pnpm typecheck` | Passed, 15/15 workspaces |
 | `pnpm test` | Passed, 44 files / 181 tests (incl. new authz matrix, parity, validator suites) |
 | `pnpm build` | Passed, 15/15 workspaces and all Phase 6 routes |
-| `pnpm test:server-only` | PENDING |
+| `pnpm test:server-only` | Passed; privileged DB and auth imports fail client builds as required |
 | `pnpm db:start` / `pnpm db:reset` | Passed through migration `0026` plus deterministic seed |
 | `pnpm db:types` | Passed twice; deterministic output (identical SHA-256 across consecutive runs) |
 | `pnpm db:lint` | Passed; no schema errors |
 | `pnpm db:validate` | Passed; Phase 6 allowlist + forbidden later-phase tables |
 | `pnpm test:db` | Passed, 11 pgTAP files / 290 assertions + 5 live tests |
 | `pnpm test:phase6-scale` | Passed at 2,000 requirements; transaction rolled back |
-| `pnpm test:e2e` | PENDING |
-| `pnpm test:a11y` | PENDING |
-| `pnpm test:live-security` | PENDING |
-| `pnpm test:production-probe` | PENDING |
-| `pnpm capture:phase6` | PENDING |
+| `pnpm test:e2e` | Passed, 396 passed / 143 intentional project skips / 0 failed across seven profiles (22.1m); re-run after final polish commits — see below |
+| `pnpm test:a11y` | Passed, 161/161 across seven profiles (light + dark) |
+| `pnpm test:live-security` | Passed; audit UPDATE/DELETE/TRUNCATE blocked, audit schema off PostgREST |
+| `pnpm test:production-probe` | Passed; protected Phase 6 routes, canonical metadata, unique-nonce CSP, security headers, zero health audit writes |
+| `pnpm capture:phase6` | Passed; 35 deterministic captures generated and reviewed |
 
 ## Visual evidence index
 
-`pnpm capture:phase6` writes the deterministic manifest to the machine-local evidence directory (`PHASE6_CAPTURE_DIR`). Captures: register (desktop light/dark, tablet, Pixel, iPhone, needs-attention, not-applicable, bulk-selected, add flow, long title, empty desktop/mobile); requirement detail (desktop light/dark, iPhone, N/A confirmation, stale-conflict, not-found); template library (desktop light/dark, tablet, Pixel, no-results); builder draft (desktop light/dark, tablet); published version chain; apply flow (choose, preview desktop light/dark, Pixel, iPhone); overview requirement panel (desktop light/dark, Pixel). Review outcome recorded below after capture.
+`pnpm capture:phase6` writes the deterministic manifest to the machine-local evidence directory (`PHASE6_CAPTURE_DIR`). Captures: register (desktop light/dark, tablet, Pixel, iPhone, needs-attention, not-applicable, bulk-selected, add flow, long title, empty desktop/mobile); requirement detail (desktop light/dark, iPhone, N/A confirmation, stale-conflict, not-found); template library (desktop light/dark, tablet, Pixel, no-results); builder draft (desktop light/dark, tablet); published version chain; apply flow (choose, preview desktop light/dark, Pixel, iPhone); overview requirement panel (desktop light/dark, Pixel). Review outcome: the register reads as an operational closeout register (visible grouped headers, quiet status ink, derived attention chips); light/dark parity holds; mobile cards and the phone-safe bulk bar are intentional; the review caught and fixed three issues before closeout — a Firefox zero-width table-cell collapse, a raw template identifier in the breadcrumb (now the template name), and a bulk bar that would have pinned over small viewports.
 
 ## Deferred Phase 7+ functionality (confirmed absent)
 
@@ -103,4 +103,4 @@ No file uploads, storage buckets, document/version records, previews, OCR, submi
 
 ## Phase 6 verdict
 
-PENDING FINAL VALIDATION.
+READY FOR PHASE 6C AUDIT.
