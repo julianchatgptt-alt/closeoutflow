@@ -49,6 +49,7 @@ import {
 
 import { SampleValidationForm } from "../form/sample-form";
 import { BrandFinalReview } from "./brand-final-review";
+import { FullProductVisualReview } from "./full-product-visual-review";
 import { KeystoneRefinementReview } from "./keystone-refinement-review";
 import { LogoFounderReview } from "./logo-founder-review";
 import {
@@ -109,6 +110,7 @@ export function DesignGallery() {
             <GalleryControls />
           </div>
         </div>
+        <FullProductVisualReview />
         <KeystoneRefinementReview />
         <BrandFinalReview />
         <LogoFounderReview />

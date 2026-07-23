@@ -1,0 +1,275 @@
+/*
+ * Phase 6E-B1 — SCOPED prototype tokens for founder visual review ONLY.
+ * These variables live under .scope and never touch production tokens.css.
+ * Light values on .scope; dark values under :global(.dark) .scope.
+ * The core fix vs. production: a real surface ladder with genuine elevation
+ * (including a real dark-mode shadow) instead of a uniform border ring.
+ */
+
+.scope {
+  /* surface ladder */
+  --pv-canvas: 216 22% 95.5%;
+  --pv-quiet: 214 20% 97.5%;
+  --pv-panel: 0 0% 100%;
+  --pv-raised: 0 0% 100%;
+  /* ink */
+  --pv-fg: 220 26% 14%;
+  --pv-muted: 220 14% 36%; /* readable secondary — AA on panel/canvas */
+  --pv-muted-strong: 220 20% 26%;
+  /* lines */
+  --pv-border: 215 16% 87%;
+  --pv-hairline: 215 18% 92%;
+  /* brand */
+  --pv-accent: 215 68% 36%; /* engineered blue */
+  --pv-accent-fg: 0 0% 100%;
+  --pv-accent-tint: 215 70% 96%;
+  /* status */
+  --pv-warning-fg: 33 90% 30%;
+  --pv-warning-bg: 40 90% 92%;
+  --pv-success-fg: 152 46% 30%;
+  --pv-success-bg: 152 44% 94%;
+  /* elevation — the missing piece */
+  --pv-shadow-raised:
+    0 1px 2px 0 hsl(216 30% 15% / 0.06), 0 14px 30px -14px hsl(216 30% 15% / 0.18);
+  --pv-shadow-overlay:
+    0 2px 6px 0 hsl(216 30% 15% / 0.1), 0 24px 48px -18px hsl(216 30% 15% / 0.28);
+  /* nav active (light accent, NOT a filled block) */
+  --pv-nav-active-bg: 215 70% 96%;
+  --pv-nav-active-accent: 215 68% 42%;
+  --pv-nav-active-fg: 215 66% 30%;
+
+  color: hsl(var(--pv-fg));
+}
+
+:global(.dark) .scope {
+  --pv-canvas: 222 20% 7%;
+  --pv-quiet: 221 18% 10.5%;
+  --pv-panel: 220 16% 12.5%;
+  --pv-raised: 219 15% 16.5%;
+  --pv-fg: 210 30% 96%;
+  --pv-muted: 215 16% 72%; /* readable secondary — AA on panel/canvas */
+  --pv-muted-strong: 215 20% 84%;
+  --pv-border: 217 14% 22%;
+  --pv-hairline: 217 12% 17%;
+  --pv-accent: 213 80% 62%;
+  --pv-accent-fg: 220 40% 10%;
+  --pv-accent-tint: 215 40% 18%;
+  --pv-warning-fg: 40 90% 66%;
+  --pv-warning-bg: 36 40% 16%;
+  --pv-success-fg: 152 45% 60%;
+  --pv-success-bg: 156 30% 15%;
+  /* real dark elevation (ambient) — replaces the flat border ring */
+  --pv-shadow-raised: 0 1px 2px 0 hsl(0 0% 0% / 0.45), 0 12px 30px -10px hsl(0 0% 0% / 0.55);
+  --pv-shadow-overlay: 0 2px 8px 0 hsl(0 0% 0% / 0.5), 0 24px 50px -14px hsl(0 0% 0% / 0.65);
+  --pv-nav-active-bg: 215 40% 18%;
+  --pv-nav-active-accent: 213 80% 62%;
+  --pv-nav-active-fg: 210 60% 90%;
+}
+
+/* ---- surface primitives ---- */
+.canvas {
+  background: hsl(var(--pv-canvas));
+}
+.quiet {
+  background: hsl(var(--pv-quiet));
+  border-radius: 0.625rem;
+}
+.panel {
+  background: hsl(var(--pv-panel));
+  border: 1px solid hsl(var(--pv-hairline));
+  border-radius: 0.625rem;
+}
+.raised {
+  background: hsl(var(--pv-raised));
+  border-radius: 0.75rem;
+  box-shadow: var(--pv-shadow-raised);
+}
+.overlay {
+  background: hsl(var(--pv-raised));
+  border-radius: 0.75rem;
+  box-shadow: var(--pv-shadow-overlay);
+}
+.hairline {
+  border-color: hsl(var(--pv-hairline));
+}
+
+/* ---- typography ---- */
+.title {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: hsl(var(--pv-fg));
+}
+.overline {
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: hsl(var(--pv-muted));
+}
+.secondary {
+  font-size: 0.875rem;
+  line-height: 1.35rem;
+  color: hsl(var(--pv-muted-strong));
+}
+.metric {
+  font-size: 1.75rem;
+  line-height: 2rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--pv-fg));
+}
+
+/* ---- nav ---- */
+.navItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-height: 2.5rem;
+  padding: 0 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--pv-muted-strong));
+}
+.navItem:hover {
+  background: hsl(var(--pv-quiet));
+}
+.navItemActive {
+  background: hsl(var(--pv-nav-active-bg));
+  color: hsl(var(--pv-nav-active-fg));
+  font-weight: 600;
+}
+.navItemActive::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.375rem;
+  bottom: 0.375rem;
+  width: 3px;
+  border-radius: 9999px;
+  background: hsl(var(--pv-nav-active-accent));
+}
+/* disabled meaning is carried by the "Later" chip, not by low-contrast text */
+.navDisabled {
+  color: hsl(var(--pv-muted));
+}
+
+/* ---- chips / status ---- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid hsl(var(--pv-border));
+  color: hsl(var(--pv-muted-strong));
+  background: hsl(var(--pv-panel));
+}
+.chipAttention {
+  color: hsl(var(--pv-warning-fg));
+  background: hsl(var(--pv-warning-bg));
+  border-color: transparent;
+}
+.chipInfo {
+  color: hsl(var(--pv-accent));
+  background: hsl(var(--pv-accent-tint));
+  border-color: transparent;
+}
+
+/* ---- buttons ---- */
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: hsl(var(--pv-accent));
+  color: hsl(var(--pv-accent-fg));
+}
+.btnQuiet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: hsl(var(--pv-panel));
+  border: 1px solid hsl(var(--pv-border));
+  color: hsl(var(--pv-fg));
+}
+
+/* ---- meters ---- */
+.meterTrack {
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: hsl(var(--pv-quiet));
+  overflow: hidden;
+}
+.meterFill {
+  height: 100%;
+  border-radius: 9999px;
+  background: hsl(var(--pv-accent));
+}
+
+/* ---- register table ---- */
+.tableHead {
+  color: hsl(var(--pv-muted));
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.rowRule {
+  border-top: 1px solid hsl(var(--pv-hairline));
+}
+.groupHead {
+  background: hsl(var(--pv-quiet));
+  color: hsl(var(--pv-muted));
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ---- device frame for product screenshots ---- */
+.frame {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid hsl(var(--pv-border));
+  box-shadow: var(--pv-shadow-raised);
+  background: hsl(var(--pv-panel));
+}
+.frameBar {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  background: hsl(var(--pv-quiet));
+  border-bottom: 1px solid hsl(var(--pv-hairline));
+}
+.frameDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: hsl(var(--pv-border));
+}
+
+/* homepage hero band */
+.hero {
+  background: linear-gradient(180deg, hsl(var(--pv-quiet)) 0%, hsl(var(--pv-canvas)) 100%);
+  border-radius: 1rem;
+  border: 1px solid hsl(var(--pv-hairline));
+}
