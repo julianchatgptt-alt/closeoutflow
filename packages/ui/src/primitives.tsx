@@ -373,28 +373,72 @@ export function Separator(props: SeparatorPrimitive.SeparatorProps) {
   return <SeparatorPrimitive.Root className="h-px w-full bg-border" {...props} />;
 }
 
-export function EmptyState({
+/**
+ * Shared state composition: a quiet centred surface with one icon, one title,
+ * one line of value, and at most one primary action. Used by every empty,
+ * no-results, error, and permission state so the product never shows a blank
+ * card, a bare spinner, or a raw message.
+ */
+function StateShell({
+  icon,
   title,
   description,
-  action
+  action,
+  tone = "quiet",
+  role,
+  headingClassName
 }: {
+  icon: ReactNode;
   title: string;
   description: string;
   action?: ReactNode;
+  tone?: "quiet" | "panel";
+  role?: "alert" | "status";
+  headingClassName?: string;
 }) {
   return (
-    <div className="grid min-h-40 place-items-center rounded-lg bg-surface px-5 py-8 text-center shadow-card">
-      <div>
-        <span className="mx-auto mb-3 grid h-16 w-16 place-items-center rounded-full bg-muted">
-          <FileUp aria-hidden="true" className="h-10 w-10 text-muted-foreground" />
+    <div
+      {...(role ? { role } : {})}
+      className={cn(
+        "grid min-h-40 place-items-center rounded-lg px-6 py-10 text-center",
+        tone === "quiet" ? "bg-surface-sunken" : "bg-surface shadow-card"
+      )}
+    >
+      <div className="max-w-md">
+        <span className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-surface shadow-card">
+          {icon}
         </span>
-        <h2 className="text-[15px] font-semibold">{title}</h2>
-        <p className="mx-auto mt-1 max-w-md text-[13px] text-muted-foreground">{description}</p>
-        {action ? <div className="mt-4">{action}</div> : null}
+        <h2 className={cn("text-[15px] font-semibold", headingClassName)}>{title}</h2>
+        <p className="mx-auto mt-1.5 text-sm leading-[1.35rem] text-muted-foreground">
+          {description}
+        </p>
+        {action ? <div className="mt-5">{action}</div> : null}
       </div>
     </div>
   );
 }
+
+export function EmptyState({
+  title,
+  description,
+  action,
+  icon
+}: {
+  title: string;
+  description: string;
+  action?: ReactNode;
+  icon?: ReactNode;
+}) {
+  return (
+    <StateShell
+      icon={icon ?? <FileUp aria-hidden="true" className="h-6 w-6 text-subtle-foreground" />}
+      title={title}
+      description={description}
+      {...(action ? { action } : {})}
+    />
+  );
+}
+
 export function ErrorState({
   title = "Something went wrong",
   description,
@@ -405,32 +449,39 @@ export function ErrorState({
   onRetry?: () => void;
 }) {
   return (
-    <div
+    <StateShell
       role="alert"
-      className="rounded-lg border-l-2 border-danger bg-surface p-5 text-left shadow-card"
-    >
-      <XCircle aria-hidden="true" className="h-6 w-6 text-danger" />
-      <h2 className="mt-2 font-semibold">{title}</h2>
-      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-      {onRetry ? (
-        <Button className="mt-4" size="sm" variant="outline" onClick={onRetry}>
-          Retry
-        </Button>
-      ) : null}
-    </div>
+      tone="panel"
+      icon={<XCircle aria-hidden="true" className="h-6 w-6 text-danger" />}
+      title={title}
+      description={description}
+      {...(onRetry
+        ? {
+            action: (
+              <Button size="sm" variant="outline" onClick={onRetry}>
+                Retry
+              </Button>
+            )
+          }
+        : {})}
+    />
   );
 }
+
 export function PermissionDenied({
-  description = "Ask an organization administrator if you need access."
+  description = "Ask an organization administrator if you need access.",
+  action
 }: {
   description?: string;
+  action?: ReactNode;
 }) {
   return (
-    <div className="rounded-lg border p-8 text-center">
-      <Lock aria-hidden="true" className="mx-auto h-8 w-8 text-muted-foreground" />
-      <h2 className="mt-2 font-semibold">You don&apos;t have permission to view this</h2>
-      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-    </div>
+    <StateShell
+      icon={<Lock aria-hidden="true" className="h-6 w-6 text-subtle-foreground" />}
+      title="You don't have permission to view this"
+      description={description}
+      {...(action ? { action } : {})}
+    />
   );
 }
 
@@ -466,6 +517,131 @@ export function MetricCard({
       <p className="text-[13px] text-muted-foreground">{label}</p>
       <p className="mt-1 text-[28px] font-semibold leading-9 tabular-nums">{value}</p>
       {detail ? <p className="mt-1 text-xs text-muted-foreground">{detail}</p> : null}
+    </div>
+  );
+}
+
+/**
+ * A single real count. Used sparingly — one row at most, never a four-up KPI
+ * strip. `href` turns the metric into a route into the work it describes.
+ */
+export function Metric({
+  label,
+  value,
+  detail,
+  href,
+  attention = false
+}: {
+  label: string;
+  value: string | number;
+  detail?: string;
+  href?: string;
+  attention?: boolean;
+}) {
+  const body = (
+    <>
+      <p className="text-overline">{label}</p>
+      <p className={cn("mt-1.5 text-metric", attention && "text-warning-foreground")}>{value}</p>
+      {detail ? <p className="mt-1 text-[13px] text-muted-foreground">{detail}</p> : null}
+    </>
+  );
+  if (href) {
+    return (
+      <a
+        href={href}
+        className="block rounded-lg px-4 py-3.5 transition-colors hover:bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        {body}
+      </a>
+    );
+  }
+  return <div className="px-4 py-3.5">{body}</div>;
+}
+
+/**
+ * The single mobile representation every table degrades to below `md`, so the
+ * product does not carry a different bespoke card per page.
+ */
+export function RecordCard({
+  title,
+  href,
+  source,
+  status,
+  fields = [],
+  footer
+}: {
+  title: string;
+  href?: string;
+  source?: string;
+  status?: ReactNode;
+  fields?: Array<{ label: string; value: ReactNode }>;
+  footer?: ReactNode;
+}) {
+  return (
+    <div className="rounded-lg bg-surface p-4 shadow-card">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          {href ? (
+            <a
+              href={href}
+              title={title}
+              className="block truncate font-semibold text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {title}
+            </a>
+          ) : (
+            <p title={title} className="truncate font-semibold">
+              {title}
+            </p>
+          )}
+          {source ? (
+            <p title={source} className="mt-0.5 truncate text-[13px] text-muted-foreground">
+              {source}
+            </p>
+          ) : null}
+        </div>
+        {status ? <div className="shrink-0">{status}</div> : null}
+      </div>
+      {fields.length > 0 ? (
+        <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5 border-t border-hairline pt-3">
+          {fields.map((field) => (
+            <div key={field.label} className="min-w-0">
+              <dt className="text-overline">{field.label}</dt>
+              <dd className="mt-0.5 truncate text-[13px]">{field.value}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
+      {footer ? <div className="mt-3">{footer}</div> : null}
+    </div>
+  );
+}
+
+/**
+ * Derived attention, shown as a quiet warning chip rather than a red alarm.
+ * Attention here means "setup is incomplete", never "something has failed".
+ */
+export function AttentionChip({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex min-h-5 items-center gap-1 rounded-full bg-warning-subtle px-2 py-0 text-[11px] font-medium leading-4 text-warning-foreground">
+      {children}
+    </span>
+  );
+}
+
+/** Real, derived progress. Never decorative — callers pass actual counts. */
+export function Meter({ value, max = 100, label }: { value: number; max?: number; label: string }) {
+  const pct = max > 0 ? Math.min(100, Math.max(0, Math.round((value / max) * 100))) : 0;
+  return (
+    <div
+      role="progressbar"
+      aria-valuenow={value}
+      aria-valuemin={0}
+      aria-valuemax={max}
+      aria-label={label}
+      className="h-1.5 w-full overflow-hidden rounded-full bg-surface-sunken"
+    >
+      <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
     </div>
   );
 }

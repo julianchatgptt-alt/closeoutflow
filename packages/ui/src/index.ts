@@ -1,11 +1,12 @@
 export { Button, type ButtonProps } from "./button";
-export { Card, CardContent, CardHeader, CardTitle } from "./card";
+export { Card, CardContent, CardHeader, CardTitle, type CardProps } from "./card";
 export { Input, type InputProps } from "./input";
 export { Skeleton } from "./skeleton";
 export { Toast, ToastProvider, type ToastProps } from "./toast";
 export { cn } from "./lib/cn";
 export {
   Alert,
+  AttentionChip,
   Avatar,
   Badge,
   Banner,
@@ -21,11 +22,14 @@ export {
   KeyValue,
   Label,
   MetadataList,
+  Meter,
+  Metric,
   MetricCard,
   MultiSelect,
   PermissionDenied,
   Progress,
   RadioGroup,
+  RecordCard,
   ResponsiveStack,
   Select,
   Separator,

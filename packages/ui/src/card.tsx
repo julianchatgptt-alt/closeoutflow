@@ -1,9 +1,34 @@
+import { cva, type VariantProps } from "class-variance-authority";
 import type { HTMLAttributes } from "react";
 
 import { cn } from "./lib/cn";
 
-export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("rounded-lg bg-surface shadow-card", className)} {...props} />;
+/**
+ * Surface ladder (Phase 6E-B2). Hierarchy comes from tone and elevation rather
+ * than from putting a border ring around every box.
+ *
+ * - `quiet`   grouping regions and insets — tone shift only, no border, no shadow
+ * - `panel`   the default content surface — hairline boundary, no drop shadow
+ * - `raised`  the ONE focal element per view — real elevation, no ring
+ *
+ * Use at most one `raised` card per viewport; nested cards are prohibited (back
+ * sub-groups with `quiet` plus spacing instead).
+ */
+const card = cva("rounded-lg", {
+  variants: {
+    tier: {
+      quiet: "bg-surface-sunken",
+      panel: "bg-surface shadow-card",
+      raised: "rounded-xl bg-surface-raised shadow-raised"
+    }
+  },
+  defaultVariants: { tier: "panel" }
+});
+
+export type CardProps = HTMLAttributes<HTMLDivElement> & VariantProps<typeof card>;
+
+export function Card({ className, tier, ...props }: CardProps) {
+  return <div className={cn(card({ tier }), className)} {...props} />;
 }
 
 export function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {

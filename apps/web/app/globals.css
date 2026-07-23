@@ -30,11 +30,37 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-.text-page-title {
+/* `text-h1`/`text-h2` were referenced by pages and dialog titles but generated no
+   CSS (the tokens live in a plain :root block, not a Tailwind @theme), so those
+   headings silently rendered at body size. Defined here alongside the rest. */
+.text-page-title,
+.text-h1 {
   font-size: var(--text-h1);
   font-weight: 600;
-  line-height: 1.875rem;
-  letter-spacing: -0.011em;
+  line-height: 2.25rem;
+  letter-spacing: -0.01em;
+}
+
+.text-h2 {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  line-height: 1.5rem;
+  letter-spacing: -0.005em;
+}
+
+/* Major region title — sits between the page title and the overline. */
+.text-section {
+  font-size: var(--text-h2);
+  font-weight: 500;
+  line-height: 1.5rem;
+}
+
+.text-metric {
+  font-size: var(--text-metric);
+  font-weight: 600;
+  line-height: 2rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
 
 .text-overline {
@@ -43,7 +69,8 @@ body {
   line-height: 1rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: hsl(var(--muted-foreground));
+  /* Quieter than body secondary so the two ranks stay distinguishable. */
+  color: hsl(var(--subtle-foreground));
 }
 
 @keyframes cof-fade-in {

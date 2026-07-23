@@ -12,7 +12,18 @@ const preset = {
           sunken: semantic("surface-sunken")
         },
         foreground: semantic("foreground"),
-        border: { DEFAULT: semantic("border"), strong: semantic("border-strong") },
+        border: {
+          DEFAULT: semantic("border"),
+          strong: semantic("border-strong"),
+          hairline: semantic("hairline")
+        },
+        hairline: semantic("hairline"),
+        nav: {
+          DEFAULT: semantic("nav-item-fg"),
+          active: semantic("nav-item-active-bg"),
+          "active-accent": semantic("nav-item-active-accent"),
+          "active-foreground": semantic("nav-item-active-fg")
+        },
         input: semantic("input"),
         ring: semantic("ring"),
         primary: {
@@ -43,9 +54,17 @@ const preset = {
       },
       boxShadow: {
         card: "var(--shadow-card)",
+        raised: "var(--shadow-raised)",
+        overlay: "var(--shadow-overlay)",
         sm: "var(--shadow-sm)",
         md: "var(--shadow-md)",
         lg: "var(--shadow-lg)"
+      },
+      maxWidth: {
+        content: "var(--content-max)",
+        "content-wide": "var(--content-wide)",
+        "content-reading": "var(--content-max-reading)",
+        "content-form": "var(--content-max-form)"
       },
       fontFamily: { sans: "var(--font-sans)", mono: "var(--font-mono)" },
       zIndex: {

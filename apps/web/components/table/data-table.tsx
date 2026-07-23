@@ -121,7 +121,7 @@ export function DataTable<T extends { id: string }>({
   if (error) return <ErrorState description={error} onRetry={() => undefined} />;
   return (
     <section aria-label={caption} className="overflow-hidden rounded-lg bg-surface shadow-card">
-      <div className="flex flex-col gap-2 border-b p-3 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-2 border-b border-hairline bg-surface-sunken p-3 md:flex-row md:items-center md:justify-between">
         <label className="relative block md:w-56">
           <span className="sr-only">Search {caption}</span>
           <Search
@@ -215,7 +215,7 @@ export function DataTable<T extends { id: string }>({
                                 ? "none"
                                 : undefined
                         }
-                        className={`h-11 border-b border-border-strong px-3 text-xs font-semibold text-muted-foreground ${header.id === "select" ? "w-10" : (columns.find((column) => column.key === header.id)?.className ?? "")}`}
+                        className={`text-overline h-[var(--row-h-header)] border-b border-hairline px-3 ${header.id === "select" ? "w-10" : (columns.find((column) => column.key === header.id)?.className ?? "")}`}
                       >
                         {header.column.getCanSort() ? (
                           <button
@@ -246,7 +246,7 @@ export function DataTable<T extends { id: string }>({
                 {table.getRowModel().rows.map((row) => (
                   <tr
                     key={row.id}
-                    className={`group h-[var(--row-h)] border-b transition-colors duration-[var(--dur-fast)] last:border-0 hover:bg-muted/50 ${row.getIsSelected() ? "bg-[hsl(var(--selection))] shadow-[inset_2px_0_0_hsl(var(--primary))]" : ""}`}
+                    className={`group h-[var(--row-h)] border-b border-hairline transition-colors duration-[var(--dur-fast)] last:border-0 hover:bg-surface-sunken ${row.getIsSelected() ? "bg-[hsl(var(--selection))] shadow-[inset_2px_0_0_hsl(var(--primary))]" : ""}`}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <td
@@ -261,7 +261,7 @@ export function DataTable<T extends { id: string }>({
               </tbody>
             </table>
           </div>
-          <div className="divide-y md:hidden">
+          <div className="divide-y divide-hairline md:hidden">
             {table.getRowModel().rows.map((row) => (
               <article
                 key={row.id}
@@ -299,7 +299,7 @@ export function DataTable<T extends { id: string }>({
           </div>
         </>
       )}
-      <div className="flex items-center justify-between border-t p-3 text-sm text-muted-foreground">
+      <div className="flex items-center justify-between border-t border-hairline p-3 text-sm text-muted-foreground">
         <span>{table.getFilteredRowModel().rows.length} records</span>
         <div className="flex items-center gap-2">
           <Button

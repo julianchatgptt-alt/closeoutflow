@@ -23,15 +23,18 @@
   --blue-800: 218 72% 24%;
   --blue-900: 219 66% 18%;
 
-  --background: 216 20% 95.5%;
+  /* Surface ladder (Phase 6E-B2): canvas → quiet → panel → raised → overlay.
+     Hierarchy comes from tone + elevation, not from a border ring on every box. */
+  --background: 216 22% 95.5%;
   --surface: var(--neutral-0);
   --surface-raised: var(--neutral-0);
-  --surface-sunken: 214 20% 97%;
-  --foreground: var(--neutral-900);
+  --surface-sunken: 214 20% 97.5%;
+  --foreground: 220 26% 14%;
   --muted: var(--neutral-100);
-  --muted-foreground: 215 20% 34%;
-  --subtle-foreground: 215 16% 45%;
-  --border: 214 16% 89%;
+  --muted-foreground: 220 20% 26%;
+  --subtle-foreground: 220 14% 36%;
+  --border: 215 16% 87%;
+  --hairline: 215 18% 92%;
   --border-strong: var(--neutral-300);
   --input: var(--neutral-300);
   --ring: var(--blue-500);
@@ -46,6 +49,12 @@
   --link-hover: var(--blue-700);
   --selection: var(--blue-100);
   --sidebar-active: var(--selection);
+  /* Navigation: light accent treatment, never an oversized filled block. */
+  --nav-item-fg: var(--muted-foreground);
+  --nav-item-hover: var(--surface-sunken);
+  --nav-item-active-bg: 215 70% 96%;
+  --nav-item-active-accent: 215 68% 42%;
+  --nav-item-active-fg: 215 66% 30%;
   --success-foreground: 158 64% 26%;
   --success-subtle: 152 44% 94%;
   --success-border: 152 40% 80%;
@@ -76,13 +85,15 @@
     var(--font-plex-mono), ui-monospace, "SFMono-Regular", "Cascadia Code", Menlo, Consolas,
     monospace;
   --text-display: 2rem;
-  --text-h1: 1.5rem;
+  /* Page titles own the first viewport (6E-B2: 24px → 30px). */
+  --text-h1: 1.875rem;
   --text-h2: 1.125rem;
   --text-h3: 1rem;
   --text-body: 0.875rem;
   --text-sm: 0.8125rem;
   --text-xs: 0.75rem;
   --text-overline: 0.6875rem;
+  --text-metric: 1.75rem;
 
   --space-0: 0;
   --space-1: 0.25rem;
@@ -100,6 +111,8 @@
   --header-h: 3.5rem;
   --project-subnav-h: 2.75rem;
   --content-max: 90rem;
+  /* Operational pages (register, directories, lists) go wide; forms/detail read narrow. */
+  --content-wide: 100rem;
   --content-max-reading: 70rem;
   --content-max-form: 40rem;
   --page-gutter: 1.5rem;
@@ -121,7 +134,12 @@
   --radius-full: 9999px;
   --shadow-none: none;
   --shadow-sm: 0 1px 2px 0 hsl(220 33% 11% / 0.06);
-  --shadow-card: 0 1px 2px 0 hsl(220 30% 15% / 0.05), 0 0 0 1px hsl(var(--border));
+  /* Panels get a hairline boundary only — no drop shadow, no heavy ring.
+     Elevation is reserved for the one focal surface per view (--shadow-raised)
+     and for overlays (--shadow-overlay). */
+  --shadow-card: 0 0 0 1px hsl(var(--hairline));
+  --shadow-raised: 0 1px 2px 0 hsl(216 30% 15% / 0.06), 0 14px 30px -14px hsl(216 30% 15% / 0.18);
+  --shadow-overlay: 0 2px 6px 0 hsl(216 30% 15% / 0.1), 0 24px 48px -18px hsl(216 30% 15% / 0.28);
   --shadow-md: 0 4px 12px -2px hsl(220 33% 11% / 0.12);
   --shadow-lg: 0 12px 32px -8px hsl(220 33% 11% / 0.2);
   --dur-fast: 120ms;
@@ -143,15 +161,16 @@
 }
 
 .dark {
-  --background: 224 18% 6.5%;
-  --surface: 220 15% 11.5%;
-  --surface-raised: 219 14% 15%;
-  --surface-sunken: 222 16% 9%;
-  --foreground: 214 20% 93%;
+  --background: 222 20% 7%;
+  --surface: 220 16% 12.5%;
+  --surface-raised: 219 15% 16.5%;
+  --surface-sunken: 221 18% 10.5%;
+  --foreground: 210 30% 96%;
   --muted: 219 14% 15%;
-  --muted-foreground: 215 16% 72%;
-  --subtle-foreground: 215 14% 62%;
-  --border: 218 12% 22%;
+  --muted-foreground: 215 20% 84%;
+  --subtle-foreground: 215 16% 72%;
+  --border: 217 14% 22%;
+  --hairline: 217 12% 17%;
   --border-strong: 217 12% 30%;
   --input: 217 12% 30%;
   --ring: var(--blue-300);
@@ -185,7 +204,14 @@
   --owner-foreground: 256 60% 74%;
   --owner-subtle: 256 29% 17%;
   --owner-border: 256 26% 32%;
-  --shadow-card: 0 0 0 1px hsl(var(--border));
+  --nav-item-active-bg: 215 40% 18%;
+  --nav-item-active-accent: 213 80% 62%;
+  --nav-item-active-fg: 210 60% 90%;
+  --shadow-card: 0 0 0 1px hsl(var(--hairline));
+  /* Dark mode gets genuine ambient elevation. Previously every raised surface
+     was the same border ring as every panel, so nothing read as elevated. */
+  --shadow-raised: 0 1px 2px 0 hsl(0 0% 0% / 0.45), 0 12px 30px -10px hsl(0 0% 0% / 0.55);
+  --shadow-overlay: 0 2px 8px 0 hsl(0 0% 0% / 0.5), 0 24px 50px -14px hsl(0 0% 0% / 0.65);
   color-scheme: dark;
 }
 
@@ -216,10 +242,12 @@
 @media (prefers-contrast: more) {
   :root {
     --border: var(--border-strong);
-    --muted-foreground: var(--neutral-700);
+    --hairline: var(--border-strong);
+    --subtle-foreground: var(--muted-foreground);
   }
 
   .dark {
-    --muted-foreground: var(--neutral-300);
+    --hairline: var(--border-strong);
+    --subtle-foreground: var(--muted-foreground);
   }
 }

@@ -16,10 +16,12 @@ import { Button } from "./button";
 import { cn } from "./lib/cn";
 
 const overlay = "cof-fade fixed inset-0 z-overlay bg-[hsl(var(--overlay))]";
+/* Overlays carry real elevation instead of a border ring, and drop to a bottom
+   sheet below `sm` so forms are never cramped on a phone. */
 const dialog =
-  "cof-dialog fixed left-1/2 top-1/2 z-modal w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-surface-raised p-6 shadow-lg max-sm:bottom-0 max-sm:top-auto max-sm:w-full max-sm:max-w-none max-sm:-translate-y-0 max-sm:rounded-b-none";
+  "cof-dialog fixed left-1/2 top-1/2 z-modal w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-xl border border-hairline bg-surface-raised p-6 shadow-overlay max-sm:bottom-0 max-sm:top-auto max-sm:w-full max-sm:max-w-none max-sm:-translate-y-0 max-sm:rounded-b-none max-sm:pb-[max(1.5rem,env(safe-area-inset-bottom))]";
 const commandDialog =
-  "cof-dialog fixed left-1/2 top-[12vh] z-command w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded-xl border bg-surface-raised shadow-lg max-sm:inset-0 max-sm:h-dvh max-sm:w-full max-sm:max-w-none max-sm:translate-x-0 max-sm:rounded-none";
+  "cof-dialog fixed left-1/2 top-[12vh] z-command w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded-xl border border-hairline bg-surface-raised shadow-overlay max-sm:inset-0 max-sm:h-dvh max-sm:w-full max-sm:max-w-none max-sm:translate-x-0 max-sm:rounded-none";
 
 export function Tooltip({ children, content }: { children: ReactNode; content: ReactNode }) {
   return (
@@ -46,7 +48,7 @@ export function Popover({ trigger, children }: { trigger: ReactNode; children: R
         <PopoverPrimitive.Content
           align="start"
           sideOffset={6}
-          className="cof-menu z-dropdown w-72 rounded-lg border bg-surface-raised p-4 shadow-md"
+          className="cof-menu z-dropdown w-72 rounded-lg border border-hairline bg-surface-raised p-4 shadow-overlay"
         >
           {children}
         </PopoverPrimitive.Content>
@@ -69,7 +71,7 @@ export function DropdownMenu({
         <DropdownPrimitive.Content
           align="end"
           sideOffset={6}
-          className="cof-menu z-dropdown min-w-48 rounded-lg border bg-surface-raised p-1 shadow-md"
+          className="cof-menu z-dropdown min-w-48 rounded-lg border border-hairline bg-surface-raised p-1.5 shadow-overlay"
         >
           {items.map((item) => (
             <DropdownPrimitive.Item
@@ -219,11 +221,11 @@ export function Sheet({
         <DialogPrimitive.Overlay className={overlay} />
         <DialogPrimitive.Content
           className={cn(
-            "cof-sheet fixed inset-y-0 z-modal w-[min(18rem,88vw)] bg-surface p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-lg",
-            side === "left" ? "left-0 border-r" : "right-0 border-l"
+            "cof-sheet fixed inset-y-0 z-modal w-[min(19rem,88vw)] bg-surface-raised p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-overlay",
+            side === "left" ? "left-0" : "right-0"
           )}
         >
-          <DialogPrimitive.Title className="font-semibold">{title}</DialogPrimitive.Title>
+          <DialogPrimitive.Title className="text-h2 font-semibold">{title}</DialogPrimitive.Title>
           <div className="mt-4">{children}</div>
           <DialogPrimitive.Close
             aria-label="Close drawer"
