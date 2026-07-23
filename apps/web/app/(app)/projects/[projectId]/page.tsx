@@ -10,8 +10,11 @@ import {
   SetupChecklist,
   StatusBadge,
   humanize,
+  linkButton,
   outlineLink
 } from "../../../../components/projects/phase-5-ui";
+import { formatDateOnly } from "../../../../lib/date-format";
+import type { RequirementSummary } from "../../../../lib/phase-6-schemas";
 
 type Overview = {
   project: {
@@ -39,11 +42,14 @@ export default async function Page({
 }) {
   const [{ projectId }, query] = await Promise.all([params, searchParams]);
   const { client } = await getActiveContext();
-  const { data, error } = await client.rpc("get_project_overview", {
-    target_project_id: projectId
-  });
+  const [{ data, error }, summaryResult] = await Promise.all([
+    client.rpc("get_project_overview", { target_project_id: projectId }),
+    client.rpc("get_requirement_summary", { target_project_id: projectId })
+  ]);
   if (error || !data || Array.isArray(data) || typeof data !== "object") notFound();
   const overview = data as unknown as Overview;
+  const summary = (summaryResult.data ?? {}) as RequirementSummary;
+  const requirementCount = (summary.total ?? 0) + (summary.not_applicable ?? 0);
   const p = overview.project;
   return (
     <>
@@ -60,7 +66,10 @@ export default async function Page({
       <Notice error={query.error} message={query.message} />
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(18rem,.8fr)]">
         <div className="grid gap-5">
-          <SetupChecklist projectId={projectId} setup={overview.setup} />
+          <SetupChecklist
+            projectId={projectId}
+            setup={{ ...overview.setup, requirements: requirementCount > 0 }}
+          />
           <Section title="Important dates">
             <KeyValue
               items={[
@@ -178,11 +187,92 @@ export default async function Page({
               </p>
             )}
           </Section>
-          <Section title="Closeout readiness">
-            <p className="text-sm text-muted-foreground">
-              Project setup is available now. Requirements and document readiness arrive in future
-              phases; no placeholder metrics are shown.
-            </p>
+          <Section
+            title="Closeout requirements"
+            action={
+              requirementCount > 0 ? (
+                <Link
+                  href={`/projects/${projectId}/requirements`}
+                  className="text-sm font-medium text-primary"
+                >
+                  Open register
+                </Link>
+              ) : undefined
+            }
+          >
+            {requirementCount > 0 ? (
+              <>
+                <div className="mb-4 grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-2xl font-semibold tabular-nums">{summary.total ?? 0}</p>
+                    <p className="text-xs text-muted-foreground">Requirements</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-semibold tabular-nums">
+                      {summary.needs_attention ?? 0}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Need setup attention</p>
+                  </div>
+                </div>
+                <p className="mb-3 text-sm text-muted-foreground">
+                  {summary.unassigned_company ?? 0} unassigned · {summary.missing_due_date ?? 0}{" "}
+                  without dates
+                  {summary.not_applicable ? ` · ${summary.not_applicable} not applicable` : ""}
+                </p>
+                {(() => {
+                  const total = summary.total ?? 0;
+                  const configured = summary.configured ?? 0;
+                  const percent = total > 0 ? Math.round((configured / total) * 100) : 0;
+                  return (
+                    <div className="mb-4">
+                      <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                        <span>Setup progress</span>
+                        <span className="tabular-nums">{percent}%</span>
+                      </div>
+                      <div aria-hidden className="h-2 overflow-hidden rounded-full bg-muted">
+                        <div className="h-full bg-primary" style={{ width: `${percent}%` }} />
+                      </div>
+                    </div>
+                  );
+                })()}
+                {(summary.upcoming ?? []).length ? (
+                  <ul className="mb-4 grid gap-2 text-sm">
+                    {(summary.upcoming ?? []).map((upcoming) => (
+                      <li key={upcoming.id} className="flex items-center justify-between gap-3">
+                        <Link
+                          href={`/projects/${projectId}/requirements/${upcoming.id}`}
+                          className="min-w-0 truncate font-medium hover:text-primary"
+                        >
+                          {upcoming.title}
+                        </Link>
+                        <span className="shrink-0 tabular-nums text-muted-foreground">
+                          {formatDateOnly(upcoming.due_date)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+                {(summary.needs_attention ?? 0) > 0 ? (
+                  <Link
+                    className="text-sm font-medium text-primary"
+                    href={`/projects/${projectId}/requirements?attention=1`}
+                  >
+                    Review {summary.needs_attention} requirement
+                    {summary.needs_attention === 1 ? "" : "s"} needing attention →
+                  </Link>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <p className="mb-4 text-sm text-muted-foreground">
+                  Define the closeout scope for this project. Apply your organization template or
+                  add requirements one by one — submissions and reviews arrive in later phases.
+                </p>
+                <Link className={linkButton} href={`/projects/${projectId}/requirements`}>
+                  Add closeout requirements
+                </Link>
+              </>
+            )}
           </Section>
         </div>
       </div>

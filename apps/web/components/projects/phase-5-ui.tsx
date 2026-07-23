@@ -88,7 +88,8 @@ export function SetupChecklist({
     ["team", "Assign the internal team", `/projects/${projectId}/team`],
     ["owner_company", "Add the owner company", `/projects/${projectId}/companies`],
     ["key_companies", "Add key companies", `/projects/${projectId}/companies`],
-    ["key_contacts", "Add key contacts", `/projects/${projectId}/contacts`]
+    ["key_contacts", "Add key contacts", `/projects/${projectId}/contacts`],
+    ["requirements", "Add closeout requirements", `/projects/${projectId}/requirements`]
   ] as const;
   const done = steps.filter(([key]) => setup[key]).length;
   const percent = Math.round((done / steps.length) * 100);
