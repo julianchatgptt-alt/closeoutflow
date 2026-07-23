@@ -30,7 +30,11 @@ export const approvedApplicationTables = new Set([
   "company_contacts",
   "project_companies",
   "project_contacts",
-  "project_members"
+  "project_members",
+  "requirement_categories",
+  "requirement_templates",
+  "requirement_template_items",
+  "project_requirements"
 ]);
 
 export const forbiddenBusinessTables = new Set([
@@ -74,7 +78,8 @@ export function validateApplicationTables(sql) {
 }
 
 const approvedPhase4Tables = new Set([...approvedApplicationTables].slice(0, 8));
-const approvedPhase5Tables = new Set([...approvedApplicationTables].slice(8));
+const approvedPhase5Tables = new Set([...approvedApplicationTables].slice(8, 15));
+const approvedPhase6Tables = new Set([...approvedApplicationTables].slice(15));
 
 export async function validateMigrations(migrationsDirectory = directory) {
   const names = (await readdir(migrationsDirectory)).filter((name) => name.endsWith(".sql")).sort();
@@ -113,6 +118,12 @@ export async function validateMigrations(migrationsDirectory = directory) {
   for (const table of approvedPhase5Tables) {
     if (!containsTableCreation(combined, table)) {
       errors.push("Missing approved Phase 5 project-foundation table: " + table + ".");
+    }
+  }
+
+  for (const table of approvedPhase6Tables) {
+    if (!containsTableCreation(combined, table)) {
+      errors.push("Missing approved Phase 6 requirement-foundation table: " + table + ".");
     }
   }
 

@@ -821,6 +821,146 @@ export type Database = {
           },
         ]
       }
+      project_requirements: {
+        Row: {
+          archive_reason: string | null
+          archived_at: string | null
+          archived_by: string | null
+          category_id: string
+          created_at: string
+          created_by: string
+          description: string | null
+          due_date: string | null
+          id: string
+          internal_owner_member_id: string | null
+          is_required: boolean
+          na_reason: string | null
+          normalized_title: string
+          notes: string | null
+          organization_id: string
+          priority: string
+          project_id: string
+          record_type: string | null
+          responsible_project_company_id: string | null
+          responsible_project_contact_id: string | null
+          sort_order: number
+          source_item_key: string | null
+          source_template_id: string | null
+          status: string
+          title: string
+          trade: string | null
+          updated_at: string
+        }
+        Insert: {
+          archive_reason?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
+          category_id: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          internal_owner_member_id?: string | null
+          is_required?: boolean
+          na_reason?: string | null
+          normalized_title: string
+          notes?: string | null
+          organization_id: string
+          priority?: string
+          project_id: string
+          record_type?: string | null
+          responsible_project_company_id?: string | null
+          responsible_project_contact_id?: string | null
+          sort_order?: number
+          source_item_key?: string | null
+          source_template_id?: string | null
+          status?: string
+          title: string
+          trade?: string | null
+          updated_at?: string
+        }
+        Update: {
+          archive_reason?: string | null
+          archived_at?: string | null
+          archived_by?: string | null
+          category_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          internal_owner_member_id?: string | null
+          is_required?: boolean
+          na_reason?: string | null
+          normalized_title?: string
+          notes?: string | null
+          organization_id?: string
+          priority?: string
+          project_id?: string
+          record_type?: string | null
+          responsible_project_company_id?: string | null
+          responsible_project_contact_id?: string | null
+          sort_order?: number
+          source_item_key?: string | null
+          source_template_id?: string | null
+          status?: string
+          title?: string
+          trade?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_requirements_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "requirement_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_requirements_internal_owner_member_id_fkey"
+            columns: ["internal_owner_member_id"]
+            isOneToOne: false
+            referencedRelation: "project_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_requirements_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_requirements_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_requirements_responsible_project_company_id_fkey"
+            columns: ["responsible_project_company_id"]
+            isOneToOne: false
+            referencedRelation: "project_companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_requirements_responsible_project_contact_id_fkey"
+            columns: ["responsible_project_contact_id"]
+            isOneToOne: false
+            referencedRelation: "project_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_requirements_source_template_id_fkey"
+            columns: ["source_template_id"]
+            isOneToOne: false
+            referencedRelation: "requirement_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           actual_completion_date: string | null
@@ -921,6 +1061,210 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      requirement_categories: {
+        Row: {
+          archived_at: string | null
+          archived_by: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          is_system: boolean
+          name: string
+          organization_id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          archived_at?: string | null
+          archived_by?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          is_system?: boolean
+          name: string
+          organization_id: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          archived_at?: string | null
+          archived_by?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          is_system?: boolean
+          name?: string
+          organization_id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "requirement_categories_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      requirement_template_items: {
+        Row: {
+          category_id: string
+          created_at: string
+          default_due_anchor: string | null
+          default_due_offset_days: number | null
+          default_responsible_role: string | null
+          description: string | null
+          id: string
+          is_optional: boolean
+          item_key: string
+          organization_id: string
+          priority: string
+          sort_order: number
+          template_id: string
+          title: string
+          trade: string | null
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          default_due_anchor?: string | null
+          default_due_offset_days?: number | null
+          default_responsible_role?: string | null
+          description?: string | null
+          id?: string
+          is_optional?: boolean
+          item_key: string
+          organization_id: string
+          priority?: string
+          sort_order?: number
+          template_id: string
+          title: string
+          trade?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          default_due_anchor?: string | null
+          default_due_offset_days?: number | null
+          default_responsible_role?: string | null
+          description?: string | null
+          id?: string
+          is_optional?: boolean
+          item_key?: string
+          organization_id?: string
+          priority?: string
+          sort_order?: number
+          template_id?: string
+          title?: string
+          trade?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "requirement_template_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "requirement_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requirement_template_items_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requirement_template_items_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "requirement_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      requirement_templates: {
+        Row: {
+          archived_at: string | null
+          archived_by: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          family_id: string
+          id: string
+          is_starter: boolean
+          name: string
+          organization_id: string
+          published_at: string | null
+          published_by: string | null
+          source_template_id: string | null
+          status: string
+          updated_at: string
+          updated_by: string | null
+          version: number
+        }
+        Insert: {
+          archived_at?: string | null
+          archived_by?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          family_id: string
+          id?: string
+          is_starter?: boolean
+          name: string
+          organization_id: string
+          published_at?: string | null
+          published_by?: string | null
+          source_template_id?: string | null
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+          version?: number
+        }
+        Update: {
+          archived_at?: string | null
+          archived_by?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          family_id?: string
+          id?: string
+          is_starter?: boolean
+          name?: string
+          organization_id?: string
+          published_at?: string | null
+          published_by?: string | null
+          source_template_id?: string | null
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "requirement_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "requirement_templates_source_template_id_fkey"
+            columns: ["source_template_id"]
+            isOneToOne: false
+            referencedRelation: "requirement_templates"
             referencedColumns: ["id"]
           },
         ]
@@ -1045,6 +1389,15 @@ export type Database = {
           organization_id: string
         }[]
       }
+      apply_requirement_template: {
+        Args: {
+          request_id?: string
+          selections?: Json
+          target_project_id: string
+          target_template_id: string
+        }
+        Returns: Json
+      }
       archive_company: {
         Args: { request_id?: string; target_company_id: string }
         Returns: undefined
@@ -1061,6 +1414,31 @@ export type Database = {
         Args: {
           reason?: string
           request_id?: string
+          target_project_id: string
+        }
+        Returns: undefined
+      }
+      archive_project_requirement: {
+        Args: {
+          reason?: string
+          request_id?: string
+          target_requirement_id: string
+        }
+        Returns: undefined
+      }
+      archive_requirement_category: {
+        Args: { request_id?: string; target_category_id: string }
+        Returns: undefined
+      }
+      archive_requirement_template: {
+        Args: { request_id?: string; target_template_id: string }
+        Returns: undefined
+      }
+      assert_requirement_responsibility: {
+        Args: {
+          company_reference: string
+          contact_reference: string
+          member_reference: string
           target_project_id: string
         }
         Returns: undefined
@@ -1092,6 +1470,16 @@ export type Database = {
         }
         Returns: string
       }
+      bulk_update_project_requirements: {
+        Args: {
+          action_value?: Json
+          bulk_action: string
+          request_id?: string
+          requirement_ids: string[]
+          target_project_id: string
+        }
+        Returns: number
+      }
       can_access_project: {
         Args: { target_project_id: string }
         Returns: boolean
@@ -1115,6 +1503,14 @@ export type Database = {
           target_project_role: string
         }
         Returns: undefined
+      }
+      clone_requirement_template: {
+        Args: {
+          new_template_name: string
+          request_id?: string
+          target_template_id: string
+        }
+        Returns: string
       }
       complete_ownership_transfer: {
         Args: { target_transfer_id: string }
@@ -1165,6 +1561,36 @@ export type Database = {
         }
         Returns: string
       }
+      create_project_requirement: {
+        Args: {
+          request_id?: string
+          requirement_data: Json
+          target_project_id: string
+        }
+        Returns: string
+      }
+      create_requirement_category: {
+        Args: {
+          category_description?: string
+          category_name: string
+          request_id?: string
+          target_organization_id: string
+        }
+        Returns: string
+      }
+      create_requirement_template: {
+        Args: {
+          request_id?: string
+          target_organization_id: string
+          template_description?: string
+          template_name: string
+        }
+        Returns: string
+      }
+      create_template_version: {
+        Args: { request_id?: string; target_template_id: string }
+        Returns: string
+      }
       current_user_id: { Args: never; Returns: string }
       database_health_check: { Args: never; Returns: boolean }
       end_company_contact: {
@@ -1198,6 +1624,14 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      ensure_requirement_defaults: {
+        Args: { request_id?: string; target_organization_id: string }
+        Returns: undefined
+      }
+      generate_requirement_item_key: {
+        Args: { item_title: string }
+        Returns: string
       }
       get_invitation_preview: {
         Args: { raw_token: string }
@@ -1267,6 +1701,30 @@ export type Database = {
         Args: { target_project_id: string }
         Returns: Json
       }
+      get_requirement_summary: {
+        Args: { target_project_id: string }
+        Returns: Json
+      }
+      get_template_preview: {
+        Args: { target_project_id?: string; target_template_id: string }
+        Returns: {
+          already_in_project: boolean
+          category_id: string
+          category_name: string
+          default_due_anchor: string
+          default_due_offset_days: number
+          default_responsible_role: string
+          description: string
+          is_optional: boolean
+          item_id: string
+          item_key: string
+          previously_removed: boolean
+          priority: string
+          sort_order: number
+          title: string
+          trade: string
+        }[]
+      }
       has_org_permission: {
         Args: { permission: string; target_organization_id: string }
         Returns: boolean
@@ -1295,6 +1753,15 @@ export type Database = {
           request_id?: string
           target_company_id: string
           target_contact_id: string
+        }
+        Returns: string
+      }
+      mark_requirement_not_applicable: {
+        Args: {
+          expected_updated_at: string
+          reason: string
+          request_id?: string
+          target_requirement_id: string
         }
         Returns: string
       }
@@ -1330,6 +1797,14 @@ export type Database = {
         Args: { permission: string; target_project_id: string }
         Returns: boolean
       }
+      publish_requirement_template: {
+        Args: {
+          expected_updated_at: string
+          request_id?: string
+          target_template_id: string
+        }
+        Returns: undefined
+      }
       reactivate_member: {
         Args: { target_membership_id: string }
         Returns: undefined
@@ -1364,6 +1839,23 @@ export type Database = {
         Args: { request_id?: string; target_project_member_id: string }
         Returns: undefined
       }
+      reorder_project_requirements: {
+        Args: {
+          ordered_requirement_ids: string[]
+          request_id?: string
+          target_category_id: string
+          target_project_id: string
+        }
+        Returns: undefined
+      }
+      reorder_requirement_categories: {
+        Args: {
+          ordered_category_ids: string[]
+          request_id?: string
+          target_organization_id: string
+        }
+        Returns: undefined
+      }
       replace_recovery_code_hashes: {
         Args: { target_hashes: string[] }
         Returns: undefined
@@ -1392,9 +1884,38 @@ export type Database = {
         Args: { request_id?: string; target_project_id: string }
         Returns: undefined
       }
+      restore_project_requirement: {
+        Args: { request_id?: string; target_requirement_id: string }
+        Returns: undefined
+      }
+      restore_requirement_category: {
+        Args: { request_id?: string; target_category_id: string }
+        Returns: undefined
+      }
+      restore_requirement_template: {
+        Args: { request_id?: string; target_template_id: string }
+        Returns: undefined
+      }
+      reverse_requirement_not_applicable: {
+        Args: {
+          expected_updated_at: string
+          request_id?: string
+          target_requirement_id: string
+        }
+        Returns: string
+      }
       revoke_invitation: {
         Args: { target_invitation_id: string }
         Returns: undefined
+      }
+      save_template_items: {
+        Args: {
+          expected_updated_at: string
+          items: Json
+          request_id?: string
+          target_template_id: string
+        }
+        Returns: string
       }
       search_companies: {
         Args: {
@@ -1438,6 +1959,47 @@ export type Database = {
           preferred_name: string
           project_count: number
           status: string
+          updated_at: string
+        }[]
+      }
+      search_project_requirements: {
+        Args: {
+          cursor_category_sort?: number
+          cursor_id?: string
+          cursor_sort_order?: number
+          filters?: Json
+          page_size?: number
+          search_query?: string
+          target_project_id: string
+        }
+        Returns: {
+          archived_at: string
+          category_id: string
+          category_name: string
+          category_sort: number
+          description: string
+          due_date: string
+          id: string
+          internal_owner_member_id: string
+          internal_owner_name: string
+          internal_owner_stale: boolean
+          is_required: boolean
+          na_reason: string
+          notes: string
+          priority: string
+          responsible_company_name: string
+          responsible_company_stale: boolean
+          responsible_contact_name: string
+          responsible_contact_stale: boolean
+          responsible_project_company_id: string
+          responsible_project_contact_id: string
+          sort_order: number
+          source_template_id: string
+          source_template_name: string
+          source_template_version: number
+          status: string
+          title: string
+          trade: string
           updated_at: string
         }[]
       }
@@ -1529,6 +2091,33 @@ export type Database = {
           target_project_contact_id: string
         }
         Returns: undefined
+      }
+      update_project_requirement: {
+        Args: {
+          expected_updated_at: string
+          request_id?: string
+          requirement_data: Json
+          target_requirement_id: string
+        }
+        Returns: string
+      }
+      update_requirement_category: {
+        Args: {
+          category_data: Json
+          expected_updated_at: string
+          request_id?: string
+          target_category_id: string
+        }
+        Returns: string
+      }
+      update_requirement_template: {
+        Args: {
+          expected_updated_at: string
+          request_id?: string
+          target_template_id: string
+          template_data: Json
+        }
+        Returns: string
       }
       write_audit_event: {
         Args: {

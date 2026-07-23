@@ -55,6 +55,17 @@ export const permissions = {
   contactCreate: "contact.create",
   contactUpdate: "contact.update",
   contactArchive: "contact.archive",
+  templateView: "template.view",
+  templateManage: "template.manage",
+  templatePublish: "template.publish",
+  templateArchive: "template.archive",
+  requirementView: "requirement.view",
+  requirementManage: "requirement.manage",
+  requirementAssign: "requirement.assign",
+  requirementSetDates: "requirement.set_dates",
+  requirementApplyTemplate: "requirement.apply_template",
+  requirementSetNotApplicable: "requirement.set_not_applicable",
+  requirementArchive: "requirement.archive",
   platformSuspendOrg: "platform.suspend_org",
   platformSuspendUser: "platform.suspend_user",
   platformViewSecurityEvents: "platform.view_security_events"
@@ -69,7 +80,8 @@ const memberReadPermissions = [
   permissions.membershipView,
   permissions.membershipLeave,
   permissions.companyView,
-  permissions.contactView
+  permissions.contactView,
+  permissions.templateView
 ] as const;
 
 const directoryManagePermissions = [
@@ -79,6 +91,11 @@ const directoryManagePermissions = [
   permissions.contactCreate,
   permissions.contactUpdate,
   permissions.contactArchive
+] as const;
+
+const templateManagePermissions = [
+  permissions.templateManage,
+  permissions.templatePublish
 ] as const;
 
 const administratorPermissions = [
@@ -94,7 +111,9 @@ const administratorPermissions = [
   permissions.auditView,
   permissions.projectCreate,
   permissions.projectViewAll,
-  ...directoryManagePermissions
+  ...directoryManagePermissions,
+  ...templateManagePermissions,
+  permissions.templateArchive
 ] as const;
 
 export const rolePermissions: Readonly<Record<OrgRole, readonly Permission[]>> = {
@@ -110,12 +129,14 @@ export const rolePermissions: Readonly<Record<OrgRole, readonly Permission[]>> =
   project_manager: [
     ...memberReadPermissions,
     permissions.projectCreate,
-    ...directoryManagePermissions
+    ...directoryManagePermissions,
+    ...templateManagePermissions
   ],
   closeout_coordinator: [
     ...memberReadPermissions,
     permissions.projectCreate,
-    ...directoryManagePermissions
+    ...directoryManagePermissions,
+    ...templateManagePermissions
   ],
   internal_reviewer: memberReadPermissions,
   viewer: memberReadPermissions
@@ -177,8 +198,25 @@ const projectScopedPermissions = new Set<Permission>([
   permissions.projectRestore,
   permissions.projectManageTeam,
   permissions.projectManageCompanies,
-  permissions.projectManageContacts
+  permissions.projectManageContacts,
+  permissions.requirementView,
+  permissions.requirementManage,
+  permissions.requirementAssign,
+  permissions.requirementSetDates,
+  permissions.requirementApplyTemplate,
+  permissions.requirementSetNotApplicable,
+  permissions.requirementArchive
 ]);
+
+const requirementConfigurationPermissions = [
+  permissions.requirementView,
+  permissions.requirementManage,
+  permissions.requirementAssign,
+  permissions.requirementSetDates,
+  permissions.requirementApplyTemplate,
+  permissions.requirementSetNotApplicable,
+  permissions.requirementArchive
+] as const;
 
 export const projectRolePermissions: Readonly<Record<ProjectRole, readonly Permission[]>> = {
   project_administrator: [
@@ -188,23 +226,26 @@ export const projectRolePermissions: Readonly<Record<ProjectRole, readonly Permi
     permissions.projectRestore,
     permissions.projectManageTeam,
     permissions.projectManageCompanies,
-    permissions.projectManageContacts
+    permissions.projectManageContacts,
+    ...requirementConfigurationPermissions
   ],
   project_manager: [
     permissions.projectView,
     permissions.projectUpdate,
     permissions.projectManageTeam,
     permissions.projectManageCompanies,
-    permissions.projectManageContacts
+    permissions.projectManageContacts,
+    ...requirementConfigurationPermissions
   ],
   closeout_coordinator: [
     permissions.projectView,
     permissions.projectUpdate,
     permissions.projectManageCompanies,
-    permissions.projectManageContacts
+    permissions.projectManageContacts,
+    ...requirementConfigurationPermissions
   ],
-  internal_reviewer: [permissions.projectView],
-  viewer: [permissions.projectView]
+  internal_reviewer: [permissions.projectView, permissions.requirementView],
+  viewer: [permissions.projectView, permissions.requirementView]
 };
 
 const sensitiveMfaPermissions = new Set<Permission>([
@@ -276,7 +317,8 @@ export function can(
     if (
       resource.projectStatus === "archived" &&
       knownPermission !== permissions.projectView &&
-      knownPermission !== permissions.projectRestore
+      knownPermission !== permissions.projectRestore &&
+      knownPermission !== permissions.requirementView
     ) {
       return { allowed: false, reason: "permission_denied" };
     }

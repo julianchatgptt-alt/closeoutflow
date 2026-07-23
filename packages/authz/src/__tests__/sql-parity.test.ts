@@ -16,7 +16,8 @@ import {
 function sqlPermissionMatrix() {
   const migration = [
     "0006_memberships_and_permissions.sql",
-    "0012_project_extensions_and_permissions.sql"
+    "0012_project_extensions_and_permissions.sql",
+    "0022_requirement_foundations.sql"
   ]
     .map((name) => readFileSync(path.join(process.cwd(), "supabase", "migrations", name), "utf8"))
     .join("\n");
@@ -37,15 +38,7 @@ function sqlPermissionMatrix() {
 describe("TypeScript and SQL authorization parity", () => {
   it("cross-diffs every organization permission, role, and role mapping", () => {
     const sql = sqlPermissionMatrix();
-    const projectScoped = new Set<string>([
-      permissions.projectView,
-      permissions.projectUpdate,
-      permissions.projectArchive,
-      permissions.projectRestore,
-      permissions.projectManageTeam,
-      permissions.projectManageCompanies,
-      permissions.projectManageContacts
-    ]);
+    const projectScoped = new Set<string>(Object.values(projectRolePermissions).flat());
     const organizationPermissions = Object.values(permissions)
       .filter((permission) => !permission.startsWith("platform.") && !projectScoped.has(permission))
       .sort();
@@ -63,13 +56,13 @@ describe("TypeScript and SQL authorization parity", () => {
   });
 
   it("keeps the project-role matrix aligned with project_permission", () => {
-    const migration = readFileSync(
-      path.join(process.cwd(), "supabase", "migrations", "0013_projects_and_project_members.sql"),
-      "utf8"
-    );
+    const migration = ["0013_projects_and_project_members.sql", "0022_requirement_foundations.sql"]
+      .map((name) => readFileSync(path.join(process.cwd(), "supabase", "migrations", name), "utf8"))
+      .join("\n");
     const functionBody =
-      migration.match(/create or replace function public\.project_permission[\s\S]*?\$\$;/)?.[0] ??
-      "";
+      [
+        ...migration.matchAll(/create or replace function public\.project_permission[\s\S]*?\$\$;/g)
+      ].at(-1)?.[0] ?? "";
     const matrix = new Map<string, string[]>();
     const branch = /when '([^']+)' then effective_role (?:in \(([^)]+)\)|= '([^']+)')/g;
     for (const match of functionBody.matchAll(branch)) {

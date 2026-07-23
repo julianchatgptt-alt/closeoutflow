@@ -111,7 +111,14 @@ describe("Phase 4 authorization policy", () => {
       permissions.projectRestore,
       permissions.projectManageTeam,
       permissions.projectManageCompanies,
-      permissions.projectManageContacts
+      permissions.projectManageContacts,
+      permissions.requirementView,
+      permissions.requirementManage,
+      permissions.requirementAssign,
+      permissions.requirementSetDates,
+      permissions.requirementApplyTemplate,
+      permissions.requirementSetNotApplicable,
+      permissions.requirementArchive
     ];
 
     for (const projectRole of projectRoles) {
@@ -152,6 +159,58 @@ describe("Phase 4 authorization policy", () => {
     expect(can(projectActor("owner"), permissions.projectRestore, archived)).toEqual({
       allowed: true
     });
+  });
+
+  it("gates requirement configuration by project role and archived status", () => {
+    for (const permission of [
+      permissions.requirementManage,
+      permissions.requirementAssign,
+      permissions.requirementSetDates,
+      permissions.requirementApplyTemplate,
+      permissions.requirementSetNotApplicable,
+      permissions.requirementArchive
+    ]) {
+      expect(
+        can(projectActor("viewer", "closeout_coordinator"), permission, projectResource).allowed,
+        `coordinator: ${permission}`
+      ).toBe(true);
+      expect(
+        can(projectActor("viewer", "internal_reviewer"), permission, projectResource),
+        `reviewer: ${permission}`
+      ).toEqual({ allowed: false, reason: "permission_denied" });
+    }
+    expect(
+      can(projectActor("project_manager"), permissions.requirementView, projectResource)
+    ).toEqual({ allowed: false, reason: "permission_denied" });
+
+    const archived = { ...projectResource, projectStatus: "archived" };
+    expect(can(projectActor("owner"), permissions.requirementView, archived)).toEqual({
+      allowed: true
+    });
+    expect(can(projectActor("owner"), permissions.requirementManage, archived)).toEqual({
+      allowed: false,
+      reason: "permission_denied"
+    });
+  });
+
+  it("grants template management to the approved organization roles only", () => {
+    const expectations: Array<[OrgRole, Permission, boolean]> = [
+      ["owner", permissions.templateArchive, true],
+      ["administrator", permissions.templateArchive, true],
+      ["project_manager", permissions.templateArchive, false],
+      ["closeout_coordinator", permissions.templateArchive, false],
+      ["project_manager", permissions.templateManage, true],
+      ["closeout_coordinator", permissions.templatePublish, true],
+      ["internal_reviewer", permissions.templateManage, false],
+      ["viewer", permissions.templateManage, false],
+      ["internal_reviewer", permissions.templateView, true],
+      ["viewer", permissions.templateView, true]
+    ];
+    for (const [role, permission, expected] of expectations) {
+      expect(can(actor(role), permission, resource).allowed, `${role}: ${permission}`).toBe(
+        expected
+      );
+    }
   });
 
   it("requires reauthentication and AAL2 for ownership transfer", () => {
