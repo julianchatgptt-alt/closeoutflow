@@ -11,13 +11,13 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
   return (
     <aside
       aria-label="Application sidebar"
-      className="app-sidebar fixed inset-y-0 left-0 z-sidebar hidden bg-background lg:flex lg:flex-col"
+      className="app-sidebar fixed inset-y-0 left-0 z-sidebar hidden border-r border-hairline bg-background pb-[env(safe-area-inset-bottom)] lg:flex lg:flex-col"
     >
       <Brand />
       <PrimaryNavigation collapsed={collapsed} />
       <Button
         variant="ghost"
-        className="m-2 h-9 w-9 shrink-0 self-end px-0"
+        className="m-2 h-9 w-9 shrink-0 self-end px-0 text-muted-foreground"
         aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         onClick={onToggle}
       >

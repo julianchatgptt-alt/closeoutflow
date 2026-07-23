@@ -58,7 +58,7 @@ export function CommandPalette({
         returnFocusRef.current?.focus();
       }}
     >
-      <div className="flex items-center gap-3 border-b p-4">
+      <div className="flex items-center gap-3 border-b border-hairline p-4">
         <Search aria-hidden="true" className="h-5 w-5 text-muted-foreground" />
         <input
           value={query}
@@ -84,8 +84,8 @@ export function CommandPalette({
               navigate(results[activeIndex].href);
             }
           }}
-          placeholder="Search pages and sample projects…"
-          aria-label="Search Closeout pages and sample projects"
+          placeholder="Jump to a page…"
+          aria-label="Jump to a Closeout page"
           role="combobox"
           aria-autocomplete="list"
           aria-expanded="true"
@@ -123,12 +123,12 @@ export function CommandPalette({
             </button>
           ))
         ) : (
-          <p className="p-6 text-center text-sm text-muted-foreground">
-            No sample results for “{query}”.
-          </p>
+          <p className="p-6 text-center text-sm text-muted-foreground">No pages match “{query}”.</p>
         )}
-        <p className="mt-2 flex items-center justify-between gap-3 border-t bg-surface-sunken p-3 text-xs text-muted-foreground">
-          <span>Sample navigation only — no live search or API.</span>
+        {/* Honest about scope: this jumps between pages. Searching across
+            projects and requirements is not built yet, so it is not implied. */}
+        <p className="mt-2 flex items-center justify-between gap-3 border-t border-hairline bg-surface-sunken p-3 text-xs text-muted-foreground">
+          <span>Jump to a page. Searching your records arrives later.</span>
           <span className="whitespace-nowrap">
             <kbd className="rounded border px-1.5 py-0.5">↑↓</kbd> move ·{" "}
             <kbd className="rounded border px-1.5 py-0.5">↵</kbd> open

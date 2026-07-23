@@ -38,7 +38,7 @@ export function SettingsNavigation({ children }: { children: React.ReactNode }) 
               <span
                 key={item.href}
                 aria-disabled="true"
-                className="flex min-h-11 items-center rounded-md px-3 text-sm text-muted-foreground opacity-60"
+                className="flex min-h-11 items-center rounded-lg px-3 text-[13.5px] text-subtle-foreground"
               >
                 {item.label}
                 <Badge tone="neutral" className="ml-auto">
@@ -50,7 +50,7 @@ export function SettingsNavigation({ children }: { children: React.ReactNode }) 
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-11 items-center rounded-lg px-3 text-[13.5px] transition-colors ${active ? "bg-[hsl(var(--sidebar-active))] font-semibold text-primary" : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"}`}
+                className={`relative flex min-h-11 items-center rounded-lg px-3 text-[13.5px] transition-colors ${active ? "bg-[hsl(var(--nav-item-active-bg))] font-semibold text-[hsl(var(--nav-item-active-fg))] before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-[hsl(var(--nav-item-active-accent))] before:content-['']" : "text-muted-foreground hover:bg-surface-sunken hover:text-foreground"}`}
               >
                 {item.label}
               </Link>

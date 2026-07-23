@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { SIDEBAR_STORAGE_KEY } from "../theme/theme-script";
@@ -10,6 +10,24 @@ import { CommandPalette } from "./command-palette";
 import { ProjectSubnav } from "./project-subnav";
 import { Sidebar } from "./sidebar";
 import type { OrganizationContext } from "../../lib/organization-context";
+
+/**
+ * Operational surfaces — registers, directories and list pages — get the wide
+ * content width so wide tables are not squeezed. Forms, detail and settings
+ * pages keep the narrower reading width.
+ */
+const OPERATIONAL_ROUTES = [
+  /^\/dashboard$/,
+  /^\/projects$/,
+  /^\/companies$/,
+  /^\/contacts$/,
+  /^\/templates$/,
+  /^\/projects\/[^/]+\/requirements$/
+];
+
+function isOperationalRoute(pathname: string) {
+  return OPERATIONAL_ROUTES.some((pattern) => pattern.test(pathname));
+}
 
 export function AppShell({
   children,
@@ -21,6 +39,7 @@ export function AppShell({
   organizationContext: OrganizationContext;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const paletteTrigger = useRef<HTMLElement | null>(null);
@@ -92,7 +111,9 @@ export function AppShell({
         <main
           id="main"
           tabIndex={-1}
-          className="mx-auto w-full max-w-[var(--content-max)] p-[var(--page-gutter)]"
+          className={`mx-auto w-full p-[var(--page-gutter)] pb-[max(var(--page-gutter),env(safe-area-inset-bottom))] ${
+            isOperationalRoute(pathname) ? "max-w-content-wide" : "max-w-content"
+          }`}
         >
           {children}
         </main>

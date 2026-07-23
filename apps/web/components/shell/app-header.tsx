@@ -25,7 +25,7 @@ export function AppHeader({
   const pathname = usePathname();
   const { density, setDensity, theme, setTheme } = useTheme();
   return (
-    <header className="sticky top-0 z-header flex h-14 items-center gap-1.5 border-b bg-background px-3 sm:gap-2 sm:px-4">
+    <header className="sticky top-0 z-header flex h-14 items-center gap-1.5 border-b border-hairline bg-background px-3 pt-[env(safe-area-inset-top)] sm:gap-2 sm:px-4">
       <div className="lg:hidden">
         <Sheet
           key={pathname}
@@ -90,13 +90,18 @@ export function AppHeader({
       >
         <Search aria-hidden="true" className="h-5 w-5" />
       </IconButton>
+      {/* Notification delivery is not built yet. The bell stays quiet and tells
+          the truth — never a fabricated unread count or invented items. */}
       <DropdownMenu
         trigger={
           <IconButton label="Notifications">
             <Bell aria-hidden="true" className="h-5 w-5" />
           </IconButton>
         }
-        items={[{ label: "No notifications yet", disabled: true }]}
+        items={[
+          { label: "No notifications yet", disabled: true },
+          { label: "Reminders arrive with the notifications system", disabled: true }
+        ]}
       />
       <DropdownMenu
         trigger={
