@@ -1,16 +1,17 @@
-# Phase 6B exit review
+# Phase 6 exit review
 
-> **Decision:** Phase 6B is complete and ready for the independent Phase 6C audit.
+> **Decision:** Phase 6B implementation, Phase 6C independent audit, and Phase 6D remediation are complete. Phase 6 is ready for the full-product visual and SEO phase.
 > **Date:** 2026-07-23.
-> **Branch:** `codex/phase-6b-requirements`.
+> **Branches:** `codex/phase-6b-requirements` (implementation) and `codex/phase-6d-requirements-remediation` (audit remediation).
+> **Audit evidence:** [phase-6c-audit.md](./phase-6c-audit.md) is preserved byte-for-byte; remediation evidence is in [phase-6d-remediation.md](./phase-6d-remediation.md).
 
 ## Implementation result
 
-Closeout now provides the complete Phase 6 configuration layer: organization requirement categories, reusable row-per-version requirement templates with a first-class library and builder, atomic idempotent template application, project requirement snapshots with derived attention indicators, three-slot responsibility assignment against the Phase 5 relationship model, date-only due dates in project context, not-applicable approval with reasons, independent soft archival, capped all-or-nothing bulk operations, real project-overview integration, immutable in-transaction audit, and forced-RLS tenant/project isolation mirrored by `packages/authz`.
+Closeout now provides the complete Phase 6 configuration layer: organization requirement categories, reusable row-per-version requirement templates with a first-class library and builder, atomic idempotent template application, project requirement snapshots with derived attention indicators, three-slot responsibility assignment against the Phase 5 relationship model, date-only due dates in project context, not-applicable approval with preflight-validated reasons, independent soft archival, capped all-or-nothing bulk operations, accessible adjacent ordering, real project-overview integration, immutable in-transaction audit, and forced-RLS tenant/project isolation mirrored by `packages/authz`.
 
 ## Tables and migrations
 
-Exactly four new tables — `requirement_categories`, `requirement_templates`, `requirement_template_items`, `project_requirements` — created by append-only migrations `0022`–`0026`. Migrations `0000`–`0021` are untouched. The migration validator allowlists exactly these tables, requires their presence, and still rejects `requirements`, `submissions`, `documents`, `document_versions`, `reviews`, `packages`, and every other later-phase table (with red-path self-tests).
+Exactly four new tables — `requirement_categories`, `requirement_templates`, `requirement_template_items`, `project_requirements` — created by append-only migrations `0022`–`0026`; remediation migrations `0027`–`0028` redefine functions/grants only and add no tables. Migrations `0000`–`0026` are untouched by Phase 6D. The migration validator allowlists exactly these tables, requires their presence, and still rejects `requirements`, `submissions`, `documents`, `document_versions`, `reviews`, `packages`, and every other later-phase table (with red-path self-tests).
 
 ## Lifecycle confirmation
 
@@ -27,8 +28,8 @@ Exactly four new tables — `requirement_categories`, `requirement_templates`, `
 
 ## RPCs / actions
 
-DB (SECURITY DEFINER, `search_path=''`, narrow grants, blocking audit): 6 category functions incl. idempotent `ensure_requirement_defaults`; 9 template functions (create/update/save-items/publish/version/clone/archive/restore/preview); 7 requirement functions (create/update/N-A/reverse/archive/restore/reorder); `apply_requirement_template`; `bulk_update_project_requirements`; readers `search_project_requirements` + `get_requirement_summary`.
-App: `actions/requirement-templates.ts` (10 actions) and `actions/project-requirements.ts` (10 actions), each Zod-validated, active-org/project revalidated, `can()`-authorized, RPC-backed, rate-limited, with friendly stale-conflict/error mapping.
+DB (SECURITY DEFINER, `search_path=''`, narrow grants, blocking audit): exactly 32 current Phase 6 feature/helper functions — 6 category/default; 9 template/version/preview; 7 requirement lifecycle/configuration (create/update/N-A/reverse/archive/restore/move); 4 apply/bulk/register-reader; and 6 permission/helper/guard functions. The former broad `reorder_project_requirements` function is revoked and removed; `move_project_requirement` is the only register-order mutation and requires `requirement.manage` plus an `updated_at` token. The Phase 5 `get_project_overview` redefinition for suspended-team presentation is tracked separately from this count.
+App: `actions/requirement-templates.ts` (10 actions) and `actions/project-requirements.ts` (11 actions), each Zod-validated, active-org/project revalidated, `can()`-authorized, RPC-backed, rate-limited where applicable, with friendly stale-conflict/error mapping.
 
 ## Routes
 
@@ -40,7 +41,7 @@ Full catalog per [phase-6-audit-events.md](./phase-6-audit-events.md): 9 templat
 
 ## RLS matrix result
 
-pgTAP (`supabase/tests/0010_phase_6_requirements.test.sql`, 76 assertions, constrained `authenticated` roles with `request.jwt.claims`) proves: forced RLS + zero anon grants + select-only authenticated grants on all 4 tables; zero cross-tenant rows for every table; foreign template ids denied without existence leakage; unassigned members see zero project requirements while retaining library read; suspended members lose both; assigned PM limited to the assigned project; archived projects read-only; published-template immutability; apply idempotency; bulk cap/mixing rejection; starter seeding idempotency. The live E2E layer re-verifies unassigned non-enumerating 404 and viewer read-only surfaces.
+pgTAP (`supabase/tests/0010_phase_6_requirements.test.sql` + `0011_phase_6d_remediation.test.sql`, 108 Phase 6 assertions; 322 across the database suite, all using constrained `authenticated` roles with `request.jwt.claims`) proves: forced RLS + zero anon grants + select-only authenticated grants on all 4 tables; zero cross-tenant rows for every table; foreign template ids denied without existence leakage; unassigned members see zero project requirements while retaining library read; suspended members lose both; assigned PM limited to the assigned project; archived projects read-only; published-template immutability; apply idempotency; bulk cap/mixing rejection; starter seeding idempotency; Viewer/Reviewer empty-update denial; authorized empty/same-value no-op behavior; field-group and mixed-payload authorization; stale update/move rejection; old reorder-function removal; narrow move grants/isolation/audit; and suspended-team exclusion. The live E2E layer re-verifies unassigned non-enumerating 404, viewer read-only surfaces, N/A preflight, ordering controls, and active-team presentation.
 
 ## Template behavior
 
@@ -58,6 +59,8 @@ Snapshots with provenance; re-applying a template adds nothing (skips reported h
 - **Reuse (J4):** re-apply reports 0 additions; preview shows "Already in project".
 - **Access (J5):** owner sees all; unassigned member gets a non-enumerating not-found; assigned reviewer gets a read-only register with no configuration controls; viewers browse the library read-only.
 - **Bulk:** two selected rows changed by one confirmed action.
+- **Ordering:** two custom rows are moved with labelled keyboard/touch controls; the database verifies authorization, category scope, stale-token rejection, and one audit event.
+- **N/A preflight:** invalid short input renders an associated inline error and cannot open confirmation; a valid reason opens confirmation without mutating until approved.
 
 ## Scale result
 
@@ -71,24 +74,27 @@ Snapshots with provenance; re-applying a template adds nothing (skips reported h
 | `pnpm format:check` | Passed |
 | `pnpm lint` | Passed, including workspace import boundaries |
 | `pnpm typecheck` | Passed, 15/15 workspaces |
-| `pnpm test` | Passed, 44 files / 181 tests (incl. new authz matrix, parity, validator suites) |
+| `pnpm test` | Passed, 45 files / 184 tests (including N/A preflight component/axe coverage) |
 | `pnpm build` | Passed, 15/15 workspaces and all Phase 6 routes |
 | `pnpm test:server-only` | Passed; privileged DB and auth imports fail client builds as required |
-| `pnpm db:start` / `pnpm db:reset` | Passed through migration `0026` plus deterministic seed |
-| `pnpm db:types` | Passed twice; deterministic output (identical SHA-256 across consecutive runs) |
-| `pnpm db:lint` | Passed; no schema errors |
+| `pnpm db:start` / `pnpm db:reset` | Passed through migration `0028` plus deterministic seed |
+| `pnpm db:types` | Passed twice; deterministic SHA-256 `4CCB5B263B3A01541D490D86F5A30DBEAE872DCB4CA5AB3E1C1EBA71BC5144DF` |
+| `pnpm db:lint` | Passed; zero schema findings |
 | `pnpm db:validate` | Passed; Phase 6 allowlist + forbidden later-phase tables |
-| `pnpm test:db` | Passed, 11 pgTAP files / 290 assertions + 5 live tests |
+| `pnpm test:db` | Passed, 12 pgTAP files / 322 assertions + 5 live tests |
+| Targeted Phase 6D pgTAP | Passed, 32/32 permission, no-op, ordering, audit, tenant, and suspended-member assertions |
+| Targeted N/A form tests | Passed, 3/3 including inline association, bounds, confirmation, and axe |
 | `pnpm test:phase6-scale` | Passed at 2,000 requirements; transaction rolled back |
-| `pnpm test:e2e` | Passed, 396 passed / 143 intentional project skips / 0 failed across seven profiles (final post-polish run, 20.6m) |
+| `pnpm test:e2e` | Passed, 397 passed / 149 intentional project skips / 0 failed across seven profiles (final Phase 6D run, 21.1m) |
 | `pnpm test:a11y` | Passed, 161/161 across seven profiles (light + dark) |
 | `pnpm test:live-security` | Passed; audit UPDATE/DELETE/TRUNCATE blocked, audit schema off PostgREST |
 | `pnpm test:production-probe` | Passed; protected Phase 6 routes, canonical metadata, unique-nonce CSP, security headers, zero health audit writes |
-| `pnpm capture:phase6` | Passed; 35 deterministic captures generated and reviewed |
+| Phase 6D affected-view capture | Passed; register ordering and N/A inline-validation views captured and reviewed only |
+| Secret/diff checks | Passed; local secret scan clean, `git diff --check` clean, Phase 6C audit hash unchanged |
 
 ## Visual evidence index
 
-`pnpm capture:phase6` writes the deterministic manifest to the machine-local evidence directory (`PHASE6_CAPTURE_DIR`). Captures: register (desktop light/dark, tablet, Pixel, iPhone, needs-attention, not-applicable, bulk-selected, add flow, long title, empty desktop/mobile); requirement detail (desktop light/dark, iPhone, N/A confirmation, stale-conflict, not-found); template library (desktop light/dark, tablet, Pixel, no-results); builder draft (desktop light/dark, tablet); published version chain; apply flow (choose, preview desktop light/dark, Pixel, iPhone); overview requirement panel (desktop light/dark, Pixel). Review outcome: the register reads as an operational closeout register (visible grouped headers, quiet status ink, derived attention chips); light/dark parity holds; mobile cards and the phone-safe bulk bar are intentional; the review caught and fixed three issues before closeout — a Firefox zero-width table-cell collapse, a raw template identifier in the breadcrumb (now the template name), and a bulk bar that would have pinned over small viewports.
+The Phase 6B deterministic 35-capture manifest remains the full baseline: register, requirement detail, template library/builder/version chain, apply flow, and overview across desktop/tablet/Pixel/iPhone plus light/dark and edge states. Phase 6D did not regenerate that unaffected matrix. Because two user-facing screens changed, only `requirement-ordering--desktop--light.png` and `not-applicable-inline-validation--desktop--light.png` were captured to the machine-local Phase 6D evidence directory and reviewed. The register capture shows enabled adjacent controls with balanced disabled boundary states and no new clutter; the detail capture shows the concise inline error associated directly with the reason field, with no confirmation dialog. The existing responsive/keyboard behavior is independently green in the seven-profile E2E and 161-case accessibility suites.
 
 ## Deferred Phase 7+ functionality (confirmed absent)
 
@@ -98,9 +104,10 @@ No file uploads, storage buckets, document/version records, previews, OCR, submi
 
 - Local scale validation (2,000 rows) is deterministic but not production-tenancy load testing; indexes and cursor paging are in place.
 - Automated axe coverage cannot replace assistive-technology or customer usability research.
-- Starter-template content awaits founder/construction-professional review before production exposure (ROD-2); the disclaimer ships with it.
+- Starter-template content awaits founder/construction-professional review before production exposure (ROD-2); the contract-verification/not-legal-advice disclaimer ships with it. This is a non-blocking production-readiness action.
 - Approved deviations are listed in [phase-6-implementation-progress.md](./phase-6-implementation-progress.md) — none reduce specified capability, honesty, or security guarantees.
+- No Phase 6C MEDIUM or LOW finding remains open; see [phase-6d-remediation.md](./phase-6d-remediation.md).
 
 ## Phase 6 verdict
 
-READY FOR PHASE 6C AUDIT.
+PHASE 6 COMPLETE — READY FOR FULL-PRODUCT VISUAL AND SEO PHASE

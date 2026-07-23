@@ -1,7 +1,7 @@
-# Phase 6B implementation progress
+# Phase 6 implementation progress
 
-> **Status:** Complete. Closing evidence and the full validation record are in [phase-6-exit-review.md](./phase-6-exit-review.md).
-> **Branch:** `codex/phase-6b-requirements`. Migrations `0022`–`0026` (append-only; `0000`–`0021` untouched).
+> **Status:** Phase 6B implementation and Phase 6D audit remediation complete. Closing evidence and the full validation record are in [phase-6-exit-review.md](./phase-6-exit-review.md); finding-by-finding evidence is in [phase-6d-remediation.md](./phase-6d-remediation.md).
+> **Branches:** Phase 6B `codex/phase-6b-requirements`; Phase 6D `codex/phase-6d-requirements-remediation`. Migrations `0022`–`0028` are append-only; `0000`–`0021` remain untouched.
 
 ## Task record (plan T0–T20)
 
@@ -29,10 +29,26 @@
 | T19 visual review | `capture:phase6` deterministic harness (35 captures across desktop/tablet/Pixel/iPhone × light/dark); the review found and fixed a Firefox table-cell collapse, a raw template-id breadcrumb, and a phone-hostile sticky bulk bar before closeout; reviewed evidence indexed in the exit review. |
 | T20 docs + exit review | This record + [phase-6-exit-review.md](./phase-6-exit-review.md); AGENTS/CLAUDE pointers updated at T0. |
 
+## Phase 6D audit-remediation record
+
+The independent Phase 6C audit is preserved byte-for-byte in [phase-6c-audit.md](./phase-6c-audit.md) (SHA-256 `8CC9C4AD2E0487D4A5E36169BB471A7181250A8D4AF0E44EA1D2FAD7C70C16B6`) and was committed before remediation. Phase 6D resolved every MEDIUM/LOW finding and the suspended-team observation without creating a Phase 7 surface:
+
+| Finding | Resolution |
+| --- | --- |
+| P6C-001 empty update write | Append-only `0027` redefines `update_project_requirement`: each supplied field group requires its own permission before mutation; Viewer/Reviewer empty payloads deny; authorized empty and same-value payloads return the existing token without `UPDATE` or audit; mixed payloads require every included permission; stale actual writes still fail `P0001`. |
+| P6C-002 unused reorder RPC | Append-only `0028` revokes and removes the unused array reorder RPC, adds the narrower `move_project_requirement` RPC with `requirement.manage`, optimistic concurrency, project/category scope, and blocking audit, and exposes keyboard/touch Move up/down controls in the unfiltered register. |
+| P6C-003 N/A validation | The detail action validates the trimmed 3–200 character reason client-side, associates inline errors accessibly, focuses the invalid field, and opens confirmation only after valid input; server/DB validation remains authoritative. |
+| P6C-004 suspended team presentation | `get_project_overview` now joins only active organization memberships into the active team roster and setup calculation. The historical `project_members` row remains unchanged; RLS behavior is unchanged. |
+| P6C-005 function census | Exit evidence now records the exact current 32-function Phase 6 feature/helper inventory rather than an approximate count. |
+| P6C-006 starter content | Remains intentionally non-blocking for local completion: content is development-safe, carries the contract-verification/not-legal-advice disclaimer, and still requires founder/construction-professional review before production exposure. |
+
+Phase 6D adds `supabase/tests/0011_phase_6d_remediation.test.sql` (32 pgTAP assertions), component tests for N/A preflight validation, and browser coverage for ordering, N/A validation, and suspended-team exclusion. Generated database types replace the removed broad RPC with the real `move_project_requirement` signature.
+
 ## Approved deviations / notes (recorded, not hidden)
 
 - **Implementation style follows the shipped Phase 5B house patterns** (server-rendered pages + progressive-enhancement forms + dialog confirmations) rather than the sheet-heavy interaction sketches in the 6A routes doc; every specified capability, state, and honesty rule is preserved. Register row-level quick actions live on the requirement detail page; the register handles mass changes through the bulk bar.
 - **Bulk confirmation** is a single AlertDialog (action + count explained in copy) rather than a typed-count input; destructive bulk actions remain soft and reversible.
 - **Category archive/restore RPCs** exist at the DB layer with Owner/Admin gating; the Phase 6 UI exposes category create/list (rename/reorder/archive UI deferred to first customer need — functions and audit are in place).
 - **Requirement audit excerpt** on the detail page links to the existing project activity feed rather than embedding a filtered timeline (no new event system either way).
+- **Requirement ordering** uses explicit adjacent Move up/down controls instead of drag-and-drop. It is keyboard/touch accessible, concurrency-checked, and deliberately hidden in filtered/archived/paginated views where "adjacent" would be ambiguous.
 - **`.env.local` note:** local `next dev` requires the root env values (the repo stores them at the root; Next reads the app directory). A gitignored copy in `apps/web/` is used for local dev; the Playwright harness injects env explicitly and is unaffected.

@@ -41,7 +41,7 @@ One event per apply, not per row (the created rows are traceable via provenance 
 | `requirement.marked_not_applicable` | mark_requirement_not_applicable | requirement | `reason_label` (≤80, truncated) | full reason text beyond label | "{actor} marked {title} not applicable" |
 | `requirement.not_applicable_reversed` | reverse_requirement_not_applicable | requirement | — | — | "{actor} reopened {title}" |
 | `requirement.archived` / `requirement.restored` | archive/restore | requirement | `reason?` | — | "{actor} removed/restored {title}" |
-| `requirement.reordered` | reorder_project_requirements | project | `moved_count`,`category_id?` | per-row detail | "{actor} reordered requirements" |
+| `requirement.reordered` | `move_project_requirement` | requirement | `moved_count=1`,`category_id`,`direction`; low-sensitivity sort-order before/after | per-row content detail | "{actor} reordered requirements" |
 | `requirement.bulk_updated` | bulk_update_project_requirements | project | `action`,`count`,`requirement_ids[]` (capped at 50 + `truncated` flag),`value_label?` (e.g., company name, date) | free-text values | "{actor} updated {count} requirements ({action label})" |
 
 Bulk N-A/archive use `requirement.bulk_updated` (with action) — no per-row event storm; single-row actions use their specific events.

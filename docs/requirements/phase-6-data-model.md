@@ -93,7 +93,7 @@ Audit inside the transaction (blocking) for all of the above.
 
 ## 5. Search & ordering strategy
 
-PostgreSQL only. Register search: trigram GIN on `normalized_title` (`ILIKE '%q%'`, unaccent-folded); filters hit the composite indexes. Stable ordering: category `sort_order` → requirement `sort_order` → `id`; gapped integers (1000-step) with a resequence path inside `reorder_project_requirements`. Cursor pagination on `(category_sort, sort_order, id)`, default 100/max 200 per page — a 2,000-requirement project pages cleanly; `get_requirement_summary` supplies counts without scanning pages. Template preview reads one version's items (≤ a few hundred rows) in one query.
+PostgreSQL only. Register search: trigram GIN on `normalized_title` (`ILIKE '%q%'`, unaccent-folded); filters hit the composite indexes. Stable ordering: category `sort_order` → requirement `sort_order` → `id`; gapped integers and the Phase 6D `move_project_requirement` path swap one adjacent pair inside the category with optimistic concurrency and blocking audit. Cursor pagination on `(category_sort, sort_order, id)`, default 100/max 200 per page — a 2,000-requirement project pages cleanly; `get_requirement_summary` supplies counts without scanning pages. Template preview reads one version's items (≤ a few hundred rows) in one query.
 
 ## 6. Ordered migration plan (append-only; SQL written in 6B)
 
@@ -104,6 +104,8 @@ PostgreSQL only. Register search: trigram GIN on `normalized_title` (`ILIKE '%q%
 | `0024` | project requirements | `project_requirements`; RLS+force; create/update/N-A/archive/restore/reorder functions; consistency triggers |
 | `0025` | application, bulk & readers | `apply_requirement_template`; `bulk_update_project_requirements`; `search_project_requirements`; `get_requirement_summary`; grants census |
 | `0026` | seed & pgTAP contract | deterministic non-prod seed (starter + custom org template w/ versions, applied requirements across states in both orgs, unassigned/undated/N-A/archived rows, second org mirror for isolation); full pgTAP (RLS/isolation/parity/lifecycle/apply-idempotency/bulk/search/grants) |
+| `0027` | Phase 6D update hardening | redefine `update_project_requirement`; authorize every supplied field group; deny read-only empty payloads; authorized empty/same-value payloads return without `UPDATE` or audit |
+| `0028` | Phase 6D ordering + overview hardening | remove the unused broad reorder RPC; add concurrency-checked `move_project_requirement`; exclude suspended organization memberships from the active overview-team projection |
 
 Each migration: RLS enable+**force**, revoke-then-grant, pgTAP for new policies/functions, regenerate + commit `types.generated.ts`, `db:validate` green. **No submission/document/review/portal table in any migration** — the validator still blocks them, and 6B adds a test asserting `create table public.submissions` still fails.
 
