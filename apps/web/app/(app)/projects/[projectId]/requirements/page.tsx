@@ -432,7 +432,7 @@ export default async function Page({
           </div>
 
           {canManage ? (
-            <div className="sticky bottom-0 mt-4 flex flex-wrap items-end gap-3 rounded-lg border bg-surface/95 p-4 shadow-card backdrop-blur-sm">
+            <div className="mt-4 flex flex-wrap items-end gap-3 rounded-lg border bg-surface/95 p-4 shadow-card backdrop-blur-sm md:sticky md:bottom-0">
               <label htmlFor="bulk-action" className="grid gap-1.5 text-sm font-semibold">
                 Change selected
                 <Select id="bulk-action" name="bulkAction" defaultValue="set_responsible_company">

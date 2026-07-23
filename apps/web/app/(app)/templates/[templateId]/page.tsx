@@ -19,6 +19,7 @@ import { ConfirmAction } from "../../../../components/projects/confirm-action";
 import { Notice, Section, humanize, outlineLink } from "../../../../components/projects/phase-5-ui";
 import { ConfirmSubmit } from "../../../../components/requirements/confirm-submit";
 import { PageHeader } from "../../../../components/shell/page-header";
+import { TemplateBreadcrumb } from "../../../../components/shell/template-breadcrumb";
 import { getActiveContext } from "../../../../lib/active-context";
 import { responsibleRoles } from "../../../../lib/phase-6-schemas";
 
@@ -103,7 +104,7 @@ export default async function Page({
   }
 
   return (
-    <>
+    <TemplateBreadcrumb template={{ id: template.id, name: template.name }}>
       <PageHeader
         title={template.name}
         description={
@@ -409,7 +410,7 @@ export default async function Page({
           ) : null}
         </div>
       </div>
-    </>
+    </TemplateBreadcrumb>
   );
 }
 

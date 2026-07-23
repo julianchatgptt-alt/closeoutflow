@@ -30,16 +30,25 @@ export type BreadcrumbItem = { href: string; label: string; current: boolean };
 
 export function buildBreadcrumbItems(
   pathname: string,
-  project: { id: string; name: string } | null
+  project: { id: string; name: string } | null,
+  template: { id: string; name: string } | null = null
 ): BreadcrumbItem[] {
   const segments = pathname.split("/").filter((segment) => segment.length > 0);
   return segments.map((segment, index) => {
-    const isProjectId =
-      index > 0 && segments[index - 1] === "projects" && UUID_SEGMENT.test(segment);
-    const label = isProjectId
-      ? project?.id === segment
-        ? project.name
-        : "Project"
+    const previous = index > 0 ? segments[index - 1] : undefined;
+    const isIdentifier = UUID_SEGMENT.test(segment);
+    const label = isIdentifier
+      ? previous === "projects"
+        ? project?.id === segment
+          ? project.name
+          : "Project"
+        : previous === "templates"
+          ? template?.id === segment
+            ? template.name
+            : "Template"
+          : previous === "requirements"
+            ? "Requirement"
+            : "Details"
       : (labelsBySegment[segment] ??
         segment
           .split("-")
@@ -56,8 +65,8 @@ export function buildBreadcrumbItems(
 
 export function Breadcrumbs() {
   const pathname = usePathname();
-  const { project } = useBreadcrumbContext();
-  const items = buildBreadcrumbItems(pathname, project);
+  const { project, template } = useBreadcrumbContext();
+  const items = buildBreadcrumbItems(pathname, project, template);
   return (
     <nav aria-label="Breadcrumbs" className="min-w-0 flex-1">
       <ol className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">

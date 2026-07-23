@@ -52,11 +52,11 @@ test("capture the deterministic Phase 6 visual evidence manifest", async ({ page
 
   // Requirement register — populated, light/dark, tablet, phones.
   await prepare(page, register, desktop);
-  await capture(page, "register--desktop--light");
+  await capture(page, "register--desktop--light", false);
   await prepare(page, register, desktop, "dark");
-  await capture(page, "register--desktop--dark");
+  await capture(page, "register--desktop--dark", false);
   await prepare(page, register, tablet);
-  await capture(page, "register--tablet--light");
+  await capture(page, "register--tablet--light", false);
   await prepare(page, register, pixel);
   await capture(page, "register--pixel--light");
   await prepare(page, register, iphone);
@@ -64,16 +64,16 @@ test("capture the deterministic Phase 6 visual evidence manifest", async ({ page
 
   // Needs-attention filter and not-applicable views.
   await prepare(page, `${register}?attention=1`, desktop);
-  await capture(page, "register--needs-attention--desktop--light");
+  await capture(page, "register--needs-attention--desktop--light", false);
   await prepare(page, `${register}?status=not_applicable`, desktop);
-  await capture(page, "register--not-applicable--desktop--light");
+  await capture(page, "register--not-applicable--desktop--light", false);
 
   // Bulk-selection state.
   await prepare(page, register, desktop);
   const checkboxes = page.getByRole("checkbox", { name: /^Select / });
   await checkboxes.nth(0).check();
   await checkboxes.nth(1).check();
-  await capture(page, "register--bulk-selected--desktop--light");
+  await capture(page, "register--bulk-selected--desktop--light", false);
 
   // Long custom requirement title + custom create flow.
   await prepare(page, `${register}?add=1`, desktop);
@@ -83,7 +83,7 @@ test("capture the deterministic Phase 6 visual evidence manifest", async ({ page
   await page.getByLabel("Requirement title").fill(longTitle);
   await page.getByRole("button", { name: "Add requirement", exact: true }).click();
   await expect(page.locator('main [role="status"]').first()).toContainText("Requirement added");
-  await capture(page, "register--long-title--desktop--light");
+  await capture(page, "register--long-title--desktop--light", false);
 
   // Empty register (draft project without requirements).
   await prepare(page, `${emptyProject}/requirements`, desktop);
