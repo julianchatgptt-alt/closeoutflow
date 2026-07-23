@@ -1,6 +1,7 @@
 import {
   BarChart3,
   Building2,
+  ClipboardList,
   ContactRound,
   FolderKanban,
   LayoutDashboard,
@@ -13,6 +14,7 @@ export const globalNavigation = [
   { href: "/projects", label: "Projects", icon: FolderKanban },
   { href: "/companies", label: "Companies", icon: Building2 },
   { href: "/contacts", label: "Contacts", icon: ContactRound },
+  { href: "/templates", label: "Templates", icon: ClipboardList },
   { href: "/reports", label: "Reports", icon: BarChart3, disabled: true, phase: 11 },
   { href: "/settings/team", label: "Team", icon: UsersRound },
   { href: "/settings/organization", label: "Settings", icon: Settings }
@@ -41,7 +43,7 @@ export const settingsNavigation = [
   { href: "/settings/organization", label: "Organization", phase: 4 },
   { href: "/settings/team", label: "Team", phase: 4 },
   { href: "/settings/roles", label: "Roles", phase: 4 },
-  { href: "/settings/templates", label: "Requirement Templates", phase: 6 },
+  { href: "/templates", label: "Requirement Templates", phase: 6 },
   { href: "/settings/trades", label: "Trades & Divisions", phase: 6, disabled: true },
   { href: "/settings/billing", label: "Billing", phase: 16, disabled: true },
   { href: "/settings/integrations", label: "Integrations", phase: 15, disabled: true },

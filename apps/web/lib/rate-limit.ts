@@ -36,7 +36,9 @@ export type LimitedOperation =
   | "account-recovery"
   | "project-mutation"
   | "directory-mutation"
-  | "project-assignment";
+  | "project-assignment"
+  | "template-mutation"
+  | "requirement-mutation";
 
 const rules: Record<LimitedOperation, RateLimitRule> = {
   "sign-up": { limit: 5, windowSeconds: 900 },
@@ -62,7 +64,9 @@ const rules: Record<LimitedOperation, RateLimitRule> = {
   "account-recovery": { limit: 5, windowSeconds: 900 },
   "project-mutation": { limit: 60, windowSeconds: 900 },
   "directory-mutation": { limit: 60, windowSeconds: 900 },
-  "project-assignment": { limit: 90, windowSeconds: 900 }
+  "project-assignment": { limit: 90, windowSeconds: 900 },
+  "template-mutation": { limit: 60, windowSeconds: 900 },
+  "requirement-mutation": { limit: 120, windowSeconds: 900 }
 };
 
 const localStore = new LocalRateLimitStore();
