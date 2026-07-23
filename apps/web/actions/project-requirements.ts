@@ -93,8 +93,8 @@ export async function createRequirementAction(formData: FormData): Promise<void>
   if (error) requirementError(path, friendlyRequirementError(error));
   redirect(
     parsed.data.addAnother
-      ? `${path}?message=Requirement added — add another&add=1`
-      : `${path}?message=Requirement added`
+      ? `${path}?message=${encodeURIComponent("Requirement added. Add another below.")}&add=1`
+      : `${path}?message=${encodeURIComponent("Requirement added")}`
   );
 }
 

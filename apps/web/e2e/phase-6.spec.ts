@@ -59,7 +59,7 @@ test("custom requirement fast-create lands in the correct category", async ({ pa
   const title = `Fixture Custom Requirement ${Date.now()}`;
   await page.goto(`${register}?add=1`);
   await page.getByLabel("Requirement title").fill(title);
-  await page.getByLabel("Category", { exact: true }).selectOption({ label: "Warranties" });
+  await page.locator("#requirement-category").selectOption({ label: "Warranties" });
   await page.getByRole("button", { name: "Add requirement", exact: true }).click();
   await expect(page.locator('main [role="status"]').first()).toContainText("Requirement added");
   const warrantySection = page.getByRole("region", { name: "Warranties" });

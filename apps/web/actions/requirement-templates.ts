@@ -56,7 +56,9 @@ export async function createTemplateAction(formData: FormData): Promise<void> {
     request_id: createRequestId()
   });
   if (error || !data) templateError("/templates/new", "The template could not be created");
-  redirect(`/templates/${data}?message=Template created — add its requirements`);
+  redirect(
+    `/templates/${data}?message=${encodeURIComponent("Template created. Add its requirements next.")}`
+  );
 }
 
 export async function updateTemplateAction(formData: FormData): Promise<void> {
@@ -261,7 +263,9 @@ export async function publishTemplateAction(formData: FormData): Promise<void> {
           ? "This template changed while you were editing. Reload and try again."
           : "The template could not be published"
     );
-  redirect(`${path}?message=Template published — it can now be applied to projects`);
+  redirect(
+    `${path}?message=${encodeURIComponent("Template published. It can now be applied to projects.")}`
+  );
 }
 
 export async function createTemplateVersionAction(formData: FormData): Promise<void> {

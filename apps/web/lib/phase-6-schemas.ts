@@ -154,7 +154,8 @@ export const applyTemplateSchema = z.object({
   projectId: z.uuid(),
   templateId: z.uuid(),
   selectedItemKeys: z.array(z.string().min(3).max(80)).min(1, "Select at least one requirement"),
-  roleAssignments: z.record(z.enum(responsibleRoles), z.uuid().or(z.literal(""))),
+  // Keys are constrained to responsibleRoles by the action; a partial record is valid.
+  roleAssignments: z.record(z.string(), z.uuid()),
   defaultDueDate: optionalDate
 });
 
