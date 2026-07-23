@@ -123,7 +123,13 @@ export default async function Page({
         />
       ) : (
         <div className="overflow-hidden rounded-lg bg-surface shadow-card">
-          <table className="hidden w-full text-sm md:table">
+          <table className="hidden w-full table-fixed text-sm md:table">
+            <colgroup>
+              <col />
+              <col className="w-56" />
+              <col className="w-36" />
+              <col className="w-32" />
+            </colgroup>
             <thead className="border-b text-left text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="px-5 py-3">Template</th>
@@ -135,7 +141,7 @@ export default async function Page({
             <tbody className="divide-y">
               {cards.map(({ display, draft, archived }) => (
                 <tr key={display.family_id} className="hover:bg-muted/50">
-                  <td className="max-w-0 px-5 py-4">
+                  <td className="px-5 py-4">
                     <Link
                       className="block truncate font-semibold hover:text-primary"
                       href={`/templates/${(draft ?? display).id}`}

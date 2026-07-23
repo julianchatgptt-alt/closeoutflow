@@ -14,6 +14,7 @@
     "capture:phase5e-final": "node scripts/run-logo-review.mjs --config playwright.phase5e-final.capture.config.ts",
     "capture:keystone-refinement": "node scripts/run-logo-review.mjs --config playwright.keystone-refinement.capture.config.ts",
     "capture:phase5d": "node scripts/run-playwright.mjs --config playwright.capture.config.ts",
+    "capture:phase6": "node scripts/run-playwright.mjs --config playwright.phase6.capture.config.ts",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck",
     "db:lint": "supabase db lint --local",
     "db:reset": "node scripts/db-reset.mjs",

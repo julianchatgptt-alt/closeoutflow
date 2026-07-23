@@ -9,10 +9,18 @@ test("the requirement register is real, grouped, and honest across browsers", as
   await expect(page.getByRole("heading", { level: 1, name: "Requirements" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Preview information" })).toHaveCount(0);
   await expect(page.getByLabel("Register summary")).toBeVisible();
-  await expect(page.getByRole("link", { name: "HVAC O&M Manual" }).first()).toBeVisible();
-  await expect(page.getByText("From Medical Office Closeout v1").first()).toBeVisible();
-  await expect(page.getByText("Company left project").first()).toBeVisible();
-  await expect(page.getByText("Planned date passed").first()).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "HVAC O&M Manual" }).filter({ visible: true }).first()
+  ).toBeVisible();
+  await expect(
+    page.getByText("From Medical Office Closeout v1").filter({ visible: true }).first()
+  ).toBeVisible();
+  await expect(
+    page.getByText("Company left project").filter({ visible: true }).first()
+  ).toBeVisible();
+  await expect(
+    page.getByText("Planned date passed").filter({ visible: true }).first()
+  ).toBeVisible();
   const mainText = await page.locator("body").innerText();
   expect(mainText).not.toMatch(/not_applicable_approved|source_item_key|jsonb/i);
   expect(mainText).not.toMatch(/\b20\d{2}-\d{2}-\d{2}\b/);
@@ -20,11 +28,15 @@ test("the requirement register is real, grouped, and honest across browsers", as
 
 test("register filters derive attention and never store assignment status", async ({ page }) => {
   await page.goto(`${register}?attention=1`);
-  await expect(page.getByRole("link", { name: "Roofing Warranty" }).first()).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Roofing Warranty" }).filter({ visible: true }).first()
+  ).toBeVisible();
   await expect(page.getByRole("link", { name: "HVAC O&M Manual" })).toHaveCount(0);
   await page.goto(`${register}?status=not_applicable`);
-  await expect(page.getByRole("link", { name: "Certificate of Occupancy" }).first()).toBeVisible();
-  await expect(page.getByText("Not applicable").first()).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Certificate of Occupancy" }).filter({ visible: true }).first()
+  ).toBeVisible();
+  await expect(page.getByText("Not applicable").filter({ visible: true }).first()).toBeVisible();
 });
 
 test("requirement detail separates responsibility, dates, and lifecycle actions", async ({
@@ -62,9 +74,17 @@ test("custom requirement fast-create lands in the correct category", async ({ pa
   await page.locator("#requirement-category").selectOption({ label: "Warranties" });
   await page.getByRole("button", { name: "Add requirement", exact: true }).click();
   await expect(page.locator('main [role="status"]').first()).toContainText("Requirement added");
-  const warrantySection = page.getByRole("region", { name: "Warranties" });
-  await expect(warrantySection.getByRole("link", { name: title })).toBeVisible();
-  await expect(warrantySection.getByText("Custom requirement").first()).toBeVisible();
+  const warrantiesGroup = page
+    .locator("tbody, section")
+    .filter({ hasText: "Warranties" })
+    .filter({ has: page.getByRole("link", { name: title }) })
+    .first();
+  await expect(
+    warrantiesGroup.getByRole("link", { name: title }).filter({ visible: true }).first()
+  ).toBeVisible();
+  await expect(
+    warrantiesGroup.getByText("Custom requirement").filter({ visible: true }).first()
+  ).toBeVisible();
 });
 
 test("applying a template is idempotent and reports honest counts", async ({ page }, testInfo) => {
@@ -72,6 +92,11 @@ test("applying a template is idempotent and reports honest counts", async ({ pag
   await page.goto(`${register}/apply?template=b0000000-0000-4000-8000-000000000001`);
   await expect(page.getByText(/will be added/)).toBeVisible();
   await expect(page.getByText("Already in project").first()).toBeVisible();
+  // Include the optional items so the re-apply preview is truly empty.
+  const uncheckedItems = page.locator('input[name="itemKeys"]:not(:checked):not([disabled])');
+  while ((await uncheckedItems.count()) > 0) {
+    await uncheckedItems.first().check();
+  }
   await page.getByRole("button", { name: /^Add \d+ requirement/ }).click();
   await expect(page).toHaveURL(/\/requirements\?message=/, { timeout: 15_000 });
   await expect(page.locator('main [role="status"]').first()).toContainText(
@@ -113,7 +138,7 @@ test("bulk selection applies one confirmed change to many requirements", async (
   await checkboxes.nth(0).check();
   await checkboxes.nth(1).check();
   await page.getByLabel("Change selected").selectOption("set_priority");
-  await page.getByLabel("Priority", { exact: true }).selectOption("high");
+  await page.locator("#bulk-priority").selectOption("high");
   await page.getByRole("button", { name: "Apply to selected" }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Apply to selected" }).click();
   await expect(page.locator('main [role="status"]').first()).toContainText(

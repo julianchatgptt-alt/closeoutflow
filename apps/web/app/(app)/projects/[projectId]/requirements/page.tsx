@@ -301,105 +301,134 @@ export default async function Page({
         <form action={bulkUpdateRequirementsAction}>
           <input type="hidden" name="projectId" value={projectId} />
           <div className="overflow-hidden rounded-lg bg-surface shadow-card">
-            {[...grouped.entries()].map(([categoryName, categoryRows]) => (
-              <section key={categoryName} aria-label={categoryName}>
-                <h2 className="flex items-center justify-between border-b bg-muted/40 px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {categoryName}
-                  <span className="tabular-nums">{categoryRows.length}</span>
-                </h2>
-                <table className="hidden w-full text-sm md:table">
-                  <thead className="sr-only">
-                    <tr>
-                      {canManage ? <th>Select</th> : null}
-                      <th>Requirement</th>
-                      <th>Responsible</th>
-                      <th>Internal owner</th>
-                      <th>Due date</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {categoryRows.map((row) => (
-                      <tr
-                        key={row.id}
-                        className={`hover:bg-muted/50 ${row.archived_at ? "opacity-60" : ""}`}
-                      >
-                        {canManage ? (
-                          <td className="w-10 pl-5">
-                            <input
-                              type="checkbox"
-                              name="requirementIds"
-                              value={row.id}
-                              aria-label={`Select ${row.title}`}
-                            />
-                          </td>
-                        ) : null}
-                        <td className={`max-w-0 py-3.5 pr-4 ${canManage ? "pl-3" : "pl-5"}`}>
-                          <Link
-                            href={`${registerPath}/${row.id}`}
-                            className="block truncate font-semibold hover:text-primary"
-                            title={row.title}
-                          >
-                            {row.title}
-                          </Link>
-                          <SourceLine row={row} />
-                        </td>
-                        <td className="max-w-48 pr-4">
-                          <ResponsibilityCell row={row} />
-                        </td>
-                        <td className="max-w-40 pr-4">
-                          <OwnerCell row={row} />
-                        </td>
-                        <td className="pr-4">
-                          <DueDateCell row={row} />
-                        </td>
-                        <td className="pr-5">
-                          <RequirementStatusBadge
-                            status={row.status}
-                            archived={Boolean(row.archived_at)}
+            <table className="hidden w-full table-fixed text-sm md:table">
+              <colgroup>
+                {canManage ? <col className="w-12" /> : null}
+                <col />
+                <col className="w-[19%]" />
+                <col className="w-[15%]" />
+                <col className="w-[13%]" />
+                <col className="w-32" />
+              </colgroup>
+              <thead className="border-b text-left text-xs uppercase tracking-wide text-muted-foreground">
+                <tr>
+                  {canManage ? (
+                    <th className="py-3 pl-5">
+                      <span className="sr-only">Select</span>
+                    </th>
+                  ) : null}
+                  <th className={canManage ? "py-3" : "py-3 pl-5"}>Requirement</th>
+                  <th>Responsible</th>
+                  <th>Internal owner</th>
+                  <th>Due date</th>
+                  <th className="pr-5">Status</th>
+                </tr>
+              </thead>
+              {[...grouped.entries()].map(([categoryName, categoryRows]) => (
+                <tbody key={categoryName} className="divide-y border-b">
+                  <tr className="bg-muted/40">
+                    <th
+                      colSpan={canManage ? 6 : 5}
+                      scope="colgroup"
+                      className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                    >
+                      {categoryName}{" "}
+                      <span className="font-normal tabular-nums">({categoryRows.length})</span>
+                    </th>
+                  </tr>
+                  {categoryRows.map((row) => (
+                    <tr
+                      key={row.id}
+                      className={`hover:bg-muted/50 ${row.archived_at ? "opacity-60" : ""}`}
+                    >
+                      {canManage ? (
+                        <td className="pl-5">
+                          <input
+                            type="checkbox"
+                            name="requirementIds"
+                            value={row.id}
+                            aria-label={`Select ${row.title}`}
                           />
                         </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div className="divide-y md:hidden">
-                  {categoryRows.map((row) => (
-                    <article key={row.id} className={`p-4 ${row.archived_at ? "opacity-60" : ""}`}>
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0 flex-1">
-                          {canManage ? (
-                            <label className="float-left mr-3 mt-0.5">
-                              <input
-                                type="checkbox"
-                                name="requirementIds"
-                                value={row.id}
-                                aria-label={`Select ${row.title}`}
-                              />
-                            </label>
-                          ) : null}
-                          <Link
-                            href={`${registerPath}/${row.id}`}
-                            className="font-semibold hover:text-primary"
-                          >
-                            {row.title}
-                          </Link>
-                          <SourceLine row={row} />
-                        </div>
+                      ) : null}
+                      <td className={`py-3.5 pr-4 ${canManage ? "" : "pl-5"}`}>
+                        <Link
+                          href={`${registerPath}/${row.id}`}
+                          className="block truncate font-semibold hover:text-primary"
+                          title={row.title}
+                        >
+                          {row.title}
+                        </Link>
+                        <SourceLine row={row} />
+                      </td>
+                      <td className="pr-4">
+                        <ResponsibilityCell row={row} />
+                      </td>
+                      <td className="pr-4">
+                        <OwnerCell row={row} />
+                      </td>
+                      <td className="pr-4">
+                        <DueDateCell row={row} />
+                      </td>
+                      <td className="pr-5">
                         <RequirementStatusBadge
                           status={row.status}
                           archived={Boolean(row.archived_at)}
                         />
-                      </div>
-                      <div className="mt-3 grid grid-cols-2 gap-3">
-                        <ResponsibilityCell row={row} />
-                        <DueDateCell row={row} />
-                      </div>
-                    </article>
+                      </td>
+                    </tr>
                   ))}
-                </div>
-              </section>
-            ))}
+                </tbody>
+              ))}
+            </table>
+            <div className="md:hidden">
+              {[...grouped.entries()].map(([categoryName, categoryRows]) => (
+                <section key={categoryName} aria-label={categoryName}>
+                  <h2 className="flex items-center justify-between border-b bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {categoryName}
+                    <span className="tabular-nums">{categoryRows.length}</span>
+                  </h2>
+                  <div className="divide-y">
+                    {categoryRows.map((row) => (
+                      <article
+                        key={row.id}
+                        className={`p-4 ${row.archived_at ? "opacity-60" : ""}`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            {canManage ? (
+                              <label className="float-left mr-3 mt-0.5">
+                                <input
+                                  type="checkbox"
+                                  name="requirementIds"
+                                  value={row.id}
+                                  aria-label={`Select ${row.title}`}
+                                />
+                              </label>
+                            ) : null}
+                            <Link
+                              href={`${registerPath}/${row.id}`}
+                              className="font-semibold hover:text-primary"
+                            >
+                              {row.title}
+                            </Link>
+                            <SourceLine row={row} />
+                          </div>
+                          <RequirementStatusBadge
+                            status={row.status}
+                            archived={Boolean(row.archived_at)}
+                          />
+                        </div>
+                        <div className="mt-3 grid grid-cols-2 gap-3">
+                          <ResponsibilityCell row={row} />
+                          <DueDateCell row={row} />
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
           </div>
 
           {canManage ? (
