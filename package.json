@@ -33,6 +33,7 @@
     "test:server-only": "node scripts/verify-server-only.mjs",
     "test:production-probe": "node scripts/probe-production-runtime.mjs",
     "test:phase5-scale": "node scripts/probe-phase-5-scale.mjs",
+    "test:phase6-scale": "node scripts/probe-phase-6-scale.mjs",
     "test:live-security": "node scripts/probe-live-database-security.mjs",
     "test:logo-review": "node scripts/run-logo-review.mjs --config playwright.logo-review.config.ts",
     "typecheck": "turbo run typecheck"

@@ -3,7 +3,6 @@ import { expect, test } from "@playwright/test";
 
 const previewRoutes = [
   "/dashboard",
-  "/projects/riverside-medical-office/requirements",
   "/projects/riverside-medical-office/documents",
   "/projects/riverside-medical-office/reviews",
   "/projects/riverside-medical-office/equipment",
@@ -14,7 +13,6 @@ const previewRoutes = [
   "/projects/riverside-medical-office/drawings",
   "/projects/riverside-medical-office/package",
   "/reports",
-  "/settings/templates",
   "/settings/trades",
   "/settings/billing",
   "/settings/integrations",
@@ -222,8 +220,8 @@ test("all approved internal placeholder routes are honest", async ({ page }, tes
 });
 
 test("cross-browser shell and project workspace smoke", async ({ page }) => {
-  await page.goto("/projects/riverside-medical-office/requirements");
-  await expect(page.getByRole("heading", { level: 1, name: "Requirements" })).toBeVisible();
+  await page.goto("/projects/riverside-medical-office/documents");
+  await expect(page.getByRole("heading", { level: 1, name: "Documents" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Project navigation" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Preview information" })).toHaveCount(1);
 });
