@@ -4,7 +4,7 @@ Instructions for Claude (Claude Code and other Claude agents) in this repository
 
 ## Start here, every session
 1. Read the relevant Phase 1 docs in [`/docs/product/`](docs/product/) and Phase 2 docs in [`/docs/architecture/`](docs/architecture/) for the area you're touching. Do not work from memory of the product — the docs are the source of truth.
-2. Confirm which phase/task you are on. Phase 5B is implemented in [`docs/projects/phase-5-implementation-progress.md`](docs/projects/phase-5-implementation-progress.md) with exit evidence in [`docs/projects/phase-5-exit-review.md`](docs/projects/phase-5-exit-review.md). The next activity is the independent Phase 5C audit; **do not begin Phase 6 unless explicitly assigned after audit acceptance**.
+2. Confirm which phase/task you are on. Phase 5 (5B implementation, 5C audit, 5D remediation, 5E brand/auth polish) is complete — exit evidence in [`docs/projects/phase-5-exit-review.md`](docs/projects/phase-5-exit-review.md) and [`docs/brand/phase-5e-exit-review.md`](docs/brand/phase-5e-exit-review.md). Phase 6A planning is complete in [`docs/requirements/`](docs/requirements/); the next activity is Phase 6B implementation per [`docs/requirements/phase-6-implementation-plan.md`](docs/requirements/phase-6-implementation-plan.md). **Phase 6 is requirement configuration only** — no uploads, document versions, reviews, portals, notifications, packages, AI, or billing.
 
 ## The rules you must never break (summary — full text in AGENTS.md §1)
 - Never weaken **tenant isolation**; every tenant table has `organization_id` + RLS (deny by default).
@@ -32,6 +32,6 @@ Requirement, Submission, Document, Document Version, Review, Approval are **sepa
 - **Update docs/ADRs** when a decision changes.
 
 ## Where to look
-- Product truth: `docs/product/*`. Architecture truth: `docs/architecture/*`. Implemented frontend truth: `docs/design/*`. Identity/tenancy truth: `docs/auth/*`. Phase 5 project/directory specifications and implementation evidence: `docs/projects/*`. Architecture decisions: `architecture-decisions.md`. What needs a human: the relevant `open-decisions.md`. Current audit handoff: `docs/projects/phase-5-exit-review.md`.
+- Product truth: `docs/product/*`. Architecture truth: `docs/architecture/*`. Implemented frontend truth: `docs/design/*`. Identity/tenancy truth: `docs/auth/*`. Phase 5 project/directory specifications and implementation evidence: `docs/projects/*`. Phase 6 requirement/template specifications: `docs/requirements/*`. Architecture decisions: `architecture-decisions.md`. What needs a human: the relevant `open-decisions.md`.
 
 > Optimize for a small, correct, well-tested change that upholds every isolation/security/integrity rule — not for doing more at once.

@@ -37,3 +37,9 @@ Approved Phase 3 design specifications live in [`design/`](./design/):
 - [Audit remediation](./design/phase-3d-remediation.md)
 
 Phase 3 is limited to the design system, shell, presentational components, static labeled mock content, placeholder routes, and their tests. It does not authorize authentication, business persistence, business APIs, billing, integrations, AI processing, or external portals.
+
+## Closeout requirements and templates
+
+Phase 6A planning specifications live in [`requirements/`](./requirements/). Begin with [Phase 6 overview](./requirements/phase-6-overview.md); the ordered build plan is [Phase 6 implementation plan](./requirements/phase-6-implementation-plan.md) and founder inputs are in [Open decisions](./requirements/open-decisions.md).
+
+Phase 6 is limited to requirement configuration: categories, versioned templates, template application, project requirements, responsibility, due dates, N/A, archive, bulk operations, permissions/RLS, and audit. It does not authorize file uploads, document versions, reviews/approvals, portals, secure external links, notifications, package generation, AI, integrations, or billing.
