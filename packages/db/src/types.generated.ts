@@ -1765,6 +1765,15 @@ export type Database = {
         }
         Returns: string
       }
+      move_project_requirement: {
+        Args: {
+          expected_updated_at: string
+          move_direction: string
+          request_id?: string
+          target_requirement_id: string
+        }
+        Returns: string
+      }
       normalize_directory_text: { Args: { value: string }; Returns: string }
       normalize_website_domain: { Args: { value: string }; Returns: string }
       platform_get_security_events: {
@@ -1837,15 +1846,6 @@ export type Database = {
       }
       remove_project_member: {
         Args: { request_id?: string; target_project_member_id: string }
-        Returns: undefined
-      }
-      reorder_project_requirements: {
-        Args: {
-          ordered_requirement_ids: string[]
-          request_id?: string
-          target_category_id: string
-          target_project_id: string
-        }
         Returns: undefined
       }
       reorder_requirement_categories: {
