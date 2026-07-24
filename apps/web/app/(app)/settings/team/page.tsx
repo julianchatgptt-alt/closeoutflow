@@ -110,23 +110,35 @@ export default async function TeamSettingsPage({
       <Card className="mt-5 overflow-x-auto">
         <table className="w-full text-left text-sm">
           <caption className="sr-only">Organization members</caption>
-          <thead className="border-b border-border bg-muted/30 text-xs uppercase text-muted-foreground">
+          <thead className="border-b border-hairline bg-surface-sunken">
             <tr>
-              <th className="px-4 py-3">Member</th>
-              <th className="px-4 py-3">Role</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3 text-right">Actions</th>
+              <th className="text-overline px-4 py-3">Member</th>
+              <th className="text-overline px-4 py-3">Role</th>
+              <th className="text-overline px-4 py-3">Status</th>
+              <th className="text-overline px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {members.map((member) => {
               const ownerProtected = member.role === "owner";
               const isSelf = member.user_id === user.id;
+              const active = member.status === "active";
               return (
-                <tr key={member.membership_id} className="border-b border-border last:border-0">
+                <tr
+                  key={member.membership_id}
+                  /* A suspended member must never read as an active one. */
+                  className={`border-b border-hairline last:border-0 ${active ? "" : "bg-surface-sunken"}`}
+                >
                   <td className="px-4 py-3">
-                    <div className="font-medium">{member.display_name}</div>
-                    <div className="text-xs text-muted-foreground">{member.email}</div>
+                    <div className={`font-medium ${active ? "" : "text-muted-foreground"}`}>
+                      {member.display_name}
+                    </div>
+                    <div
+                      className="max-w-64 truncate text-[13px] text-muted-foreground"
+                      title={member.email}
+                    >
+                      {member.email}
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     {canManage && !ownerProtected ? (
@@ -152,8 +164,9 @@ export default async function TeamSettingsPage({
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    <Badge tone={member.status === "active" ? "success" : "neutral"}>
-                      {member.status}
+                    {/* Never render the raw enum. */}
+                    <Badge tone={active ? "success" : "warning"}>
+                      {active ? "Active" : "Suspended"}
                     </Badge>
                   </td>
                   <td className="px-4 py-3">
