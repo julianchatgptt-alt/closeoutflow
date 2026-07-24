@@ -2,20 +2,27 @@ import Link from "next/link";
 
 import { EmptyState, ErrorState, Skeleton } from "@closeoutflow/ui";
 
-function StateStatStrip({ values }: { values: Array<string | number> }) {
+/**
+ * Dev-only gallery specimens for the dashboard state system.
+ *
+ * The labels here previously read "Due this week", "Awaiting my review" and
+ * "Overdue" — all later-phase systems that do not exist. They now mirror the
+ * real dashboard metric trio so even the gallery specimens stay truthful.
+ */
+function StateMetricRow({ values }: { values: Array<string | number> }) {
   return (
-    <div className="grid grid-cols-2 overflow-hidden rounded-lg bg-surface shadow-card lg:grid-cols-4">
-      {["Active projects", "Due this week", "Awaiting my review", "Overdue"].map((label, index) => (
-        <div
-          key={label}
-          className={`min-h-[72px] px-4 py-3 sm:min-h-[88px] sm:px-5 ${index % 2 ? "border-l" : ""} ${index > 1 ? "border-t lg:border-t-0" : ""} ${index > 0 ? "lg:border-l" : ""}`}
-        >
-          <p className="text-[13px] text-muted-foreground">{label}</p>
-          <p className="mt-1 text-[28px] font-semibold tabular-nums sm:text-[32px]">
-            {values[index]}
-          </p>
-        </div>
-      ))}
+    <div className="grid grid-cols-1 overflow-hidden rounded-lg bg-surface shadow-card sm:grid-cols-3">
+      {["Active projects", "Projects needing setup", "Requirements needing attention"].map(
+        (label, index) => (
+          <div
+            key={label}
+            className={`px-4 py-3.5 ${index > 0 ? "border-t border-hairline sm:border-l sm:border-t-0" : ""}`}
+          >
+            <p className="text-overline">{label}</p>
+            <p className="text-metric mt-1.5">{values[index]}</p>
+          </div>
+        )
+      )}
     </div>
   );
 }
@@ -23,7 +30,7 @@ function StateStatStrip({ values }: { values: Array<string | number> }) {
 export function DashboardEmptyState() {
   return (
     <div className="grid gap-6" data-capture="dashboard-empty">
-      <StateStatStrip values={[0, 0, 0, "—"]} />
+      <StateMetricRow values={[0, 0, 0]} />
       <EmptyState
         title="No projects yet"
         description="Projects appear here once they are created."
@@ -66,7 +73,7 @@ export function DashboardLoadingState() {
 export function DashboardErrorState() {
   return (
     <div className="grid gap-6" data-capture="dashboard-error">
-      <StateStatStrip values={["—", "—", "—", "—"]} />
+      <StateMetricRow values={["—", "—", "—"]} />
       <ErrorState
         title="Dashboard section unavailable"
         description="This section could not be displayed safely."
