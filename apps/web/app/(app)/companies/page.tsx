@@ -38,7 +38,7 @@ export default async function Page({
       <Notice error={query.error ?? error?.message} message={query.message} />
       <form
         method="get"
-        className="mb-5 flex flex-col gap-3 rounded-lg bg-surface p-4 shadow-card sm:flex-row"
+        className="mb-5 flex flex-col gap-3 rounded-lg bg-surface-sunken p-4 sm:flex-row"
       >
         <label htmlFor="company-search" className="relative flex-1">
           <span className="sr-only">Search companies</span>
@@ -68,29 +68,33 @@ export default async function Page({
       {rows.length ? (
         <div className="overflow-hidden rounded-lg bg-surface shadow-card">
           <table className="hidden w-full text-sm md:table">
-            <thead className="border-b text-left text-xs uppercase tracking-wide text-muted-foreground">
+            <thead className="border-b border-hairline text-left">
               <tr>
-                <th className="px-5 py-3">Company</th>
-                <th>Trade</th>
-                <th>Projects</th>
-                <th>Contacts</th>
-                <th>Status</th>
+                <th className="text-overline px-5 py-3">Company</th>
+                <th className="text-overline">Trade</th>
+                <th className="text-overline">Projects</th>
+                <th className="text-overline">Contacts</th>
+                <th className="text-overline">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y divide-hairline">
               {rows.map((c) => (
-                <tr key={c.id}>
-                  <td className="px-5 py-4">
-                    <Link href={`/companies/${c.id}`} className="font-semibold hover:text-primary">
+                <tr key={c.id} className="transition-colors hover:bg-surface-sunken">
+                  <td className="max-w-sm px-5 py-3.5">
+                    <Link
+                      href={`/companies/${c.id}`}
+                      className="block truncate font-semibold hover:text-primary"
+                      title={c.display_name}
+                    >
                       {c.display_name}
                     </Link>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="truncate text-[13px] text-muted-foreground">
                       {c.legal_name || "Reusable organization record"}
                     </p>
                   </td>
-                  <td>{c.trade || "—"}</td>
-                  <td>{c.project_count}</td>
-                  <td>{c.contact_count}</td>
+                  <td className="text-[13.5px]">{c.trade || "—"}</td>
+                  <td className="tabular-nums">{c.project_count}</td>
+                  <td className="tabular-nums">{c.contact_count}</td>
                   <td>
                     <StatusBadge status={c.status} />
                   </td>
@@ -98,15 +102,20 @@ export default async function Page({
               ))}
             </tbody>
           </table>
-          <div className="divide-y md:hidden">
+          <div className="divide-y divide-hairline md:hidden">
             {rows.map((c) => (
               <Link key={c.id} href={`/companies/${c.id}`} className="block p-4">
-                <div className="flex justify-between">
-                  <p className="font-semibold">{c.display_name}</p>
-                  <StatusBadge status={c.status} />
+                <div className="flex items-start justify-between gap-3">
+                  <p className="min-w-0 truncate font-semibold" title={c.display_name}>
+                    {c.display_name}
+                  </p>
+                  <div className="shrink-0">
+                    <StatusBadge status={c.status} />
+                  </div>
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {c.project_count} projects · {c.contact_count} contacts
+                <p className="mt-2 text-[13px] text-muted-foreground">
+                  {c.project_count} {c.project_count === 1 ? "project" : "projects"} ·{" "}
+                  {c.contact_count} {c.contact_count === 1 ? "contact" : "contacts"}
                 </p>
               </Link>
             ))}
