@@ -117,10 +117,10 @@ export default async function Page({
     <Link
       href={href}
       aria-current={active ? "true" : undefined}
-      className={`inline-flex min-h-9 items-center gap-1.5 rounded-full border px-3 text-sm font-medium ${active ? "border-primary bg-primary/10 text-primary" : "border-border bg-surface text-foreground hover:bg-muted"}`}
+      className={`inline-flex min-h-9 items-center gap-1.5 rounded-full border px-3.5 text-[13.5px] font-medium transition-colors ${active ? "border-transparent bg-[hsl(var(--nav-item-active-bg))] text-[hsl(var(--nav-item-active-fg))]" : "border-hairline bg-surface text-foreground hover:bg-surface-sunken"}`}
     >
       {label}
-      <span className="tabular-nums text-muted-foreground">{count ?? 0}</span>
+      <span className={`tabular-nums ${active ? "" : "text-muted-foreground"}`}>{count ?? 0}</span>
     </Link>
   );
 
@@ -175,7 +175,7 @@ export default async function Page({
       {hasAnyConfigured ? (
         <form
           method="get"
-          className="mb-5 flex flex-wrap items-end gap-3 rounded-lg bg-surface p-4 shadow-card"
+          className="mb-5 flex flex-wrap items-end gap-3 rounded-lg bg-surface-sunken p-4"
         >
           <label
             htmlFor="register-search"
@@ -315,28 +315,33 @@ export default async function Page({
                 <col className="w-32" />
                 {canReorder ? <col className="w-24" /> : null}
               </colgroup>
-              <thead className="border-b text-left text-xs uppercase tracking-wide text-muted-foreground">
+              <thead className="border-b border-hairline text-left">
                 <tr>
                   {canManage ? (
                     <th className="py-3 pl-5">
                       <span className="sr-only">Select</span>
                     </th>
                   ) : null}
-                  <th className={canManage ? "py-3" : "py-3 pl-5"}>Requirement</th>
-                  <th>Responsible</th>
-                  <th>Internal owner</th>
-                  <th>Due date</th>
-                  <th className="pr-5">Status</th>
-                  {canReorder ? <th className="pr-5 text-right">Order</th> : null}
+                  <th className={`text-overline ${canManage ? "py-3" : "py-3 pl-5"}`}>
+                    Requirement
+                  </th>
+                  <th className="text-overline">Responsible</th>
+                  <th className="text-overline">Internal owner</th>
+                  <th className="text-overline">Due date</th>
+                  <th className="text-overline pr-5">Status</th>
+                  {canReorder ? <th className="text-overline pr-5 text-right">Order</th> : null}
                 </tr>
               </thead>
               {[...grouped.entries()].map(([categoryName, categoryRows]) => (
-                <tbody key={categoryName} className="divide-y border-b">
-                  <tr className="bg-muted/40">
+                <tbody
+                  key={categoryName}
+                  className="divide-y divide-hairline border-b border-hairline"
+                >
+                  <tr className="bg-surface-sunken">
                     <th
                       colSpan={(canManage ? 6 : 5) + (canReorder ? 1 : 0)}
                       scope="colgroup"
-                      className="px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                      className="text-overline px-5 py-2.5 text-left"
                     >
                       {categoryName}{" "}
                       <span className="font-normal tabular-nums">({categoryRows.length})</span>
@@ -345,7 +350,7 @@ export default async function Page({
                   {categoryRows.map((row, rowIndex) => (
                     <tr
                       key={row.id}
-                      className={`hover:bg-muted/50 ${row.archived_at ? "opacity-60" : ""}`}
+                      className={`transition-colors hover:bg-surface-sunken ${row.archived_at ? "opacity-60" : ""}`}
                     >
                       {canManage ? (
                         <td className="pl-5">
@@ -426,11 +431,11 @@ export default async function Page({
             <div className="md:hidden">
               {[...grouped.entries()].map(([categoryName, categoryRows]) => (
                 <section key={categoryName} aria-label={categoryName}>
-                  <h2 className="flex items-center justify-between border-b bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  <h2 className="text-overline flex items-center justify-between border-b border-hairline bg-surface-sunken px-4 py-2.5">
                     {categoryName}
                     <span className="tabular-nums">{categoryRows.length}</span>
                   </h2>
-                  <div className="divide-y">
+                  <div className="divide-y divide-hairline">
                     {categoryRows.map((row, rowIndex) => (
                       <article
                         key={row.id}

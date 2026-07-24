@@ -17,10 +17,14 @@ export function RequirementStatusBadge({
   return <Badge tone="info">Planned</Badge>;
 }
 
+/**
+ * Derived attention, shown as a quiet warning chip. These mean "setup is
+ * incomplete", never "something failed", so they must never read as an alarm.
+ */
 export function StaleChip({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-warning-subtle px-2 py-0.5 text-xs font-medium text-warning-foreground">
-      <AlertTriangle className="h-3 w-3" aria-hidden />
+    <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-warning-subtle px-2 py-0.5 text-[11px] font-medium leading-4 text-warning-foreground">
+      <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden />
       {label}
     </span>
   );
@@ -42,7 +46,10 @@ export function ResponsibilityCell({ row }: { row: RegisterRow }) {
         </p>
       ) : null}
       {row.responsible_contact_name ? (
-        <p className="truncate text-xs text-muted-foreground" title={row.responsible_contact_name}>
+        <p
+          className="truncate text-[13px] text-muted-foreground"
+          title={row.responsible_contact_name}
+        >
           {row.responsible_contact_name}
         </p>
       ) : null}
@@ -94,7 +101,7 @@ export function DueDateCell({ row }: { row: RegisterRow }) {
 
 export function SourceLine({ row }: { row: RegisterRow }) {
   return (
-    <p className="truncate text-xs text-muted-foreground">
+    <p className="truncate text-[13px] text-muted-foreground">
       {row.source_template_name
         ? `From ${row.source_template_name} v${row.source_template_version}`
         : "Custom requirement"}
