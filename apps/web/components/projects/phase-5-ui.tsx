@@ -7,6 +7,7 @@ import {
   CardTitle,
   Field,
   Input,
+  Meter,
   Select,
   Textarea
 } from "@closeoutflow/ui";
@@ -92,38 +93,60 @@ export function SetupChecklist({
     ["requirements", "Add closeout requirements", `/projects/${projectId}/requirements`]
   ] as const;
   const done = steps.filter(([key]) => setup[key]).length;
-  const percent = Math.round((done / steps.length) * 100);
+  const complete = done === steps.length;
+  // The checklist is the focal panel while setup is incomplete, and recedes to
+  // a quiet panel once there is nothing left to do.
   return (
-    <Section title="Project setup">
-      <div className="mb-4 flex items-end justify-between">
-        <div>
-          <p className="text-2xl font-semibold tabular-nums">{percent}%</p>
-          <p className="text-sm text-muted-foreground">
-            {done} of {steps.length} setup steps complete
-          </p>
-        </div>
-        <div aria-hidden className="h-2 w-32 overflow-hidden rounded-full bg-muted">
-          <div className="h-full bg-primary" style={{ width: `${percent}%` }} />
-        </div>
-      </div>
-      <ol className="divide-y divide-border">
-        {steps.map(([key, label, href]) => (
-          <li key={key}>
-            <Link href={href} className="flex min-h-12 items-center gap-3 py-2 hover:text-primary">
-              {setup[key] ? (
-                <Check className="h-5 w-5 text-success" aria-hidden />
-              ) : (
-                <Circle className="h-5 w-5 text-muted-foreground" aria-hidden />
-              )}
-              <span className={setup[key] ? "text-muted-foreground line-through" : "font-medium"}>
-                {label}
-              </span>
-              {!setup[key] ? <ArrowRight className="ml-auto h-4 w-4" aria-hidden /> : null}
-            </Link>
-          </li>
-        ))}
-      </ol>
-    </Section>
+    <Card tier={complete ? "panel" : "raised"}>
+      <CardHeader className="flex-row items-center justify-between space-y-0">
+        <CardTitle>Project setup</CardTitle>
+        <span className="text-[13px] tabular-nums text-muted-foreground">
+          {done} of {steps.length}
+        </span>
+      </CardHeader>
+      <CardContent>
+        <Meter
+          value={done}
+          max={steps.length}
+          label={`${done} of ${steps.length} steps complete`}
+        />
+        <ol className="mt-4 list-none divide-y divide-hairline p-0">
+          {steps.map(([key, label, href]) => (
+            <li key={key}>
+              <Link
+                href={href}
+                className="group flex min-h-12 items-center gap-3 py-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                {setup[key] ? (
+                  <Check className="h-4 w-4 shrink-0 text-success-foreground" aria-hidden />
+                ) : (
+                  <Circle className="h-4 w-4 shrink-0 text-subtle-foreground" aria-hidden />
+                )}
+                <span
+                  className={
+                    setup[key]
+                      ? "text-[13.5px] text-muted-foreground"
+                      : "text-[13.5px] font-medium group-hover:text-primary"
+                  }
+                >
+                  {label}
+                </span>
+                {!setup[key] ? (
+                  <ArrowRight
+                    className="ml-auto h-4 w-4 shrink-0 text-subtle-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
+                    aria-hidden
+                  />
+                ) : (
+                  <span className="ml-auto text-[11px] font-medium uppercase tracking-wide text-success-foreground">
+                    Done
+                  </span>
+                )}
+              </Link>
+            </li>
+          ))}
+        </ol>
+      </CardContent>
+    </Card>
   );
 }
 export function ProjectForm({

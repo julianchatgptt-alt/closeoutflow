@@ -57,7 +57,7 @@ export default async function Page({
       />
       <Notice error={query.error ?? error?.message} message={query.message} />
       <form
-        className="mb-5 grid gap-3 rounded-lg bg-surface p-4 shadow-card md:grid-cols-[minmax(14rem,1fr)_12rem_auto_auto]"
+        className="mb-5 grid gap-3 rounded-lg bg-surface-sunken p-4 md:grid-cols-[minmax(14rem,1fr)_12rem_auto_auto]"
         method="get"
       >
         <label htmlFor="project-search" className="relative">
@@ -131,52 +131,62 @@ export default async function Page({
       ) : (
         <div className="overflow-hidden rounded-lg bg-surface shadow-card">
           <table className="hidden w-full text-sm md:table">
-            <thead className="border-b text-left text-xs uppercase tracking-wide text-muted-foreground">
+            <thead className="border-b border-hairline text-left">
               <tr>
-                <th className="px-5 py-3">Project</th>
-                <th>Status</th>
-                <th>Type</th>
-                <th>Closeout target</th>
-                <th>Team</th>
+                <th className="text-overline px-5 py-3">Project</th>
+                <th className="text-overline">Status</th>
+                <th className="text-overline">Type</th>
+                <th className="text-overline">Closeout target</th>
+                <th className="text-overline">Team</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y divide-hairline">
               {projects.map((p) => (
-                <tr key={p.id} className="hover:bg-muted/50">
-                  <td className="px-5 py-4">
-                    <Link className="font-semibold hover:text-primary" href={`/projects/${p.id}`}>
+                <tr key={p.id} className="transition-colors hover:bg-surface-sunken">
+                  <td className="max-w-md px-5 py-3.5">
+                    <Link
+                      className="block truncate font-semibold hover:text-primary"
+                      href={`/projects/${p.id}`}
+                      title={p.name}
+                    >
                       {p.name}
                     </Link>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="truncate text-[13px] text-muted-foreground">
                       {p.project_number || "No project number"}
                     </p>
                   </td>
                   <td>
                     <StatusBadge status={p.status} />
                   </td>
-                  <td>{p.project_type ? humanize(p.project_type) : "—"}</td>
-                  <td>
+                  <td className="text-[13.5px]">
+                    {p.project_type ? humanize(p.project_type) : "—"}
+                  </td>
+                  <td className="text-[13.5px]">
                     {p.closeout_target_date ? <DateCell value={p.closeout_target_date} /> : "—"}
                   </td>
-                  <td>{p.team_count}</td>
+                  <td className="tabular-nums">{p.team_count}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <div className="divide-y md:hidden">
+          <div className="divide-y divide-hairline md:hidden">
             {projects.map((p) => (
               <article key={p.id}>
                 <Link href={`/projects/${p.id}`} className="block p-4">
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-semibold">{p.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold" title={p.name}>
+                        {p.name}
+                      </p>
+                      <p className="truncate text-[13px] text-muted-foreground">
                         {p.project_number || "No project number"}
                       </p>
                     </div>
-                    <StatusBadge status={p.status} />
+                    <div className="shrink-0">
+                      <StatusBadge status={p.status} />
+                    </div>
                   </div>
-                  <p className="mt-3 text-sm text-muted-foreground">
+                  <p className="mt-3 text-[13px] text-muted-foreground">
                     {p.team_count} {p.team_count === 1 ? "teammate" : "teammates"} ·{" "}
                     {p.closeout_target_date
                       ? `Target ${formatDateOnly(p.closeout_target_date)}`
