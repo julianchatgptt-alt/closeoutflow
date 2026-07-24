@@ -10,6 +10,12 @@ const risks = {
 
 export type RiskLevel = keyof typeof risks;
 
+/**
+ * @deprecated Risk scoring is a later-phase system that does not exist. This
+ * component must not appear on any surface backed by real data. It survives
+ * only for the dev-only component gallery and the honest, clearly-labelled
+ * later-phase preview pages. Removed from the dashboard in Phase 6E-B2.
+ */
 export function RiskIndicator({ level, drivers }: { level: RiskLevel; drivers?: string }) {
   const { tone, icon: Icon } = risks[level];
   if (level === "Insufficient data") {

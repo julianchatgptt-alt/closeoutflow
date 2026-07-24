@@ -27,6 +27,7 @@ import {
   IconButton,
   Input,
   KeyValue,
+  Metric,
   MetricCard,
   MultiSelect,
   PermissionDenied,
@@ -57,7 +58,6 @@ import {
   DashboardErrorState,
   DashboardLoadingState
 } from "../dashboard/dashboard-states";
-import { StatStrip } from "../dashboard/stat-strip";
 import { PreviewPill } from "../shell/preview-pill";
 import { useTheme } from "../theme/theme-provider";
 import { ThemeToggle } from "../theme/theme-toggle";
@@ -181,7 +181,16 @@ export function DesignGallery() {
               </div>
             </div>
           </div>
-          <StatStrip />
+          {/* The fabricated dashboard StatStrip was removed in Phase 6E-B2.
+              The Metric primitive that replaced it is shown here instead. */}
+          <Card
+            tier="panel"
+            className="grid divide-y divide-hairline sm:grid-cols-3 sm:divide-x sm:divide-y-0"
+          >
+            <Metric label="Active projects" value={6} href="/projects" />
+            <Metric label="Projects needing setup" value={2} attention />
+            <Metric label="Requirements needing attention" value={14} attention />
+          </Card>
         </Section>
         <Section title="Buttons, controls, and form fields">
           <div className="flex flex-wrap gap-2">
