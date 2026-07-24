@@ -58,12 +58,14 @@ export function AuthCard({
         </div>
       </section>
 
-      <section className="flex min-h-screen items-center justify-center px-4 py-8 sm:px-8 lg:px-12">
+      <section className="flex min-h-screen items-center justify-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] sm:px-8 lg:px-12">
         <div className="w-full max-w-[29rem]">
           <Link href="/" className="mx-auto mb-7 block w-fit lg:hidden" aria-label="Closeout home">
             <CloseoutLogo />
           </Link>
-          <Card className="overflow-hidden border-border/90 bg-surface shadow-card">
+          {/* The form is the focal element of the page, so it takes the raised
+              tier rather than a hairline ring plus a second explicit border. */}
+          <Card tier="raised" className="overflow-hidden">
             <CardContent className="p-6 sm:p-9">
               <header className="mb-7">
                 <p className="text-overline">{eyebrow}</p>
