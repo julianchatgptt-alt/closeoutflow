@@ -3,6 +3,29 @@
 > **Document status:** Phase 6E-A specification — the ordered, dependency-aware Phase 6E-B plan. **Presentation, marketing, and SEO only.** Every task obeys [accessibility-performance-and-safety.md §Code-safety](./accessibility-performance-and-safety.md).
 > **Global per-task rules:** light+dark verified; AA contrast; reduced motion; all existing suites stay green; `pnpm check` + `pnpm test` (+ `pnpm test:db` only if the founder-approved dashboard RPC is built); screenshot capture + criteria pass before merge; logical commit per group; presentation-only diff (no logic/data/permission/audit change).
 
+## Implementation status
+
+**6E-B1 (founder visual direction) — complete.** See [phase-6e-b1-founder-visual-review.md](./phase-6e-b1-founder-visual-review.md).
+
+**6E-B2 (authenticated product rollout) — implemented, verification incomplete.** See [phase-6e-b2-authenticated-rollout.md](./phase-6e-b2-authenticated-rollout.md). Branch `codex/phase-6e-b2-authenticated-visual-rollout` off `229ce5c`.
+
+| Plan task | 6E-B2 status |
+|-----------|--------------|
+| G1 tokens & primitives | ✅ done — surface ladder, hairline, real dark elevation, type scale, `Metric`/`RecordCard`/`AttentionChip`/`Meter`, `Card` tiers |
+| G2 application shell | ✅ done — grouped Work/Organization rail, light-accent active state, honest bell, content-width wiring |
+| G3 dashboard | ✅ done — Direction A on **Path A** (no new SQL); FD-2 option (b) **not** exercised |
+| G4 projects | ✅ list + setup checklist; per-page pass on overview/settings/sub-tabs still outstanding |
+| G5 requirements | ✅ register refined; detail and apply flow inherit shared system only |
+| G6 templates | ✅ library rebuilt as cards; builder inherits shared system only |
+| G7 companies & contacts | ✅ directories refined; detail pages inherit shared system only |
+| G8 team & settings | ✅ member state disambiguated; remaining settings inherit shared system only |
+| G9 authentication | ✅ refinement only |
+| G10 global state pages | ✅ 404 wording, projects skeleton |
+| G15–G18 a11y / responsive / full regression | ❌ **blocked** — Docker unavailable, so no DB, e2e, a11y or probe suite ran |
+| G11–G14 public site & SEO | ⏸ not started — deliberately out of 6E-B2 scope |
+
+Two latent defects were found and fixed during the rollout: `text-h1`/`text-h2` generated no CSS (headings and dialog titles rendered at body size), and the collapsed sidebar rendered no logo because a plain class was written as a Tailwind variant.
+
 ## Task order
 
 ### G0 — Baseline & lock

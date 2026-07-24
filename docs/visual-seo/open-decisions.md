@@ -51,6 +51,21 @@
 - **Commercial/SEO:** negligible. **Technical:** less capture surface if light-only.
 - **Default:** light-first (system-dark optional). **Blocks?** No.
 
+## Decision status after 6E-B2
+
+| ID | Status |
+|----|--------|
+| FD-1 dashboard composition | **Resolved — A.** Direction A is implemented in production ([phase-6e-b2-authenticated-rollout.md §4](./phase-6e-b2-authenticated-rollout.md)). |
+| FD-2 dashboard aggregate reader | **Resolved — (a).** Path A shipped: bounded `get_requirement_summary` over at most 10 projects, **no new SQL**. Option (b) was not built and remains unapproved. |
+| FD-4 `/team` vs `/settings/team` | **Partially actioned.** `/settings/team` received the presentation pass; `/team` was not touched. Both routes remain. |
+| FD-6 starter disclaimer wording | **Applied verbatim** on the template library. |
+| FD-3, FD-5, FD-7, FD-8 | Untouched — public-site decisions, deferred to 6E-B3. |
+
+### New items raised by 6E-B2
+
+- **FD-9 — `RiskIndicator` retention.** Deleted from every real-data surface and marked `@deprecated`, but the component is still referenced by the dev-only gallery and the honest later-phase preview pages via `list-columns.tsx`. Removing it entirely means rewriting Phase-3 preview content that [route-inventory.md](./route-inventory.md) marks "keep". **Default:** retain as deprecated. **Blocks?** No.
+- **FD-10 — `linkButton` hardcoded `#1d4f9a`.** A deliberate Phase 5E hydration-contrast measure that is a standing exception to the "no one-off colour literals" governance rule. **Default:** leave as is. **Blocks?** No.
+
 ## Summary
 
 Nothing blocks Phase 6E-B from starting on defaults. The decisions worth an explicit founder nod are the **starred** ones at their checkpoints: **FD-1** (dashboard direction), **FD-3** (primary CTA), **FD-5/FD-6/FD-7** (public pages, access model, template messaging). **FD-2** (dashboard aggregate RPC) is the only item that could touch the database and is gated behind explicit approval + independent review; the default avoids it entirely.
