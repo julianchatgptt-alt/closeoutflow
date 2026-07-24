@@ -9,7 +9,9 @@ export default function NotFound() {
         <p className="mb-4 text-center text-sm font-semibold text-primary">Closeout</p>
         <EmptyState
           title="Page not found"
-          description="This Closeout page does not exist or is not available in this preview."
+          /* Deliberately non-enumerating: this reads the same whether the page
+             does not exist or the viewer simply has no access to it. */
+          description="This page does not exist, or you don't have access to it."
           action={
             <Link
               href="/dashboard"
