@@ -69,8 +69,9 @@ test("template library and builder are first-class surfaces", async ({ page }) =
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Preview information" })).toHaveCount(0);
   await expect(page.getByRole("link", { name: /Medical Office Closeout/ }).first()).toBeVisible();
+  // FD-6 starter disclaimer, worded exactly as approved in Phase 6E-B2.
   await expect(
-    page.getByText("Verify every requirement against your contract documents").first()
+    page.getByText("Verify requirements against your contract documents").first()
   ).toBeVisible();
   await page.goto("/settings/templates");
   await expect(page).toHaveURL(/\/templates$/);

@@ -1,8 +1,10 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+// The dashboard is no longer a preview placeholder — Phase 6E-B2 rebuilt it on
+// real Phase 5/6 data and removed the PreviewPill. Only genuine later-phase
+// modules remain honest previews.
 const previewRoutes = [
-  "/dashboard",
   "/projects/riverside-medical-office/documents",
   "/projects/riverside-medical-office/reviews",
   "/projects/riverside-medical-office/equipment",
@@ -187,15 +189,36 @@ test("organization name truncates safely on narrow screens", async ({ page }, te
   expect(styles).toEqual({ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" });
 });
 
-test("dashboard keeps the compact operational hierarchy on tablet", async ({ page }, testInfo) => {
+test("dashboard leads with a truthful attention-first hierarchy on tablet", async ({
+  page
+}, testInfo) => {
   test.skip(testInfo.project.name !== "chromium", "Tablet viewport check runs once");
   await page.setViewportSize({ width: 834, height: 1112 });
   await page.goto("/dashboard");
-  await expect(page.getByRole("region", { name: "Portfolio summary" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Needs attention/ })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Upcoming deadlines" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Project health" })).toBeVisible();
+
+  // The rebuilt dashboard (Phase 6E-B2, Direction A) leads with a strong title,
+  // one primary action, a real-count metric trio, and the focal attention panel.
+  await expect(page.getByRole("heading", { level: 1, name: "Dashboard" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "New project" }).first()).toBeVisible();
+  await expect(page.getByText("Active projects").first()).toBeVisible();
+  await expect(page.getByText("Projects needing setup").first()).toBeVisible();
+  await expect(page.getByText("Requirements needing attention").first()).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Projects needing setup attention" })
+  ).toBeVisible();
   await expect(page.getByRole("button", { name: "Open navigation" })).toBeVisible();
+
+  // No fabricated later-phase content, and no PREVIEW pill, may return.
+  await expect(page.getByRole("button", { name: "Preview information" })).toHaveCount(0);
+  for (const forbidden of [
+    "Awaiting my review",
+    "Upcoming deadlines",
+    "Project health",
+    "Missing submission",
+    "Overdue"
+  ]) {
+    await expect(page.getByText(forbidden, { exact: false })).toHaveCount(0);
+  }
 });
 
 test("unknown routes use the branded not-found surface", async ({ page }) => {

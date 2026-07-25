@@ -110,7 +110,14 @@ export function DesignGallery() {
             <GalleryControls />
           </div>
         </div>
-        <FullProductVisualReview />
+        {/* The B1 review board contains side-by-side (light vs dark) comparison
+            grids that intentionally do not stack, so on a phone the board is
+            wider than the viewport. Contain it here so it scrolls within its own
+            box instead of forcing page-level horizontal scroll — the board's
+            design is untouched (dev-only; 404 in production). */}
+        <div className="overflow-x-auto">
+          <FullProductVisualReview />
+        </div>
         <KeystoneRefinementReview />
         <BrandFinalReview />
         <LogoFounderReview />
