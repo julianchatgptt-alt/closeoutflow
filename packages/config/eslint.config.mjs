@@ -7,6 +7,9 @@ const config = tseslint.config(
   {
     ignores: [
       "**/.next/**",
+      // Generated Next.js build output from the managed Playwright harness
+      // (NEXT_DIST_DIR=.next-playwright); never lint generated .d.ts.
+      "**/.next-playwright/**",
       "**/.turbo/**",
       "**/coverage/**",
       "**/dist/**",
