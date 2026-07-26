@@ -21,7 +21,7 @@
 | G8 team & settings | ✅ member state disambiguated; remaining settings inherit shared system only |
 | G9 authentication | ✅ refinement only |
 | G10 global state pages | ✅ 404 wording, projects skeleton |
-| G15–G18 a11y / responsive / full regression | ❌ **blocked** — Docker unavailable, so no DB, e2e, a11y or probe suite ran |
+| G15–G18 a11y / responsive / full regression | ✅ run once Docker came up — `test:db` (322 pgTAP), `test:a11y` (161, zero violations), `test:e2e`, `test:live-security`, `test:production-probe`, `test:phase6-scale` all pass; see [phase-6e-b2-authenticated-rollout.md §12](./phase-6e-b2-authenticated-rollout.md) |
 | G11–G14 public site & SEO | ⏸ not started — deliberately out of 6E-B2 scope |
 
 Two latent defects were found and fixed during the rollout: `text-h1`/`text-h2` generated no CSS (headings and dialog titles rendered at body size), and the collapsed sidebar rendered no logo because a plain class was written as a Tailwind variant.
